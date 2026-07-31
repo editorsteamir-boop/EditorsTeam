@@ -101,21 +101,12 @@
     "images": []
   },
   {
-    "id": "اینشات-21048",
-    "title": "اینشات",
-    "icon": "🎨",
-    "description": "نمونه های اینشات",
-    "active": true,
-    "order": 5,
-    "images": []
-  },
-  {
     "id": "یبلسیب-69224",
     "title": "یبلسیب",
     "icon": "🎨",
     "description": "یبلللب",
     "active": true,
-    "order": 6,
+    "order": 5,
     "images": []
   }
 ]
