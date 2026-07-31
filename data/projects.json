@@ -74,30 +74,12 @@
     ]
   },
   {
-    "id": "اینشات-45775",
-    "title": "اینشات",
-    "icon": "🎨",
-    "description": "نمونه های اینشات",
-    "active": true,
-    "order": 2,
-    "images": []
-  },
-  {
-    "id": "اینشات-64514",
-    "title": "اینشات",
-    "icon": "🎨",
-    "description": "نمونه های اینشات",
-    "active": true,
-    "order": 3,
-    "images": []
-  },
-  {
     "id": "یبلسیب-69224",
     "title": "یبلسیب",
     "icon": "🎨",
     "description": "یبلللب",
     "active": true,
-    "order": 4,
+    "order": 2,
     "images": []
   }
 ]
