@@ -1,0 +1,36 @@
+[
+  {
+    "id": "editor-1",
+    "fullName": "علی رضایی",
+    "badge": "تدوینگر ارشد",
+    "age": "۲۸",
+    "specialty": "تدوین و موشن‌گرافیک",
+    "city": "تهران",
+    "bio": "متخصص تدوین ویدئوهای تبلیغاتی، شبکه‌های اجتماعی و ساخت موشن‌گرافیک.",
+    "image": "./assets/images/default-avatar.svg",
+    "verified": true,
+    "online": true,
+    "rating": "4.9",
+    "projects": "۱۲۸",
+    "portfolioUrl": "https://rubika.ir/editorsteamir",
+    "active": true,
+    "order": 1
+  },
+  {
+    "id": "editor-2",
+    "fullName": "محمد کریمی",
+    "badge": "ادیتور ویدئو",
+    "age": "۲۴",
+    "specialty": "تدوین محتوای اینستاگرام",
+    "city": "شیراز",
+    "bio": "فعال در زمینه تدوین ریلز، کلیپ‌های کوتاه و محتوای مناسب شبکه‌های اجتماعی.",
+    "image": "./assets/images/default-avatar.svg",
+    "verified": true,
+    "online": false,
+    "rating": "4.7",
+    "projects": "۸۶",
+    "portfolioUrl": "https://rubika.ir/editorsteamir",
+    "active": true,
+    "order": 2
+  }
+]
