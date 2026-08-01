@@ -1,11 +1,5 @@
 const summary = [{"course": "اینشات", "level": "مبتدی", "icon": "🎬", "days": 20, "weight": 4}, {"course": "سامسونگ", "level": "مبتدی", "icon": "📱", "days": 4, "weight": 1}, {"course": "پیکسلب", "level": "مبتدی", "icon": "✍️", "days": 7, "weight": 1}, {"course": "کالرپیکر", "level": "مبتدی", "icon": "🎨", "days": 1, "weight": 1}, {"course": "پیکس آرت", "level": "متوسط", "icon": "🖼️", "days": 8, "weight": 2}, {"course": "هایپیک", "level": "متوسط", "icon": "✨", "days": 4, "weight": 1}, {"course": "پوستر میکر", "level": "متوسط", "icon": "🪧", "days": 5, "weight": 1}, {"course": "کنوا", "level": "متوسط", "icon": "🟣", "days": 6, "weight": 1}, {"course": "کپ کات", "level": "متوسط", "icon": "✂️", "days": 8, "weight": 2}, {"course": "کپشنو", "level": "متوسط", "icon": "📝", "days": 1, "weight": 1}, {"course": "کپشنرز", "level": "متوسط", "icon": "💬", "days": 1, "weight": 1}, {"course": "پینترست", "level": "متوسط", "icon": "📌", "days": 1, "weight": 1}, {"course": "سنپسید", "level": "پیشرفته", "icon": "🌿", "days": 3, "weight": 1}, {"course": "الایت موشن", "level": "پیشرفته", "icon": "🎞️", "days": 8, "weight": 2}, {"course": "لایت روم", "level": "پیشرفته", "icon": "📷", "days": 5, "weight": 1}, {"course": "لئوناردو", "level": "هوش مصنوعی", "icon": "🤖", "days": 1, "weight": 1}, {"course": "پرامپت نویسی", "level": "هوش مصنوعی", "icon": "🧠", "days": 1, "weight": 1}];
-const STORAGE_KEYS = Object.freeze({
-  done: "et_done_v2",
-  notes: "et_notes_v2",
-  legacyNotes: "notes"
-});
-
-function readStoredObject(key){
+function readStoredObject(key) {
   try {
     const value = JSON.parse(localStorage.getItem(key) || "{}");
     return value && typeof value === "object" && !Array.isArray(value) ? value : {};
@@ -14,46 +8,32 @@ function readStoredObject(key){
   }
 }
 
-let done = readStoredObject(STORAGE_KEYS.done);
-let notes = readStoredObject(STORAGE_KEYS.notes);
-if (!Object.keys(notes).length) {
-  const oldNotes = readStoredObject(STORAGE_KEYS.legacyNotes);
-  if (Object.keys(oldNotes).length) {
-    notes = oldNotes;
-    try { localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify(notes)); } catch (_) {}
-  }
+function debounce(fn, delay = 250) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
 }
 
-let notesSaveTimer = null;
-let notesDirty = false;
+let done = readStoredObject("et_done_v2");
+let notes = readStoredObject("et_notes_v2");
+if (!Object.keys(notes).length) {
+  const oldNotes = readStoredObject("notes");
+  if (Object.keys(oldNotes).length) {
+    notes = oldNotes;
+    localStorage.setItem("et_notes_v2", JSON.stringify(notes));
+  }
+}
 let filter = "همه";
 const tabs = ["همه","مبتدی","متوسط","پیشرفته","هوش مصنوعی"];
 const supportUrl = "https://rubika.ir/editorsteamir";
 const groupUrl = "https://rubika.ir/joing/BBAEJBICI0KSHFTVXWHINBVKFFWZDRXC";
 const videoLinks = {"اینشات": "https://rubika.ir/editorsteamir/BHBIFFFDHIHACAAJ", "سامسونگ": "https://rubika.ir/editorsteamir/BHDADEFDCGBJCAAJ", "پیکسلب": "https://rubika.ir/editorsteamir/BHDBFIAJFFBBHAAJ", "کالرپیکر": "https://rubika.ir/editorsteamir/BGGJIDDBEJEDBAAJ", "پیکس آرت": "https://rubika.ir/editorsteamir/BHCECAHBJHDJIAAJ", "هایپیک": "https://rubika.ir/editorsteamir/BHDDFEAJDJACFAAJ", "پوستر میکر": "https://rubika.ir/editorsteamir/BHDDFIHJGDGGIAAJ", "کنوا": "https://rubika.ir/editorsteamir/BHDDFJHJGHHDEAAJ", "کپ کات": "https://rubika.ir/editorsteamir/BHDDGACJHBFJAAAJ", "کپشنو": "https://rubika.ir/editorsteamir/BGGJIEABFBCBFAAJ", "کپشنرز": "https://rubika.ir/editorsteamir/BGGJIBEBDGCBBAAJ", "پینترست": "https://rubika.ir/editorsteamir/BGGJICFBEDFCBAAJ", "سنپسید": "https://rubika.ir/editorsteamir/BHDDGBBJHFBEGAAJ", "الایت موشن": "https://rubika.ir/editorsteamir/BHDDGBGJHJCEDAAJ", "لایت روم": "https://rubika.ir/editorsteamir/BHDDGCAJIBCCJAAJ", "لئوناردو": "https://rubika.ir/editorsteamir/BGGJIEDBFCAGGAAJ", "پرامپت نویسی": "https://rubika.ir/editorsteamir/BHGFEFEHJHEDBAAJ"};
 
-function saveDone(){
-  try { localStorage.setItem(STORAGE_KEYS.done, JSON.stringify(done)); } catch (_) {}
-}
-
-function saveNotesNow(){
-  if (!notesDirty) return;
-  notesDirty = false;
-  clearTimeout(notesSaveTimer);
-  notesSaveTimer = null;
-  try { localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify(notes)); } catch (_) {}
-}
-
-function queueNotesSave(){
-  notesDirty = true;
-  clearTimeout(notesSaveTimer);
-  notesSaveTimer = setTimeout(saveNotesNow, 450);
-}
-
-function save(){
-  saveDone();
-  notesDirty = true;
-  saveNotesNow();
+function save() {
+  localStorage.setItem("et_done_v2", JSON.stringify(done));
+  localStorage.setItem("et_notes_v2", JSON.stringify(notes));
 }
 function showView(id, btn) {
   const wasInProjects = document.getElementById("projects")?.classList.contains("active");
@@ -93,9 +73,13 @@ function renderSummary(){
 function renderList(){
   const q=(document.getElementById("search")?.value || "").trim();
   const list=document.getElementById("list");
-  list.innerHTML="";
+  if(!list) return;
+
   const rows=plan.filter(x=>(filter==="همه"||x.level===filter) && (!q || x.course.includes(q) || x.level.includes(q)));
-  document.getElementById("resultCount").textContent = rows.length + " مورد";
+  const count=document.getElementById("resultCount");
+  if(count) count.textContent = rows.length + " مورد";
+
+  const fragment=document.createDocumentFragment();
   rows.forEach(x=>{
     const card=document.createElement("div");
     card.className="card"+(done[x.id]?" done":"");
@@ -109,18 +93,30 @@ function renderList(){
             <div class="course-title">${x.course}</div>
           </div>
         </div>
-        <button class="smallbtn done-toggle" style="max-width:90px" onclick="toggleDone(${x.id})">${done[x.id]?'لغو':'انجام شد'}</button>
+        <button class="smallbtn done-toggle" style="max-width:90px" data-id="${x.id}">${done[x.id]?'لغو':'انجام شد'}</button>
       </div>
       <div class="meta">سطح: ${x.level} | جلسه ${x.lesson} از ${x.lessonCount}<br>${x.task}</div>
-      <textarea id="note-${x.id}" class="note" placeholder="یادداشت این آموزش..." oninput="setNote(${x.id}, this.value)">${notes[x.id]||""}</textarea>
+      <textarea id="note-${x.id}" class="note" data-id="${x.id}" placeholder="یادداشت این آموزش...">${notes[x.id]||""}</textarea>
       <div class="card-actions">
-        <button class="smallbtn alt done-toggle" onclick="toggleDone(${x.id})">${done[x.id]?'لغو':'انجام شد'}</button>
-        <button class="smallbtn" onclick="saveNote(${x.id})">ثبت یادداشت</button>
+        <button class="smallbtn alt done-toggle" data-id="${x.id}">${done[x.id]?'لغو':'انجام شد'}</button>
+        <button class="smallbtn note-save" data-id="${x.id}">ثبت یادداشت</button>
       </div>`;
-    list.appendChild(card);
+    fragment.appendChild(card);
   });
+
+  list.replaceChildren(fragment);
   updateProgress();
 }
+
+function updateCardDoneState(id){
+  const card=document.querySelector(`.card[data-id="${id}"]`);
+  if(!card) return;
+  card.classList.toggle("done", Boolean(done[id]));
+  card.querySelectorAll(".done-toggle").forEach(btn=>{
+    btn.textContent=done[id]?"لغو":"انجام شد";
+  });
+}
+
 
 
 function showNoteToast(){
@@ -132,11 +128,10 @@ function showNoteToast(){
 }
 
 function saveNote(id){
-  const el=document.getElementById("note-"+id);
-  if(el) notes[id]=el.value;
-  notesDirty = true;
-  saveNotesNow();
-  showNoteToast();
+ const el=document.getElementById("note-"+id);
+ if(el){
+   notes[id]=el.value;
+   localStorage.setItem("et_notes_v2", JSON.stringify(notes));
 }
 }
 
@@ -155,45 +150,31 @@ function renderNotes(){
 }
 
 function deleteNote(id){
-  if(confirm('یادداشت حذف شود؟')){
-    delete notes[id];
-    notesDirty = true;
-    saveNotesNow();
-    const textarea=document.getElementById("note-"+id);
-    if(textarea) textarea.value="";
-    renderNotes();
-  }
+ if(confirm('یادداشت حذف شود؟')){
+   delete notes[id];
+   save();
+   renderNotes();
+   renderList();
+ }
 }
 function editNote(id){
-  const v=prompt('ویرایش یادداشت', notes[id]||'');
-  if(v!==null){
-    notes[id]=v;
-    notesDirty = true;
-    saveNotesNow();
-    const textarea=document.getElementById("note-"+id);
-    if(textarea) textarea.value=v;
-    renderNotes();
-  }
+ const v=prompt('ویرایش یادداشت', notes[id]||'');
+ if(v!==null){
+   notes[id]=v;
+   save();
+   renderNotes();
+   renderList();
+ }
 }
 
 function toggleDone(id){
   done[id]=!done[id];
-  saveDone();
-
-  const card=document.querySelector(`.card[data-id="${id}"]`);
-  if(card){
-    card.classList.toggle("done", !!done[id]);
-    card.querySelectorAll(".done-toggle").forEach(btn=>{
-      btn.textContent=done[id] ? "لغو" : "انجام شد";
-    });
-  }
+  save();
+  updateCardDoneState(id);
   renderSummary();
   updateProgress();
 }
-function setNote(id, val){
-  notes[id]=val;
-  queueNotesSave();
-}
+function setNote(id, val){ notes[id]=val; save(); }
 function updateProgress(){
   const c=Object.values(done).filter(Boolean).length;
   const p=Math.round(c/plan.length*100);
@@ -230,13 +211,28 @@ function copyCardNumber(){
   }
 }
 
-document.getElementById("search").addEventListener("input", renderList);
-initTabs(); renderSummary(); renderList(); updateProgress();
+const searchInput=document.getElementById("search");
+if(searchInput){
+  searchInput.addEventListener("input", debounce(renderList, 250));
+}
 
-window.addEventListener("pagehide", saveNotesNow);
-document.addEventListener("visibilitychange", ()=>{
-  if(document.visibilityState === "hidden") saveNotesNow();
-});
+const listElement=document.getElementById("list");
+if(listElement){
+  listElement.addEventListener("click", event=>{
+    const doneButton=event.target.closest(".done-toggle");
+    if(doneButton){
+      toggleDone(Number(doneButton.dataset.id));
+      return;
+    }
+    const saveButton=event.target.closest(".note-save");
+    if(saveButton){
+      saveNote(Number(saveButton.dataset.id));
+      showNoteToast();
+    }
+  });
+}
+
+initTabs(); renderSummary(); renderList(); updateProgress();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
