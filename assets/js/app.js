@@ -1,6 +1,13 @@
 const summary = [{"course": "اینشات", "level": "مبتدی", "icon": "🎬", "days": 20, "weight": 4}, {"course": "سامسونگ", "level": "مبتدی", "icon": "📱", "days": 4, "weight": 1}, {"course": "پیکسلب", "level": "مبتدی", "icon": "✍️", "days": 7, "weight": 1}, {"course": "کالرپیکر", "level": "مبتدی", "icon": "🎨", "days": 1, "weight": 1}, {"course": "پیکس آرت", "level": "متوسط", "icon": "🖼️", "days": 8, "weight": 2}, {"course": "هایپیک", "level": "متوسط", "icon": "✨", "days": 4, "weight": 1}, {"course": "پوستر میکر", "level": "متوسط", "icon": "🪧", "days": 5, "weight": 1}, {"course": "کنوا", "level": "متوسط", "icon": "🟣", "days": 6, "weight": 1}, {"course": "کپ کات", "level": "متوسط", "icon": "✂️", "days": 8, "weight": 2}, {"course": "کپشنو", "level": "متوسط", "icon": "📝", "days": 1, "weight": 1}, {"course": "کپشنرز", "level": "متوسط", "icon": "💬", "days": 1, "weight": 1}, {"course": "پینترست", "level": "متوسط", "icon": "📌", "days": 1, "weight": 1}, {"course": "سنپسید", "level": "پیشرفته", "icon": "🌿", "days": 3, "weight": 1}, {"course": "الایت موشن", "level": "پیشرفته", "icon": "🎞️", "days": 8, "weight": 2}, {"course": "لایت روم", "level": "پیشرفته", "icon": "📷", "days": 5, "weight": 1}, {"course": "لئوناردو", "level": "هوش مصنوعی", "icon": "🤖", "days": 1, "weight": 1}, {"course": "پرامپت نویسی", "level": "هوش مصنوعی", "icon": "🧠", "days": 1, "weight": 1}];
 let done = JSON.parse(localStorage.getItem("et_done_v2") || "{}");
 let notes = JSON.parse(localStorage.getItem("et_notes_v2") || "{}");
+if (!Object.keys(notes).length) {
+  const oldNotes = JSON.parse(localStorage.getItem("notes") || "{}");
+  if (Object.keys(oldNotes).length) {
+    notes = oldNotes;
+    localStorage.setItem("et_notes_v2", JSON.stringify(notes));
+  }
+}
 let filter = "همه";
 const tabs = ["همه","مبتدی","متوسط","پیشرفته","هوش مصنوعی"];
 const supportUrl = "https://rubika.ir/editorsteamir";
@@ -90,7 +97,7 @@ function saveNote(id){
  const el=document.getElementById("note-"+id);
  if(el){
    notes[id]=el.value;
-   localStorage.setItem("notes", JSON.stringify(notes));
+   localStorage.setItem("et_notes_v2", JSON.stringify(notes));
  
   showNoteToast();
 }
