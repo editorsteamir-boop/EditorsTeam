@@ -68,15 +68,17 @@
         ? `<a class="editor-portfolio" href="${escapeText(editor.portfolioUrl)}" target="_blank" rel="noopener noreferrer">مشاهده نمونه‌کارها <span>◀</span></a>`
         : `<span class="editor-portfolio disabled">نمونه‌کاری ثبت نشده</span>`;
       return `<article class="editor-card">
-        <div class="editor-avatar-wrap">
-          <img class="editor-avatar" src="${escapeText(editor.image)}" alt="تصویر ${escapeText(editor.fullName)}" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
-          <span class="editor-status ${editor.online ? "online" : "offline"}" title="${editor.online ? "آنلاین" : "آفلاین"}"></span>
-        </div>
-        <div class="editor-main">
+        <div class="editor-header">
+          <div class="editor-avatar-wrap">
+            <img class="editor-avatar" src="${escapeText(editor.image)}" alt="تصویر ${escapeText(editor.fullName)}" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
+            <span class="editor-status ${editor.online ? "online" : "offline"}" title="${editor.online ? "آنلاین" : "آفلاین"}"></span>
+          </div>
           <div class="editor-heading">
-            <div><h3>${escapeText(editor.fullName)} ${editor.verified ? '<span class="verified" title="عضو تأییدشده">✓</span>' : ''}</h3><p class="editor-badge">${escapeText(editor.badge)}</p></div>
+            <div class="editor-identity"><h3>${escapeText(editor.fullName)} ${editor.verified ? '<span class="verified" title="عضو تأییدشده">✓</span>' : ''}</h3><p class="editor-badge">${escapeText(editor.badge)}</p></div>
             <div class="editor-score"><span>★ ${escapeText(editor.rating)}</span><small>${escapeText(editor.projects)} پروژه</small></div>
           </div>
+        </div>
+        <div class="editor-main">
           ${editor.bio ? `<p class="editor-bio">${escapeText(editor.bio)}</p>` : ""}
           <div class="editor-details">
             ${info("🎂", "سن", editor.age + (editor.age !== "—" ? " سال" : ""))}
