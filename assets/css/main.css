@@ -365,3 +365,49 @@ h1 .title-line2{
 .editor-main{width:100%;min-width:0}.editor-bio{width:100%;margin:0 0 14px;color:#c7cbe0;font-size:12px;line-height:2;text-align:justify;white-space:normal;overflow-wrap:break-word}.editor-details{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%}.editor-info-item{display:grid;grid-template-columns:24px minmax(0,1fr);align-items:center;gap:10px;width:100%;background:#080d22;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:11px 13px;min-width:0;min-height:68px}.editor-info-icon{font-size:17px;text-align:center}.editor-info-item span:last-child{display:grid;grid-template-columns:minmax(64px,82px) minmax(0,1fr);align-items:center;gap:10px;min-width:0}.editor-info-item small{display:block;color:var(--muted);font-size:10px;margin:0;white-space:nowrap}.editor-info-item b{display:block;color:#fff;font-size:12px;line-height:1.8;white-space:normal;word-break:normal;overflow-wrap:break-word}
 .editor-action{display:flex;align-items:center;justify-content:flex-end;margin-top:2px;width:100%}.editor-portfolio{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:160px;border:1px solid rgba(189,121,255,.8);color:#d6a9ff;text-decoration:none;border-radius:16px;padding:11px 16px;font-size:11px;font-weight:900;transition:.2s}.editor-portfolio:hover{background:rgba(189,121,255,.13);transform:translateY(-1px)}.editor-portfolio.disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:680px){.editor-card{gap:14px;padding:14px}.editor-header{grid-template-columns:88px minmax(0,1fr);gap:12px}.editor-avatar-wrap{width:88px;height:88px;min-width:88px}.editor-heading{display:block}.editor-score{display:inline-flex;flex-direction:row;margin-top:7px}.editor-bio{text-align:right;margin-top:0}.editor-details{grid-template-columns:1fr}.editor-info-item{min-height:74px;padding:13px 15px}.editor-info-item span:last-child{grid-template-columns:78px minmax(0,1fr);gap:12px}.editor-action{justify-content:stretch}.editor-portfolio{width:100%}}
+
+
+/* v38 - mobile navigation spacing and compact editor details */
+.nav-inner{
+  display:flex !important;
+  align-items:center;
+  gap:6px !important;
+  padding:7px 12px !important;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-padding-inline:12px;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+.nav-inner::-webkit-scrollbar{display:none}
+.navbtn{
+  flex:1 0 auto;
+  min-width:72px !important;
+  margin:0 !important;
+  padding:9px 8px !important;
+  box-sizing:border-box;
+  border:1px solid transparent;
+}
+.navbtn:first-child{margin-inline-start:1px !important}
+.navbtn:last-child{margin-inline-end:1px !important}
+.navbtn.active{box-sizing:border-box}
+
+.editor-info-item{
+  min-height:56px !important;
+  padding:8px 11px !important;
+}
+@media(max-width:680px){
+  .bottom-nav{overflow:hidden}
+  .nav-inner{padding-inline:12px !important}
+  .navbtn{min-width:74px !important;padding:9px 7px !important}
+  .editor-details{gap:8px !important}
+  .editor-info-item{
+    min-height:58px !important;
+    padding:8px 12px !important;
+  }
+  .editor-info-item span:last-child{
+    grid-template-columns:68px minmax(0,1fr) !important;
+    gap:8px !important;
+  }
+  .editor-info-item b{line-height:1.55 !important}
+}
