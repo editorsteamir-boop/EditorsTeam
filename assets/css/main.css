@@ -411,3 +411,44 @@ h1 .title-line2{
   }
   .editor-info-item b{line-height:1.55 !important}
 }
+
+/* v39 - show all six main navigation tabs without horizontal scrolling */
+.nav-inner{
+  display:grid !important;
+  grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+  align-items:stretch !important;
+  gap:2px !important;
+  width:100% !important;
+  max-width:none !important;
+  padding:7px 5px !important;
+  overflow:visible !important;
+  scroll-padding-inline:0 !important;
+}
+.navbtn{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  flex:none !important;
+  margin:0 !important;
+  padding:9px 2px !important;
+  font-size:11px !important;
+  line-height:1.35 !important;
+  white-space:nowrap !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+}
+.navbtn:first-child,
+.navbtn:last-child{
+  margin-inline:0 !important;
+}
+@media(max-width:420px){
+  .nav-inner{
+    gap:1px !important;
+    padding-inline:3px !important;
+  }
+  .navbtn{
+    padding-inline:1px !important;
+    font-size:10px !important;
+    letter-spacing:-.15px;
+  }
+}
