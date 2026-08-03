@@ -83,7 +83,9 @@
                   <label><span>سن</span><input id="age" inputmode="numeric"></label><label><span>شهر</span><input id="city"></label>
                   <label class="wide"><span>حوزه کاری</span><input id="specialty" placeholder="تدوین، موشن گرافیک و..."></label>
                   <label><span>امتیاز</span><input id="rating" placeholder="4.9"></label><label><span>تعداد پروژه</span><input id="projectsDone" inputmode="numeric"></label>
-                  <label class="wide"><span>لینک نمونه‌کار</span><input id="portfolioUrl" type="url" placeholder="https://..."></label>
+                  <label class="wide"><span>لینک نمونه‌کار خارجی (اختیاری)</span><input id="portfolioUrl" type="url" placeholder="https://..."></label>
+                  <label class="wide file-drop image-drop"><div class="drop-icon">▧</div><div><strong>تصاویر نمونه‌کار ادیتور</strong><span>چند تصویر را از دسکتاپ انتخاب کنید؛ نمایش دقیقاً مشابه گالری پیکس‌آرت است.</span></div><input id="editorPortfolioImages" type="file" accept="image/*" multiple></label>
+                  <div class="wide"><div class="queue-head"><div><b>ترتیب نمونه‌کارها</b><span>ترتیب تصاویر را با کلیدهای جهت تغییر دهید.</span></div></div><div id="editorPortfolioQueue" class="image-queue"></div></div>
                   <label class="wide"><span>بیوگرافی</span><textarea id="bio" rows="4" placeholder="معرفی کوتاه ادیتور..."></textarea></label>
                 </div>
                 <div class="switches"><label class="switch-label"><span>تأییدشده</span><div class="switch-wrap"><input id="verified" type="checkbox"><i></i><b>تیک آبی</b></div></label><label class="switch-label"><span>وضعیت</span><div class="switch-wrap"><input id="online" type="checkbox"><i></i><b>آنلاین</b></div></label><label class="switch-label"><span>نمایش</span><div class="switch-wrap"><input id="editorActive" type="checkbox" checked><i></i><b>فعال باشد</b></div></label></div>
@@ -97,7 +99,7 @@
     </div>
   </div>
   <div id="toast" class="toast"></div>
-  <script src="./assets/js/github-admin.js?v=6.0.0"></script>
+  <script src="./assets/js/github-admin.js?v=6.1.0"></script>
   <script>
     document.querySelectorAll('[data-tab-link]').forEach(btn=>btn.addEventListener('click',()=>document.querySelector('.admin-tabs button[data-tab="'+btn.dataset.tabLink+'"]').click()));
     document.querySelectorAll('[data-scroll]').forEach(btn=>btn.addEventListener('click',()=>document.getElementById(btn.dataset.scroll).scrollIntoView({behavior:'smooth'})));

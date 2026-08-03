@@ -104,7 +104,14 @@
 <div id="editors" class="view">
   <div class="section-title"><span>ادیتورها</span><span>✦</span></div>
   <div class="home-note">در لیست زیر مشخصات ادیتورها رو می‌تونی به‌دقت بررسی کنی 👇</div>
-  <div id="editorsList" class="editors-list"></div>
+  <div id="editorsHome" class="editor-page active">
+    <div id="editorsList" class="editors-list"></div>
+  </div>
+  <div id="editorPortfolioPage" class="editor-page">
+    <button class="back-btn" type="button" onclick="backEditors()">→ بازگشت به ادیتورها</button>
+    <div class="section-title"><span id="editorPortfolioTitle">نمونه‌کارهای ادیتور</span><span>🖼️</span></div>
+    <div id="editorPortfolioGallery" class="gallery-grid"></div>
+  </div>
 </div>
 
 <div id="paymentModal" class="payment-modal">
