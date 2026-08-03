@@ -1,1 +1,61 @@
-[]
+[
+  {
+    "id": "editor-1",
+    "fullName": "فاطمه یزدی",
+    "badge": "تدوینگر ارشد",
+    "age": "38",
+    "city": "تهران",
+    "specialty": "طراح پوستر حرفه‌ای پوستر",
+    "rating": "5",
+    "projects": "20",
+    "portfolioImages": [
+      "./assets/images/editors/editor-1/portfolio/1785756282290-01.webp",
+      "./assets/images/editors/editor-1/portfolio/1785756385670-01.jpg",
+      "./assets/images/editors/editor-1/portfolio/1785756390344-02.jpg"
+    ],
+    "bio": "متخصص تدوین ویدئوهای تبلیغاتی و پوستر ، ادمین حرفه ای، طراح سایت و متخصص ابزارهای هوش مصنوعی",
+    "image": "./assets/images/editors/editor-1.jpg?v=1785758172942",
+    "verified": true,
+    "online": true,
+    "active": true,
+    "order": 1
+  },
+  {
+    "id": "editor-1785758530231",
+    "fullName": "فاطمه یزدی",
+    "badge": "ادیتور ارشد",
+    "age": "38",
+    "city": "تهران",
+    "specialty": "طراح حرفه‌ای پوستر",
+    "rating": "5",
+    "projects": "20",
+    "portfolioImages": [
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758533068-01.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758535524-02.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758537938-03.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758540302-04.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758542883-05.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758545307-06.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758547691-07.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758550090-08.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758552335-09.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758554855-10.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758557639-11.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758560453-12.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758562762-13.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758565347-14.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758567628-15.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758570087-16.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758572422-17.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758574732-18.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758577168-19.jpg",
+      "./assets/images/editors/editor-1785758530231/portfolio/1785758580135-20.jpg"
+    ],
+    "bio": "",
+    "image": "./assets/images/editors/editor-1785758530231.jpg?v=1785758533067",
+    "verified": true,
+    "online": true,
+    "active": true,
+    "order": 2
+  }
+]
