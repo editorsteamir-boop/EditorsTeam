@@ -452,8 +452,3 @@ h1 .title-line2{
     letter-spacing:-.15px;
   }
 }
-
-/* Editor portfolio gallery */
-.editor-page{display:none}.editor-page.active{display:block}
-.editor-portfolio{appearance:none;background:transparent;cursor:pointer;font-family:inherit}
-.editor-portfolio.disabled{pointer-events:none}
