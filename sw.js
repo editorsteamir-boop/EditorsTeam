@@ -1,6 +1,6 @@
 const CACHE_PREFIX = "editors-team-";
-const STATIC_CACHE = `${CACHE_PREFIX}static-v7.1.0`;
-const PAGE_CACHE = `${CACHE_PREFIX}pages-v7.1.0`;
+const STATIC_CACHE = `${CACHE_PREFIX}static-v7.2.0`;
+const PAGE_CACHE = `${CACHE_PREFIX}pages-v7.2.0`;
 
 const ESSENTIAL_ASSETS = [
   "./",
@@ -8,8 +8,8 @@ const ESSENTIAL_ASSETS = [
   "./assets/css/main.css?v=6.0.2",
   "./assets/js/plan.js?v=6.0.0",
   "./assets/js/app.js?v=6.0.0",
-  "./assets/js/projects.js?v=6.0.0",
-  "./assets/js/editors.js?v=6.0.2",
+  "./assets/js/projects.js?v=6.2.0",
+  "./assets/js/editors.js?v=6.2.0",
   "./assets/js/splash.js?v=6.0.0",
   "./assets/images/logo-transparent.png",
   "./assets/images/icon-192.png"
@@ -26,54 +26,47 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(
-      keys
-        .filter(key => key.startsWith(CACHE_PREFIX) && ![STATIC_CACHE, PAGE_CACHE].includes(key))
-        .map(key => caches.delete(key))
-    );
+    await Promise.all(keys.filter(key => key.startsWith(CACHE_PREFIX) && ![STATIC_CACHE, PAGE_CACHE].includes(key)).map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
 
-async function networkFirst(request, cacheName, timeoutMs = 4000) {
+function normalizedRequest(request) {
+  const url = new URL(request.url);
+  return new Request(url.origin + url.pathname, { method: "GET" });
+}
+
+async function networkFirst(request, cacheName, timeoutMs = 8000, normalize = false) {
   const cache = await caches.open(cacheName);
+  const cacheKey = normalize ? normalizedRequest(request) : request;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
-
   try {
-    const response = await fetch(request, {
-      cache: "no-cache",
-      signal: controller.signal
-    });
+    const response = await fetch(request, { cache: "no-cache", signal: controller.signal });
     clearTimeout(timer);
-    if (response && response.ok) cache.put(request, response.clone());
+    if (response && response.ok) await cache.put(cacheKey, response.clone());
     return response;
-  } catch (_) {
+  } catch (error) {
     clearTimeout(timer);
-    const cached = await cache.match(request, { ignoreSearch: false });
+    const cached = await cache.match(cacheKey, { ignoreSearch: true });
     if (cached) return cached;
-    throw _;
+    throw error;
   }
 }
 
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(STATIC_CACHE);
-  const cached = await cache.match(request, { ignoreSearch: false });
+  const cached = await cache.match(request, { ignoreSearch: true });
   const refresh = fetch(request).then(response => {
     if (response && response.ok) cache.put(request, response.clone());
     return response;
   }).catch(() => null);
-
-  return cached || refresh || new Response("اتصال اینترنت برقرار نیست.", {
-    status: 503,
-    headers: { "Content-Type": "text/plain; charset=utf-8" }
-  });
+  return cached || refresh || new Response("اتصال اینترنت برقرار نیست.", { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" } });
 }
 
 self.addEventListener("fetch", event => {
   const request = event.request;
   if (request.method !== "GET") return;
-
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
@@ -81,19 +74,13 @@ self.addEventListener("fetch", event => {
   const isAdmin = url.pathname.endsWith("/admin.html");
   const isDynamicData = url.pathname.includes("/data/") && url.pathname.endsWith(".json");
 
-  if (isNavigation || isAdmin || isDynamicData) {
-    event.respondWith(
-      networkFirst(request, PAGE_CACHE).catch(() =>
-        isNavigation ? caches.match("./index.html") : new Response("اتصال اینترنت برقرار نیست.", {
-          status: 503,
-          headers: { "Content-Type": "text/plain; charset=utf-8" }
-        })
-      )
-    );
+  if (isDynamicData) {
+    event.respondWith(networkFirst(request, PAGE_CACHE, 8000, true).catch(() => new Response("[]", { status: 200, headers: { "Content-Type": "application/json; charset=utf-8" } })));
     return;
   }
-
-  if (["style", "script", "image", "font"].includes(request.destination)) {
-    event.respondWith(staleWhileRevalidate(request));
+  if (isNavigation || isAdmin) {
+    event.respondWith(networkFirst(request, PAGE_CACHE, 8000, true).catch(() => caches.match(normalizedRequest(new Request(self.location.origin + "/index.html")), { ignoreSearch: true })));
+    return;
   }
+  if (["style", "script", "image", "font"].includes(request.destination)) event.respondWith(staleWhileRevalidate(request));
 });
