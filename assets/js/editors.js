@@ -39,16 +39,24 @@
     };
   }
 
-  async function loadEditors() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try { editorsData = JSON.parse(saved).map(normalizeEditor); return; } catch (_) {}
-    }
+  function readEditorsBackup() {
     try {
-      const response = await fetch(`./data/editors.json?v=${Date.now()}`, { cache: "no-store" });
+      const value = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      return Array.isArray(value) ? value.map(normalizeEditor) : [];
+    } catch (_) { return []; }
+  }
+
+  async function loadEditors() {
+    try {
+      const response = await fetch("./data/editors.json?v=6.2.0", { cache: "no-cache" });
       if (!response.ok) throw new Error("editors.json not found");
-      editorsData = (await response.json()).map(normalizeEditor);
-    } catch (_) { editorsData = []; }
+      const value = await response.json();
+      if (!Array.isArray(value)) throw new Error("editors.json invalid");
+      editorsData = value.map(normalizeEditor);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+    } catch (_) {
+      editorsData = readEditorsBackup();
+    }
   }
 
   function info(icon, label, value) {

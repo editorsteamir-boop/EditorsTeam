@@ -1,12 +1,24 @@
 (() => {
   "use strict";
-  const DATA_URL = "./data/projects.json";
+  const DATA_URL = "./data/projects.json?v=6.2.0";
+  const STORAGE_KEY = "editorsTeam.projects.v1";
   const esc = value => String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
   let projects = [];
+  function readBackup(){
+    try { const value=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]"); return Array.isArray(value)?value:[]; }
+    catch (_) { return []; }
+  }
   async function loadProjects(){
-    try { const r=await fetch(`${DATA_URL}?v=${Date.now()}`,{cache:"no-store"}); projects=r.ok?await r.json():[]; }
-    catch { projects=[]; }
-    projects=(Array.isArray(projects)?projects:[]).filter(p=>p.active!==false).sort((a,b)=>(a.order||0)-(b.order||0));
+    let loaded=[];
+    try {
+      const r=await fetch(DATA_URL,{cache:"no-cache"});
+      if(!r.ok) throw new Error("projects.json not found");
+      const value=await r.json();
+      if(!Array.isArray(value)) throw new Error("projects.json invalid");
+      loaded=value;
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(value));
+    } catch (_) { loaded=readBackup(); }
+    projects=loaded.filter(p=>p&&p.active!==false).sort((a,b)=>(a.order||0)-(b.order||0));
     renderHome();
   }
   function renderHome(){
