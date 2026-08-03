@@ -9,7 +9,9 @@
     "rating": "5",
     "projects": "7200",
     "portfolioImages": [
-      "./assets/images/editors/editor-1/portfolio/1785756282290-01.webp"
+      "./assets/images/editors/editor-1/portfolio/1785756282290-01.webp",
+      "./assets/images/editors/editor-1/portfolio/1785756385670-01.jpg",
+      "./assets/images/editors/editor-1/portfolio/1785756390344-02.jpg"
     ],
     "bio": "متخصص تدوین ویدئوهای تبلیغاتی و پوستر ، ادمین حرفه ای، طراح سایت و متخصص ابزارهای هوش مصنوعی",
     "image": "./assets/images/editors/editor-1.jpg?v=1785677443894",
