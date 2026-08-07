@@ -1,15 +1,15 @@
 const CACHE_PREFIX = "editors-team-";
-const STATIC_CACHE = `${CACHE_PREFIX}static-v7.2.0`;
-const PAGE_CACHE = `${CACHE_PREFIX}pages-v7.2.0`;
+const STATIC_CACHE = `${CACHE_PREFIX}static-v7.3.0`;
+const PAGE_CACHE = `${CACHE_PREFIX}pages-v7.3.0`;
 
 const ESSENTIAL_ASSETS = [
   "./",
   "./index.html",
   "./assets/css/main.css?v=6.0.2",
   "./assets/js/plan.js?v=6.0.0",
-  "./assets/js/app.js?v=6.0.0",
+  "./assets/js/app.js?v=7.3.0",
   "./assets/js/projects.js?v=6.2.0",
-  "./assets/js/editors.js?v=6.2.0",
+  "./assets/js/editors.js?v=7.3.0",
   "./assets/js/splash.js?v=6.0.0",
   "./assets/images/logo-transparent.png",
   "./assets/images/icon-192.png"
