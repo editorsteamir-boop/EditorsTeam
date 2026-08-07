@@ -79,7 +79,7 @@
     list.innerHTML = visible.map(editor => {
       const mediaCount = editor.portfolioMedia.length || editor.portfolioImages.length;
       const portfolio = mediaCount
-        ? `<a class="editor-portfolio" href="./portfolio.html?id=${encodeURIComponent(editor.id)}">مشاهده نمونه‌کارها <span>◀</span></a>`
+        ? `<a class="editor-portfolio" href="./portfolio.html?id=${encodeURIComponent(editor.id)}" data-editor-id="${escapeText(editor.id)}">مشاهده نمونه‌کارها <span>◀</span></a>`
         : `<span class="editor-portfolio disabled">نمونه‌کاری ثبت نشده</span>`;
       return `<article class="editor-card">
         <div class="editor-header">
@@ -104,6 +104,17 @@
       </article>`;
     }).join("");
   }
+
+
+  document.addEventListener("click", event => {
+    const link = event.target.closest("a.editor-portfolio[data-editor-id]");
+    if (!link) return;
+    const editor = editorsData.find(item => String(item.id) === String(link.dataset.editorId));
+    if (!editor) return;
+    try {
+      sessionStorage.setItem("editorsTeam.selectedEditor", JSON.stringify(editor));
+    } catch (_) {}
+  });
 
   async function initializeEditors() { await loadEditors(); renderEditors(); }
   window.renderEditors = renderEditors;

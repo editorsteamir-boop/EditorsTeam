@@ -49,14 +49,43 @@
     }).join("");
   }
 
+  function readStoredEditors() {
+    const sources = [];
+    try {
+      const selected = JSON.parse(sessionStorage.getItem("editorsTeam.selectedEditor") || "null");
+      if (selected && typeof selected === "object") sources.push(selected);
+    } catch (_) {}
+    try {
+      const backup = JSON.parse(localStorage.getItem("editorsTeam.editors.v1") || "[]");
+      if (Array.isArray(backup)) sources.push(...backup);
+    } catch (_) {}
+    return sources;
+  }
+
+  async function loadEditorData(id) {
+    let remote = [];
+    try {
+      const r = await fetch(`./data/editors.json?t=${Date.now()}`, { cache:"no-store" });
+      if (r.ok) {
+        const data = await r.json();
+        if (Array.isArray(data)) remote = data;
+      }
+    } catch (_) {}
+
+    const stored = readStoredEditors();
+    const all = [...stored, ...remote];
+    return all.find(x => String(x?.id) === String(id)) || null;
+  }
+
   async function init() {
     const id = new URLSearchParams(location.search).get("id");
     try {
-      const r = await fetch("./data/editors.json", { cache:"no-cache" });
-      if (!r.ok) throw new Error("editors unavailable");
-      const data = await r.json();
-      currentEditor = (Array.isArray(data) ? data : []).find(x => String(x.id) === String(id));
+      currentEditor = await loadEditorData(id);
       if (!currentEditor) throw new Error("editor not found");
+
+      // Keep the latest usable copy available for the portfolio page even if the network is slow.
+      try { sessionStorage.setItem("editorsTeam.selectedEditor", JSON.stringify(currentEditor)); } catch (_) {}
+
       $("portfolioName").textContent = currentEditor.fullName || "ادیتور";
       $("portfolioAvatar").src = currentEditor.image || DEFAULT_AVATAR;
       $("portfolioAvatar").onerror = function(){ this.src = DEFAULT_AVATAR; };
@@ -65,6 +94,7 @@
       renderMedia();
     } catch (_) {
       $("portfolioName").textContent = "ادیتور پیدا نشد";
+      $("portfolioAvatar").src = DEFAULT_AVATAR;
       $("portfolioGallery").innerHTML = '<div class="portfolio-empty">اطلاعات این ادیتور در دسترس نیست.</div>';
     }
   }
@@ -111,43 +141,41 @@
     const fullName = $("requestFullName").value.trim();
     const phone = $("requestPhone").value.trim();
     if (!fullName || !phone) return;
-
     const submit = $("requestForm").querySelector('button[type="submit"]');
-    const oldText = submit.textContent;
     submit.disabled = true;
     submit.textContent = "در حال ثبت...";
     try {
-      const payload = {
-        editor_id:String(currentEditor.id || ""),
-        editor_name:String(currentEditor.fullName || ""),
-        project_name:item.title || `پروژه ${index + 1}`,
-        full_name:fullName,
-        phone
-      };
-      const r = await fetch(`${SUPABASE_URL}/rest/v1/training_requests`, {
-        method:"POST",
-        headers:{
-          apikey:SUPABASE_KEY,
-          Authorization:`Bearer ${SUPABASE_KEY}`,
-          "Content-Type":"application/json",
-          Prefer:"return=minimal"
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/training_requests`, {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
         },
-        body:JSON.stringify(payload)
+        body: JSON.stringify({
+          editor_id: String(currentEditor.id || ""),
+          editor_name: String(currentEditor.fullName || ""),
+          project_name: item.title || `پروژه ${index + 1}`,
+          full_name: fullName,
+          phone,
+          status: "new"
+        })
       });
-      if (!r.ok) {
-        let message = "ثبت درخواست انجام نشد.";
-        try { const j = await r.json(); if (j?.message) message = j.message; } catch (_) {}
+      if (!response.ok) {
+        let message = "ثبت درخواست انجام نشد";
+        try { const data = await response.json(); if (data.message) message = data.message; } catch (_) {}
         throw new Error(message);
       }
       closeRequest();
       showToast("درخواست با موفقیت ثبت شد");
-    } catch (err) {
-      alert("خطا در ثبت درخواست: " + (err?.message || "اتصال اینترنت را بررسی کنید."));
+    } catch (error) {
+      alert(`خطا در ثبت درخواست: ${error.message || "اتصال اینترنت را بررسی کنید"}`);
     } finally {
       submit.disabled = false;
-      submit.textContent = oldText;
+      submit.textContent = "ثبت درخواست";
     }
   }
+
 
   document.addEventListener("click", e => {
     const media = e.target.closest("[data-open-media]");
@@ -156,6 +184,11 @@
     if (req) { openRequest(Number(req.dataset.requestMedia)); return; }
     if (e.target.id === "portfolioModal" || e.target.id === "portfolioClose") closeMedia();
     if (e.target.id === "requestModal" || e.target.id === "requestClose") closeRequest();
+  });
+  $("portfolioBack")?.addEventListener("click", event => {
+    event.preventDefault();
+    try { sessionStorage.setItem("editorsTeam.returnView", "editors"); } catch (_) {}
+    location.href = "./index.html?view=editors#editors";
   });
   $("requestForm").addEventListener("submit", saveRequest);
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", init) : init();
