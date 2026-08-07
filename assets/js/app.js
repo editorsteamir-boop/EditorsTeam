@@ -234,21 +234,23 @@ if(listElement){
 
 initTabs(); renderSummary(); renderList(); updateProgress();
 
-function openViewFromHash(){
-  const viewId=location.hash.replace("#","");
-  if(!viewId) return;
-  const view=document.getElementById(viewId);
-  if(!view || !view.classList.contains("view")) return;
-  const button=[...document.querySelectorAll(".navbtn")].find(btn=>String(btn.getAttribute("onclick")||"").includes(`'${viewId}'`));
-  if(button) showView(viewId,button);
-}
-openViewFromHash();
-window.addEventListener("hashchange",openViewFromHash);
+(function activateRequestedView(){
+  const params=new URLSearchParams(location.search);
+  const requested=(params.get("view")||location.hash.replace(/^#/,"")).trim();
+  if(!requested) return;
+  const target=document.getElementById(requested);
+  if(!target || !target.classList.contains("view")) return;
+  const btn=[...document.querySelectorAll(".navbtn")].find(b=>{
+    const oc=b.getAttribute("onclick")||"";
+    return oc.includes(`showView('${requested}'`) || oc.includes(`showView(\"${requested}\"`);
+  });
+  if(btn) showView(requested,btn);
+})();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      const registration = await navigator.serviceWorker.register("./sw.js?v=7.3.0", { updateViaCache: "none" });
+      const registration = await navigator.serviceWorker.register("./sw.js?v=6.0.0", { updateViaCache: "none" });
       await registration.update();
     } catch (_) {}
   });
