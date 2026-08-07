@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#090b14">
   <title>پنل مدیریت EditorsTeam</title>
-  <link rel="stylesheet" href="./assets/css/admin.css?v=6.0.0">
+  <link rel="stylesheet" href="./assets/css/admin.css?v=8.0.0">
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -100,7 +100,16 @@
 
         <section id="requestsTab" class="tab-panel">
           <div class="panel list-panel requests-panel">
-            <div class="panel-title"><div><span class="section-kicker">صندوق درخواست‌ها</span><h2>درخواست‌های آموزش پروژه</h2><p>درخواست‌های ثبت‌شده در همین مرورگر اینجا نمایش داده می‌شوند.</p></div><span id="requestCount" class="count-badge">۰ درخواست</span></div>
+            <div class="panel-title"><div><span class="section-kicker">صندوق درخواست‌ها</span><h2>درخواست‌های آموزش پروژه</h2><p>درخواست‌های ثبت‌شده کاربران از Supabase دریافت می‌شوند و از هر دستگاه قابل مشاهده‌اند.</p></div><span id="requestCount" class="count-badge">۰ درخواست</span></div>
+            <div id="supabaseLoginBox" class="supabase-login-box">
+              <div><strong>ورود مدیر درخواست‌ها</strong><p>با حساب مدیریتی Supabase وارد شوید.</p></div>
+              <div class="supabase-login-grid">
+                <label><span>ایمیل مدیر</span><input id="supabaseAdminEmail" type="email" autocomplete="username" placeholder="admin@example.com"></label>
+                <label><span>رمز عبور</span><input id="supabaseAdminPassword" type="password" autocomplete="current-password" placeholder="••••••••"></label>
+              </div>
+              <div class="toolbar"><button id="supabaseLoginBtn" type="button" class="primary-btn">ورود و دریافت درخواست‌ها</button><button id="supabaseLogoutBtn" type="button" class="secondary" hidden>خروج</button></div>
+              <p id="supabaseAuthStatus" class="supabase-auth-status">هنوز وارد نشده‌اید.</p>
+            </div>
             <div id="requestsAdminList" class="admin-list requests-list"></div>
           </div>
         </section>
@@ -108,7 +117,7 @@
     </div>
   </div>
   <div id="toast" class="toast"></div>
-  <script src="./assets/js/github-admin.js?v=7.0.0"></script>
+  <script src="./assets/js/github-admin.js?v=8.0.0"></script>
   <script>
     document.querySelectorAll('[data-tab-link]').forEach(btn=>btn.addEventListener('click',()=>document.querySelector('.admin-tabs button[data-tab="'+btn.dataset.tabLink+'"]').click()));
     document.querySelectorAll('[data-scroll]').forEach(btn=>btn.addEventListener('click',()=>document.getElementById(btn.dataset.scroll).scrollIntoView({behavior:'smooth'})));
