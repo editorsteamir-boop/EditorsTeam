@@ -78,6 +78,11 @@
   }
 
   async function init() {
+    // Always start with overlays closed. They should open only after an explicit user action.
+    const requestModal = $("requestModal");
+    const portfolioModal = $("portfolioModal");
+    if (requestModal) requestModal.hidden = true;
+    if (portfolioModal) { portfolioModal.hidden = true; portfolioModal.classList.remove("active"); }
     const id = new URLSearchParams(location.search).get("id");
     try {
       currentEditor = await loadEditorData(id);
