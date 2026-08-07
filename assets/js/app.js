@@ -236,7 +236,9 @@ initTabs(); renderSummary(); renderList(); updateProgress();
 
 (function activateRequestedView(){
   const params=new URLSearchParams(location.search);
-  const requested=(params.get("view")||location.hash.replace(/^#/,"")).trim();
+  let storedView="";
+  try { storedView=sessionStorage.getItem("editorsTeam.returnView")||""; sessionStorage.removeItem("editorsTeam.returnView"); } catch (_) {}
+  const requested=(params.get("view")||location.hash.replace(/^#/,"")||storedView).trim();
   if(!requested) return;
   const target=document.getElementById(requested);
   if(!target || !target.classList.contains("view")) return;
@@ -250,7 +252,7 @@ initTabs(); renderSummary(); renderList(); updateProgress();
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      const registration = await navigator.serviceWorker.register("./sw.js?v=6.0.0", { updateViaCache: "none" });
+      const registration = await navigator.serviceWorker.register("./sw.js?v=8.0.0", { updateViaCache: "none" });
       await registration.update();
     } catch (_) {}
   });
