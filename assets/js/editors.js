@@ -34,6 +34,9 @@
       rating: String(editor.rating || "—"),
       projects: String(editor.projects || "۰"),
       portfolioImages: Array.isArray(editor.portfolioImages) ? editor.portfolioImages.filter(Boolean).map(String) : [],
+      portfolioMedia: Array.isArray(editor.portfolioMedia)
+        ? editor.portfolioMedia.filter(item => item && item.src).map(item => ({ type: item.type === "video" ? "video" : "image", src: String(item.src) }))
+        : (Array.isArray(editor.portfolioImages) ? editor.portfolioImages.filter(Boolean).map(src => ({ type: "image", src: String(src) })) : []),
       active: editor.active !== false,
       order: Number(editor.order ?? index + 1)
     };
@@ -72,7 +75,7 @@
       return;
     }
     list.innerHTML = visible.map(editor => {
-      const portfolio = editor.portfolioImages.length
+      const portfolio = editor.portfolioMedia.length
         ? `<a class="editor-portfolio" href="./portfolio.html?id=${encodeURIComponent(editor.id)}">مشاهده نمونه‌کارها <span>◀</span></a>`
         : `<span class="editor-portfolio disabled">نمونه‌کاری ثبت نشده</span>`;
       return `<article class="editor-card">

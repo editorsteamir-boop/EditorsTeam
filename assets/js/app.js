@@ -234,10 +234,21 @@ if(listElement){
 
 initTabs(); renderSummary(); renderList(); updateProgress();
 
+function openViewFromHash(){
+  const viewId=location.hash.replace("#","");
+  if(!viewId) return;
+  const view=document.getElementById(viewId);
+  if(!view || !view.classList.contains("view")) return;
+  const button=[...document.querySelectorAll(".navbtn")].find(btn=>String(btn.getAttribute("onclick")||"").includes(`'${viewId}'`));
+  if(button) showView(viewId,button);
+}
+openViewFromHash();
+window.addEventListener("hashchange",openViewFromHash);
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      const registration = await navigator.serviceWorker.register("./sw.js?v=6.0.0", { updateViaCache: "none" });
+      const registration = await navigator.serviceWorker.register("./sw.js?v=7.3.0", { updateViaCache: "none" });
       await registration.update();
     } catch (_) {}
   });
