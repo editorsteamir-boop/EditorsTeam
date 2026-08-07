@@ -7,10 +7,12 @@ const ESSENTIAL_ASSETS = [
   "./index.html",
   "./assets/css/main.css?v=6.0.2",
   "./assets/js/plan.js?v=6.0.0",
-  "./assets/js/app.js?v=7.3.0",
+  "./assets/js/app.js?v=7.0.0",
   "./assets/js/projects.js?v=6.2.0",
-  "./assets/js/editors.js?v=7.3.0",
+  "./assets/js/editors.js?v=7.0.0",
   "./assets/js/splash.js?v=6.0.0",
+  "./assets/css/portfolio.css?v=2.0.0",
+  "./assets/js/portfolio.js?v=2.0.0",
   "./assets/images/logo-transparent.png",
   "./assets/images/icon-192.png"
 ];
