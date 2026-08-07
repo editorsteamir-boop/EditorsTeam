@@ -1,7 +1,8 @@
 (() => {
   "use strict";
   const $ = id => document.getElementById(id);
-  const REQUESTS_KEY = "editorsTeam.trainingRequests.v1";
+  const SUPABASE_URL = "https://yxzekduddsewulkbdcoz.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_rr0hMzT-HuRk4a-frH4QPQ_ZWCgQyHB";
   const DEFAULT_AVATAR = "./assets/images/default-avatar.svg";
   let currentEditor = null;
   let currentMedia = [];
@@ -102,28 +103,50 @@
 
   function closeRequest() { $("requestModal").hidden = true; $("requestForm").reset(); }
 
-  function saveRequest(event) {
+  async function saveRequest(event) {
     event.preventDefault();
     const index = Number($("requestMediaIndex").value);
     const item = currentMedia[index];
     if (!item || !currentEditor) return;
-    const request = {
-      id:`req-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
-      fullName:$("requestFullName").value.trim(),
-      phone:$("requestPhone").value.trim(),
-      editorId:String(currentEditor.id || ""),
-      editorName:String(currentEditor.fullName || ""),
-      mediaIndex:index,
-      mediaTitle:item.title || `پروژه ${index + 1}`,
-      mediaSrc:item.src,
-      createdAt:new Date().toISOString()
-    };
-    let requests = [];
-    try { requests = JSON.parse(localStorage.getItem(REQUESTS_KEY) || "[]"); if (!Array.isArray(requests)) requests = []; } catch (_) { requests = []; }
-    requests.unshift(request);
-    localStorage.setItem(REQUESTS_KEY, JSON.stringify(requests));
-    closeRequest();
-    showToast("درخواست با موفقیت ثبت شد");
+    const fullName = $("requestFullName").value.trim();
+    const phone = $("requestPhone").value.trim();
+    if (!fullName || !phone) return;
+
+    const submit = $("requestForm").querySelector('button[type="submit"]');
+    const oldText = submit.textContent;
+    submit.disabled = true;
+    submit.textContent = "در حال ثبت...";
+    try {
+      const payload = {
+        editor_id:String(currentEditor.id || ""),
+        editor_name:String(currentEditor.fullName || ""),
+        project_name:item.title || `پروژه ${index + 1}`,
+        full_name:fullName,
+        phone
+      };
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/training_requests`, {
+        method:"POST",
+        headers:{
+          apikey:SUPABASE_KEY,
+          Authorization:`Bearer ${SUPABASE_KEY}`,
+          "Content-Type":"application/json",
+          Prefer:"return=minimal"
+        },
+        body:JSON.stringify(payload)
+      });
+      if (!r.ok) {
+        let message = "ثبت درخواست انجام نشد.";
+        try { const j = await r.json(); if (j?.message) message = j.message; } catch (_) {}
+        throw new Error(message);
+      }
+      closeRequest();
+      showToast("درخواست با موفقیت ثبت شد");
+    } catch (err) {
+      alert("خطا در ثبت درخواست: " + (err?.message || "اتصال اینترنت را بررسی کنید."));
+    } finally {
+      submit.disabled = false;
+      submit.textContent = oldText;
+    }
   }
 
   document.addEventListener("click", e => {

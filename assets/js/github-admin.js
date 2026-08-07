@@ -2,7 +2,9 @@
   "use strict";
   const $ = id => document.getElementById(id);
   const DEFAULT_AVATAR = "./assets/images/default-avatar.svg";
-  const REQUESTS_KEY = "editorsTeam.trainingRequests.v1";
+  const SUPABASE_URL = "https://yxzekduddsewulkbdcoz.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_rr0hMzT-HuRk4a-frH4QPQ_ZWCgQyHB";
+  const SUPABASE_SESSION_KEY = "editorsTeam.supabase.adminSession.v1";
   const state = { projects: [], editors: [], projectQueue: [], projectEdit: null, editorEdit: null, editorFile: null, editorExistingImage: DEFAULT_AVATAR, editorPortfolioQueue: [] };
   const toast = text => { const el=$("toast"); el.textContent=text; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),2200); };
   const esc = value => String(value ?? "").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
@@ -51,10 +53,46 @@
   $("editorImage").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{await validateSquareJpg(f);state.editorFile=f;$("avatarPreview").src=URL.createObjectURL(f);toast("تصویر معتبر است");}catch(err){e.target.value="";alert(err.message);}});
   $("editorPortfolioImages").addEventListener("change",e=>{for(const file of e.target.files){const mediaType=file.type.startsWith("video/")?"video":"image";if(mediaType==="video"&&file.size>45*1024*1024){alert(`ویدئوی ${file.name} بیشتر از ۴۵ مگابایت است.`);continue;}state.editorPortfolioQueue.push({type:"new",file,name:file.name,mediaType,preview:URL.createObjectURL(file)});}renderEditorPortfolioQueue();e.target.value="";});
   $("editorPortfolioQueue").addEventListener("click",e=>{const b=e.target.closest("button[data-epq]");if(!b)return;const i=+b.dataset.i,a=b.dataset.epq;if(a==="remove")state.editorPortfolioQueue.splice(i,1);if(a==="up"&&i>0)[state.editorPortfolioQueue[i-1],state.editorPortfolioQueue[i]]=[state.editorPortfolioQueue[i],state.editorPortfolioQueue[i-1]];if(a==="down"&&i<state.editorPortfolioQueue.length-1)[state.editorPortfolioQueue[i+1],state.editorPortfolioQueue[i]]=[state.editorPortfolioQueue[i],state.editorPortfolioQueue[i+1]];renderEditorPortfolioQueue();});
-  function loadRequests(){try{const v=JSON.parse(localStorage.getItem(REQUESTS_KEY)||"[]");return Array.isArray(v)?v:[];}catch{return []}}
-  function renderRequests(){const el=$("requestsAdminList"),count=$("requestCount");if(!el)return;const requests=loadRequests();if(count)count.textContent=`${requests.length} درخواست`;el.innerHTML=requests.length?requests.map((r,i)=>`<article class="admin-row request-row"><div class="request-avatar">✉</div><div><h3>${esc(r.fullName||"بدون نام")}</h3><p>📞 ${esc(r.phone||"—")}<br>👤 ادیتور: ${esc(r.editorName||"—")}<br>🎬 ${esc(r.mediaTitle||"پروژه")}<br>🕒 ${esc(r.createdAt?new Date(r.createdAt).toLocaleString("fa-IR"):"—")}</p></div><div class="row-actions"><button class="danger" data-request-delete="${i}">حذف درخواست</button></div></article>`).join(""):"<p>هنوز درخواستی ثبت نشده است.</p>";}
-  $("requestsAdminList")?.addEventListener("click",e=>{const b=e.target.closest("[data-request-delete]");if(!b)return;const requests=loadRequests();requests.splice(Number(b.dataset.requestDelete),1);localStorage.setItem(REQUESTS_KEY,JSON.stringify(requests));renderRequests();toast("درخواست حذف شد");});
+  function getSupabaseSession(){
+    try { const x=JSON.parse(sessionStorage.getItem(SUPABASE_SESSION_KEY)||"null"); return x&&x.access_token?x:null; } catch { return null; }
+  }
+  function setSupabaseStatus(text,ok=false){const el=$("supabaseAuthStatus");if(!el)return;el.textContent=text;el.classList.toggle("ok",!!ok);}
+  function updateSupabaseLoginUi(){const session=getSupabaseSession();$("supabaseLogoutBtn").hidden=!session;$("supabaseLoginBtn").hidden=!!session;if(session)setSupabaseStatus("ورود مدیر فعال است.",true);}
+  async function supabaseAdminFetch(path,options={}){
+    const session=getSupabaseSession();
+    if(!session?.access_token)throw new Error("ابتدا وارد حساب مدیریتی Supabase شوید.");
+    const r=await fetch(`${SUPABASE_URL}${path}`,{...options,headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${session.access_token}`,"Content-Type":"application/json",...(options.headers||{})}});
+    if(r.status===401){sessionStorage.removeItem(SUPABASE_SESSION_KEY);updateSupabaseLoginUi();throw new Error("نشست مدیریت منقضی شده است؛ دوباره وارد شوید.");}
+    if(!r.ok){let msg=`خطای Supabase (${r.status})`;try{const j=await r.json();if(j.message)msg+=`: ${j.message}`}catch{}throw new Error(msg);}
+    if(r.status===204)return null;const text=await r.text();return text?JSON.parse(text):null;
+  }
+  async function supabaseLogin(){
+    const email=$("supabaseAdminEmail").value.trim(),password=$("supabaseAdminPassword").value;
+    if(!email||!password){alert("ایمیل و رمز عبور مدیر را وارد کنید.");return;}
+    const btn=$("supabaseLoginBtn"),old=btn.textContent;btn.disabled=true;btn.textContent="در حال ورود...";
+    try{
+      const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{method:"POST",headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({email,password})});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.access_token)throw new Error(j.error_description||j.msg||"ورود ناموفق بود.");
+      sessionStorage.setItem(SUPABASE_SESSION_KEY,JSON.stringify({access_token:j.access_token,refresh_token:j.refresh_token||"",expires_at:Date.now()+(Number(j.expires_in||3600)*1000),email:j.user?.email||email}));
+      $("supabaseAdminPassword").value="";updateSupabaseLoginUi();toast("ورود Supabase موفق بود");await renderRequests();
+    }catch(err){setSupabaseStatus(err.message);alert(err.message);}finally{btn.disabled=false;btn.textContent=old;}
+  }
+  function supabaseLogout(){sessionStorage.removeItem(SUPABASE_SESSION_KEY);updateSupabaseLoginUi();$("requestsAdminList").innerHTML='<p>برای مشاهده درخواست‌ها وارد حساب مدیریتی شوید.</p>';$("requestCount").textContent="۰ درخواست";toast("از حساب درخواست‌ها خارج شدید");}
+  async function renderRequests(){
+    const el=$("requestsAdminList"),count=$("requestCount");if(!el)return;
+    if(!getSupabaseSession()){if(count)count.textContent="۰ درخواست";el.innerHTML='<p>برای مشاهده درخواست‌های آنلاین، ابتدا وارد حساب مدیریتی Supabase شوید.</p>';return;}
+    el.innerHTML='<p>در حال دریافت درخواست‌ها...</p>';
+    try{
+      const requests=await supabaseAdminFetch('/rest/v1/training_requests?select=id,editor_id,editor_name,project_name,full_name,phone,created_at,status&order=created_at.desc');
+      const rows=Array.isArray(requests)?requests:[];if(count)count.textContent=`${rows.length} درخواست`;
+      el.innerHTML=rows.length?rows.map(r=>`<article class="admin-row request-row"><div class="request-avatar">✉</div><div><h3>${esc(r.full_name||"بدون نام")}</h3><p>📞 ${esc(r.phone||"—")}<br>👤 ادیتور: ${esc(r.editor_name||"—")}<br>🎬 ${esc(r.project_name||"پروژه")}<br>🕒 ${esc(r.created_at?new Date(r.created_at).toLocaleString("fa-IR"):"—")}</p></div><div class="row-actions"><button class="danger" data-request-delete="${esc(r.id)}">حذف درخواست</button></div></article>`).join(""):"<p>هنوز درخواستی ثبت نشده است.</p>";
+    }catch(err){el.innerHTML=`<p>${esc(err.message)}</p>`;setSupabaseStatus(err.message);}
+  }
+  $("requestsAdminList")?.addEventListener("click",async e=>{const b=e.target.closest("[data-request-delete]");if(!b)return;if(!confirm("این درخواست حذف شود؟"))return;try{await supabaseAdminFetch(`/rest/v1/training_requests?id=eq.${encodeURIComponent(b.dataset.requestDelete)}`,{method:"DELETE",headers:{Prefer:"return=minimal"}});toast("درخواست حذف شد");await renderRequests();}catch(err){alert(err.message);}});
+  $("supabaseLoginBtn")?.addEventListener("click",supabaseLogin);
+  $("supabaseLogoutBtn")?.addEventListener("click",supabaseLogout);
   document.querySelector(".admin-tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-tab]");if(!b)return;document.querySelectorAll(".admin-tabs button").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".tab-panel").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));if(b.dataset.tab==="requestsTab")renderRequests();});
   $("connectBtn").onclick=connect;$("saveSettingsBtn").onclick=localSettingsSave;$("projectForm").onsubmit=saveProject;$("editorForm").onsubmit=saveEditor;$("newProjectBtn").onclick=resetProject;$("cancelProjectEdit").onclick=resetProject;$("newEditorBtn").onclick=resetEditor;$("cancelEditorEdit").onclick=resetEditor;$("projectsAdminList").onclick=listAction;$("editorsAdminList").onclick=listAction;
-  localSettingsLoad();resetProject();resetEditor();renderRequests();
+  localSettingsLoad();resetProject();resetEditor();updateSupabaseLoginUi();renderRequests();
 })();
