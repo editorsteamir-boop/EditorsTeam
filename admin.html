@@ -99,17 +99,25 @@
         </section>
 
         <section id="requestsTab" class="tab-panel">
-          <div class="panel list-panel requests-panel">
-            <div class="panel-title"><div><span class="section-kicker">صندوق درخواست‌ها</span><h2>درخواست‌های آموزش پروژه</h2><p>درخواست‌های ثبت‌شده کاربران از Supabase دریافت می‌شوند و از هر دستگاه قابل مشاهده‌اند.</p></div><span id="requestCount" class="count-badge">۰ درخواست</span></div>
-            <div id="supabaseLoginBox" class="supabase-login-box">
-              <div><strong>ورود مدیر درخواست‌ها</strong><p>با حساب مدیریتی Supabase وارد شوید.</p></div>
-              <div class="supabase-login-grid">
-                <label><span>ایمیل مدیر</span><input id="supabaseAdminEmail" type="email" autocomplete="username" placeholder="admin@example.com"></label>
-                <label><span>رمز عبور</span><input id="supabaseAdminPassword" type="password" autocomplete="current-password" placeholder="••••••••"></label>
+          <div class="panel requests-panel">
+            <div class="panel-title"><div><span class="section-kicker">صندوق درخواست‌ها</span><h2>درخواست‌های آموزش پروژه</h2><p>درخواست‌های همه کاربران از Supabase دریافت می‌شوند.</p></div><span id="requestCount" class="count-badge">۰ درخواست</span></div>
+            <div id="requestsAuthBox" class="requests-auth-box">
+              <div>
+                <b>ورود مدیر Supabase</b>
+                <p>برای مشاهده شماره تلفن‌ها و مدیریت درخواست‌ها وارد حساب مدیر شوید.</p>
               </div>
-              <div class="toolbar"><button id="supabaseLoginBtn" type="button" class="primary-btn">ورود و دریافت درخواست‌ها</button><button id="supabaseLogoutBtn" type="button" class="secondary" hidden>خروج</button></div>
-              <p id="supabaseAuthStatus" class="supabase-auth-status">هنوز وارد نشده‌اید.</p>
+              <div class="requests-auth-form">
+                <input id="supabaseEmail" type="email" autocomplete="username" placeholder="ایمیل مدیر">
+                <input id="supabasePassword" type="password" autocomplete="current-password" placeholder="رمز عبور">
+                <button id="supabaseLoginBtn" type="button">ورود و دریافت درخواست‌ها</button>
+              </div>
             </div>
+            <div id="requestsToolbar" class="requests-toolbar" hidden>
+              <input id="requestSearch" type="search" placeholder="جستجو در نام، تلفن، ادیتور یا پروژه...">
+              <button id="refreshRequestsBtn" type="button" class="secondary">↻ بروزرسانی</button>
+              <button id="supabaseLogoutBtn" type="button" class="danger">خروج مدیر</button>
+            </div>
+            <div id="requestsStatus" class="requests-status">برای مشاهده درخواست‌ها ابتدا وارد شوید.</div>
             <div id="requestsAdminList" class="admin-list requests-list"></div>
           </div>
         </section>
