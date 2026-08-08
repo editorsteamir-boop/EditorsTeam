@@ -1,11 +1,13 @@
 const CACHE_PREFIX = "editors-team-";
-const STATIC_CACHE = `${CACHE_PREFIX}static-v8.0.0`;
-const PAGE_CACHE = `${CACHE_PREFIX}pages-v8.0.0`;
+const STATIC_CACHE = `${CACHE_PREFIX}static-v8.1.0`;
+const PAGE_CACHE = `${CACHE_PREFIX}pages-v8.1.0`;
 
 const ESSENTIAL_ASSETS = [
   "./",
   "./index.html",
   "./admin.html",
+  "./assets/css/admin.css?v=8.1.0",
+  "./assets/js/github-admin.js?v=8.1.0",
   "./assets/css/main.css?v=6.0.2",
   "./assets/js/plan.js?v=6.0.0",
   "./assets/js/app.js?v=8.0.0",
@@ -79,6 +81,10 @@ self.addEventListener("fetch", event => {
 
   if (isDynamicData) {
     event.respondWith(networkFirst(request, PAGE_CACHE, 8000, true).catch(() => new Response("[]", { status: 200, headers: { "Content-Type": "application/json; charset=utf-8" } })));
+    return;
+  }
+  if (url.pathname.endsWith("/assets/js/github-admin.js") || url.pathname.endsWith("/assets/css/admin.css")) {
+    event.respondWith(networkFirst(request, STATIC_CACHE, 8000, false));
     return;
   }
   if (isNavigation || isAdmin) {

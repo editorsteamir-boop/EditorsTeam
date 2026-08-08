@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#090b14">
   <title>پنل مدیریت EditorsTeam</title>
-  <link rel="stylesheet" href="./assets/css/admin.css?v=8.0.0">
+  <link rel="stylesheet" href="./assets/css/admin.css?v=8.1.0">
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -109,8 +109,10 @@
               <div class="requests-auth-form">
                 <input id="supabaseEmail" type="email" autocomplete="username" placeholder="ایمیل مدیر">
                 <input id="supabasePassword" type="password" autocomplete="current-password" placeholder="رمز عبور">
+                <button id="supabaseCheckBtn" type="button" class="secondary">بررسی اتصال دیتابیس</button>
                 <button id="supabaseLoginBtn" type="button">ورود و دریافت درخواست‌ها</button>
               </div>
+              <div id="supabaseConnectionStatus" class="db-connection-status neutral">وضعیت اتصال هنوز بررسی نشده است.</div>
             </div>
             <div id="requestsToolbar" class="requests-toolbar" hidden>
               <input id="requestSearch" type="search" placeholder="جستجو در نام، تلفن، ادیتور یا پروژه...">
@@ -125,7 +127,7 @@
     </div>
   </div>
   <div id="toast" class="toast"></div>
-  <script src="./assets/js/github-admin.js?v=8.0.0"></script>
+  <script src="./assets/js/github-admin.js?v=8.1.0"></script>
   <script>
     document.querySelectorAll('[data-tab-link]').forEach(btn=>btn.addEventListener('click',()=>document.querySelector('.admin-tabs button[data-tab="'+btn.dataset.tabLink+'"]').click()));
     document.querySelectorAll('[data-scroll]').forEach(btn=>btn.addEventListener('click',()=>document.getElementById(btn.dataset.scroll).scrollIntoView({behavior:'smooth'})));
