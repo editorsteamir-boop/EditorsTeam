@@ -193,7 +193,7 @@
   $("portfolioBack")?.addEventListener("click", event => {
     event.preventDefault();
     try { sessionStorage.setItem("editorsTeam.returnView", "editors"); } catch (_) {}
-    location.href = "./index.html?view=editors#editors";
+    location.href = "./index.html?view=editors&nosplash=1#editors";
   });
   $("requestForm").addEventListener("submit", saveRequest);
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", init) : init();
