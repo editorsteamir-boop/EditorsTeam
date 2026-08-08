@@ -452,3 +452,5 @@ h1 .title-line2{
     letter-spacing:-.15px;
   }
 }
+
+html.skip-splash .splash-screen,html.skip-splash #splash,html.skip-splash #splashIntro{display:none!important;visibility:hidden!important;opacity:0!important}
