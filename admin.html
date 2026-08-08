@@ -62,7 +62,7 @@
                   <label><span>آیکون</span><input id="projectIcon" value="🎨"></label>
                   <label class="wide"><span>عنوان گالری</span><input id="projectDescription" placeholder="نمونه پروژه‌های ..."></label>
                   <label class="switch-label"><span>وضعیت نمایش</span><div class="switch-wrap"><input id="projectActive" type="checkbox" checked><i></i><b>فعال باشد</b></div></label>
-                  <label class="wide file-drop image-drop"><div class="drop-icon">▧</div><div><strong>انتخاب تصاویر پروژه</strong><span>چند تصویر را هم‌زمان از دسکتاپ انتخاب کنید</span></div><input id="projectImages" type="file" accept="image/*" multiple></label>
+                  <label class="wide file-drop image-drop"><div class="drop-icon">▧</div><div><strong>انتخاب تصاویر پروژه</strong><span>JPG/PNG هنگام ذخیره خودکار با کیفیت ۸۶٪ به WebP تبدیل می‌شوند</span></div><input id="projectImages" type="file" accept="image/*" multiple></label>
                 </div>
                 <div class="queue-head"><div><b>ترتیب تصاویر</b><span>با کلیدهای جهت ترتیب نمایش را تغییر دهید.</span></div></div>
                 <div id="projectImageQueue" class="image-queue"></div>
@@ -78,7 +78,7 @@
             <div class="panel form-panel">
               <div class="panel-title"><div><span class="section-kicker">فرم پروفایل</span><h2 id="editorFormTitle">افزودن ادیتور</h2></div><button id="newEditorBtn" class="ghost-btn">＋ فرم جدید</button></div>
               <form id="editorForm"><input id="editorId" type="hidden">
-                <div class="editor-photo-row"><div class="avatar-frame"><img id="avatarPreview" src="./assets/images/default-avatar.svg" alt="پیش‌نمایش"><span>1:1</span></div><label class="file-drop compact-drop"><div><strong>تصویر پروفایل JPG</strong><span>تصویر باید کاملاً مربع و با نسبت ۱ به ۱ باشد.</span></div><input id="editorImage" type="file" accept="image/jpeg,.jpg,.jpeg"></label></div>
+                <div class="editor-photo-row"><div class="avatar-frame"><img id="avatarPreview" src="./assets/images/default-avatar.svg" alt="پیش‌نمایش"><span>1:1</span></div><label class="file-drop compact-drop"><div><strong>تصویر پروفایل</strong><span>تصویر باید مربع باشد؛ هنگام ذخیره خودکار به WebP تبدیل می‌شود.</span></div><input id="editorImage" type="file" accept="image/*"></label></div>
                 <div class="form-grid">
                   <label><span>نام و نشان</span><input id="fullName" required placeholder="نام کامل"></label>
                   <label><span>عنوان یا نشان</span><input id="badge" placeholder="مثلاً ادیتور ارشد"></label>
@@ -127,7 +127,7 @@
     </div>
   </div>
   <div id="toast" class="toast"></div>
-  <script src="./assets/js/github-admin.js?v=8.1.0"></script>
+  <script src="./assets/js/github-admin.js?v=9.0.0"></script>
   <script>
     document.querySelectorAll('[data-tab-link]').forEach(btn=>btn.addEventListener('click',()=>document.querySelector('.admin-tabs button[data-tab="'+btn.dataset.tabLink+'"]').click()));
     document.querySelectorAll('[data-scroll]').forEach(btn=>btn.addEventListener('click',()=>document.getElementById(btn.dataset.scroll).scrollIntoView({behavior:'smooth'})));
