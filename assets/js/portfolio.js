@@ -160,7 +160,10 @@
         body: JSON.stringify({
           editor_id: String(currentEditor.id || ""),
           editor_name: String(currentEditor.fullName || ""),
-          project_name: item.title || `پروژه ${index + 1}`,
+          project_name: `پروژه ${index + 1}`,
+          project_no: index + 1,
+          media_src: String(item.src || ""),
+          media_type: item.type === "video" ? "video" : "image",
           full_name: fullName,
           phone,
           status: "new"
@@ -193,7 +196,7 @@
   $("portfolioBack")?.addEventListener("click", event => {
     event.preventDefault();
     try { sessionStorage.setItem("editorsTeam.returnView", "editors"); } catch (_) {}
-    location.href = "./index.html?view=editors&nosplash=1#editors";
+    location.href = "./index.html?view=editors#editors";
   });
   $("requestForm").addEventListener("submit", saveRequest);
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", init) : init();
