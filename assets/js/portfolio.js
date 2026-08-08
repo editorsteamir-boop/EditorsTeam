@@ -1,0 +1,33 @@
+(() => {
+  "use strict";
+  const $=id=>document.getElementById(id), DEFAULT_AVATAR="./assets/images/default-avatar.svg";
+  let currentEditor=null,currentMedia=[];
+  const esc=value=>String(value??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+  function inferType(src,explicit){if(explicit==="video"||explicit==="image")return explicit;return /\.(mp4|webm|mov|m4v|ogg)(\?|$)/i.test(String(src||""))?"video":"image";}
+  function normalizeMedia(editor){if(Array.isArray(editor.portfolioMedia)&&editor.portfolioMedia.length)return editor.portfolioMedia.filter(Boolean).map((item,index)=>typeof item==="string"?{src:item,type:inferType(item),title:`پروژه ${index+1}`}:{src:String(item.src||""),type:inferType(item.src,item.type),title:String(item.title||`پروژه ${index+1}`)}).filter(x=>x.src);return (editor.portfolioImages||[]).filter(Boolean).map((src,index)=>({src:String(src),type:inferType(src),title:`پروژه ${index+1}`}));}
+  function renderMedia(){
+    const gallery=$("portfolioGallery");if(!currentMedia.length){gallery.innerHTML='<div class="portfolio-empty">هنوز نمونه‌کاری برای این ادیتور ثبت نشده است.</div>';return;}
+    gallery.innerHTML=currentMedia.map((item,index)=>{
+      const eager=index<2;
+      const preview=item.type==="video"?`<div class="portfolio-media-preview video-preview" data-open-media="${index}"><video src="${esc(item.src)}#t=0.1" muted playsinline preload="${eager?'metadata':'none'}"></video><span class="video-badge">▶</span></div>`:`<div class="portfolio-media-preview" data-open-media="${index}"><img class="gallery-img" src="${esc(window.ETThumb?window.ETThumb(item.src):item.src)}" alt="${esc(item.title)}" loading="${eager?'eager':'lazy'}" decoding="async" ${eager?'fetchpriority="high"':''}></div>`;
+      const saleId=window.SalesStore?.saleId("editor",currentEditor.id,item.src)||"";const sale=window.SalesStore?.get(saleId);const hasPrice=!!(sale?.price_toman>0);const price=hasPrice?window.SalesStore.formatPrice(sale.price_toman):"قیمت ثبت نشده";
+      return `<article class="portfolio-item sellable-card">${preview}<div class="sale-row" data-sale-row="${esc(saleId)}"><div class="sale-price ${hasPrice?'':'no-price'}" data-sale-price>${esc(price)}${hasPrice?' <span>تومان</span>':''}</div><button class="sale-cart" type="button" data-sale-id="${esc(saleId)}" ${!hasPrice||sale?.active===false?'disabled':''} aria-label="خرید ${esc(item.title)}"><svg class="cart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 7H7"/><circle cx="10" cy="19" r="1.5"/><circle cx="18" cy="19" r="1.5"/></svg></button></div></article>`;
+    }).join("");
+  }
+  function refreshSaleControls(){
+    if(!window.SalesStore)return;
+    $("portfolioGallery")?.querySelectorAll('[data-sale-row]').forEach(row=>{
+      const sale=window.SalesStore.get(row.dataset.saleRow),hasPrice=!!(sale?.price_toman>0),price=row.querySelector('[data-sale-price]'),cart=row.querySelector('[data-sale-id]');
+      if(price){price.classList.toggle('no-price',!hasPrice);price.innerHTML=hasPrice?`${window.SalesStore.formatPrice(sale.price_toman)} <span>تومان</span>`:'قیمت ثبت نشده';}
+      if(cart)cart.disabled=!hasPrice||sale?.active===false;
+    });
+  }
+  function readStoredEditors(){const sources=[];try{const x=JSON.parse(sessionStorage.getItem("editorsTeam.selectedEditor")||"null");if(x&&typeof x==="object")sources.push(x);}catch{}try{const x=JSON.parse(localStorage.getItem("editorsTeam.editors.v1")||"[]");if(Array.isArray(x))sources.push(...x);}catch{}return sources;}
+  async function loadEditorData(id){let remote=[];try{const r=await fetch(`./data/editors.json?t=${Date.now()}`,{cache:"no-store"});if(r.ok){const d=await r.json();if(Array.isArray(d))remote=d;}}catch{}return [...readStoredEditors(),...remote].find(x=>String(x?.id)===String(id))||null;}
+  async function init(){const modal=$("portfolioModal");if(modal){modal.hidden=true;modal.classList.remove("active");}const id=new URLSearchParams(location.search).get("id");try{currentEditor=await loadEditorData(id);if(!currentEditor)throw 0;try{sessionStorage.setItem("editorsTeam.selectedEditor",JSON.stringify(currentEditor));}catch{}$("portfolioName").textContent=currentEditor.fullName||"ادیتور";$("portfolioAvatar").src=currentEditor.image||DEFAULT_AVATAR;$("portfolioAvatar").onerror=function(){this.src=DEFAULT_AVATAR};document.title=`نمونه‌کارهای ${currentEditor.fullName||"ادیتور"}`;currentMedia=normalizeMedia(currentEditor);renderMedia();if(window.SalesStore)window.SalesStore.load().then(refreshSaleControls).catch(()=>{});}catch{$("portfolioName").textContent="ادیتور پیدا نشد";$("portfolioAvatar").src=DEFAULT_AVATAR;$("portfolioGallery").innerHTML='<div class="portfolio-empty">اطلاعات این ادیتور در دسترس نیست.</div>';}}
+  function openMedia(index){const item=currentMedia[index];if(!item)return;const modal=$("portfolioModal"),img=$("portfolioModalImage"),video=$("portfolioModalVideo");img.hidden=true;video.hidden=true;video.pause();video.removeAttribute("src");if(item.type==="video"){video.src=item.src;video.hidden=false;video.load();}else{img.src=item.src;img.hidden=false;}modal.hidden=false;modal.classList.add("active");}
+  function closeMedia(){const modal=$("portfolioModal"),video=$("portfolioModalVideo");modal.classList.remove("active");modal.hidden=true;$("portfolioModalImage").src="";video.pause();video.removeAttribute("src");video.load();}
+  document.addEventListener("click",e=>{const cart=e.target.closest("[data-sale-id]");if(cart){e.preventDefault();e.stopPropagation();window.SalesStore?.buy(cart.dataset.saleId);return;}const media=e.target.closest("[data-open-media]");if(media){openMedia(Number(media.dataset.openMedia));return;}if(e.target.id==="portfolioModal"||e.target.id==="portfolioClose")closeMedia();});
+  $("portfolioBack")?.addEventListener("click",event=>{event.preventDefault();try{sessionStorage.setItem("editorsTeam.returnView","editors");sessionStorage.setItem("editorsTeam.skipSplashOnce","1");}catch{}location.replace("./index.html?view=editors#editors");});
+  document.readyState==="loading"?document.addEventListener("DOMContentLoaded",init):init();
+})();
