@@ -67,20 +67,77 @@
     if(auth) auth.hidden=loggedIn;
     if(toolbar) toolbar.hidden=!loggedIn;
   }
+  function setDbStatus(kind,text){
+    const el=$("supabaseConnectionStatus");
+    if(!el)return;
+    el.className=`db-connection-status ${kind||"neutral"}`;
+    el.textContent=text;
+  }
+  function humanSupabaseError(data,status){
+    const raw=String(data?.error_description||data?.msg||data?.message||data?.error||"").trim();
+    const low=raw.toLowerCase();
+    if(low.includes("invalid login credentials")) return "ایمیل یا رمز عبور صحیح نیست.";
+    if(low.includes("email not confirmed")) return "ایمیل این کاربر هنوز تأیید نشده است. در Supabase کاربر را Confirm کنید.";
+    if(low.includes("user not found")) return "این کاربر در Supabase پیدا نشد.";
+    if(status===429) return "تعداد تلاش‌های ورود زیاد بوده؛ کمی بعد دوباره امتحان کنید.";
+    return raw || `خطای Supabase (${status||"نامشخص"})`;
+  }
+  async function testSupabaseConnection(showToast=true){
+    const btn=$("supabaseCheckBtn");
+    if(btn){btn.disabled=true;btn.textContent="در حال بررسی...";}
+    setDbStatus("checking","در حال بررسی اتصال به Supabase و جدول درخواست‌ها...");
+    try{
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),10000);
+      const r=await fetch(`${SUPABASE_URL}/rest/v1/training_requests?select=id&limit=1`,{
+        method:"GET",
+        headers:{"apikey":SUPABASE_KEY,"Accept":"application/json"},
+        cache:"no-store",
+        signal:controller.signal
+      });
+      clearTimeout(timer);
+      let data=null;try{data=await r.json();}catch{}
+      if(!r.ok) throw new Error(humanSupabaseError(data,r.status));
+      setDbStatus("ok","✓ اتصال به دیتابیس برقرار است و جدول training_requests در دسترس است.");
+      if(showToast)toast("اتصال دیتابیس موفق بود");
+      return true;
+    }catch(err){
+      const msg=err?.name==="AbortError"?"پاسخی از دیتابیس دریافت نشد؛ اینترنت یا Supabase را بررسی کنید.":err.message;
+      setDbStatus("bad",`✕ اتصال ناموفق: ${msg}`);
+      if(showToast)toast("اتصال دیتابیس ناموفق بود");
+      return false;
+    }finally{
+      if(btn){btn.disabled=false;btn.textContent="بررسی اتصال دیتابیس";}
+    }
+  }
   async function supabaseLogin(){
     const email=$("supabaseEmail").value.trim(), password=$("supabasePassword").value;
-    if(!email||!password){alert("ایمیل و رمز مدیر را وارد کنید.");return;}
+    const status=$("requestsStatus");
+    if(!email||!password){if(status)status.textContent="ایمیل و رمز مدیر را وارد کنید.";toast("ایمیل و رمز را کامل کنید");return;}
+    const connected=await testSupabaseConnection(false);
+    if(!connected){if(status)status.textContent="ابتدا مشکل اتصال دیتابیس را برطرف کنید.";return;}
     const btn=$("supabaseLoginBtn"); btn.disabled=true;btn.textContent="در حال ورود...";
+    if(status)status.textContent="اتصال برقرار است؛ در حال بررسی حساب مدیر...";
     try{
-      const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{method:"POST",headers:{"apikey":SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({email,password})});
-      const data=await r.json();
-      if(!r.ok||!data.access_token)throw new Error(data.error_description||data.msg||"ورود ناموفق بود");
+      const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{
+        method:"POST",
+        headers:{"apikey":SUPABASE_KEY,"Content-Type":"application/json"},
+        body:JSON.stringify({email,password}),cache:"no-store"
+      });
+      let data={};try{data=await r.json();}catch{}
+      if(!r.ok||!data.access_token)throw new Error(humanSupabaseError(data,r.status));
       saveSupabaseSession({access_token:data.access_token,refresh_token:data.refresh_token,expires_at:Math.floor(Date.now()/1000)+(data.expires_in||3600),email:data.user?.email||email});
       setRequestsLoggedIn(true);
       $("supabasePassword").value="";
+      if(status)status.textContent=`ورود ${data.user?.email||email} موفق بود؛ در حال دریافت درخواست‌ها...`;
       await fetchRequests();
       toast("ورود مدیر موفق بود");
-    }catch(err){alert(err.message);}finally{btn.disabled=false;btn.textContent="ورود و دریافت درخواست‌ها";}
+    }catch(err){
+      saveSupabaseSession(null);setRequestsLoggedIn(false);
+      if(status)status.textContent=`ورود ناموفق: ${err.message}`;
+      setDbStatus("ok","✓ دیتابیس متصل است؛ مشکل مربوط به ورود حساب مدیر است.");
+      toast("ورود مدیر ناموفق بود");
+    }finally{btn.disabled=false;btn.textContent="ورود و دریافت درخواست‌ها";}
   }
   async function refreshSupabaseSession(session){
     if(!session?.refresh_token)return null;
@@ -123,6 +180,7 @@
   }
   function supabaseLogout(){ saveSupabaseSession(null);requestRows=[];setRequestsLoggedIn(false);renderRequests();$("requestsStatus").textContent="از حساب مدیر خارج شدید.";toast("خروج انجام شد"); }
   $("requestsAdminList")?.addEventListener("click",e=>{const b=e.target.closest("[data-request-delete]");if(b)deleteRequest(b.dataset.requestDelete);});
+  $("supabaseCheckBtn")?.addEventListener("click",()=>testSupabaseConnection(true));
   $("supabaseLoginBtn")?.addEventListener("click",supabaseLogin);
   $("refreshRequestsBtn")?.addEventListener("click",fetchRequests);
   $("supabaseLogoutBtn")?.addEventListener("click",supabaseLogout);
@@ -130,4 +188,5 @@
   document.querySelector(".admin-tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-tab]");if(!b)return;document.querySelectorAll(".admin-tabs button").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".tab-panel").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));if(b.dataset.tab==="requestsTab")fetchRequests();});
   $("connectBtn").onclick=connect;$("saveSettingsBtn").onclick=localSettingsSave;$("projectForm").onsubmit=saveProject;$("editorForm").onsubmit=saveEditor;$("newProjectBtn").onclick=resetProject;$("cancelProjectEdit").onclick=resetProject;$("newEditorBtn").onclick=resetEditor;$("cancelEditorEdit").onclick=resetEditor;$("projectsAdminList").onclick=listAction;$("editorsAdminList").onclick=listAction;
   localSettingsLoad();resetProject();resetEditor();setRequestsLoggedIn(!!loadSupabaseSession());renderRequests();
+  testSupabaseConnection(false);
 })();
