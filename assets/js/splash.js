@@ -1,3 +1,4 @@
+(() => { try { const q=new URLSearchParams(location.search); if(q.get("view")==="editors" || sessionStorage.getItem("editorsTeam.skipSplashOnce")==="1"){ sessionStorage.removeItem("editorsTeam.skipSplashOnce"); document.documentElement.classList.add("skip-splash"); } } catch(_){} })();
 (() => {
   const params = new URLSearchParams(location.search);
   let returnView = "";

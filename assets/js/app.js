@@ -194,22 +194,6 @@ function closeImage(){
 }
 
 
-function showPayment(title, amount){
-  document.getElementById("paymentTitle").textContent = "پرداخت برای " + title;
-  document.getElementById("paymentAmount").textContent = "مبلغ: " + amount;
-  document.getElementById("paymentModal").classList.add("active");
-}
-function closePayment(){
-  document.getElementById("paymentModal").classList.remove("active");
-}
-function copyCardNumber(){
-  const card = "5041721084236240";
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(card).then(()=>alert("شماره کارت کپی شد"));
-  }else{
-    alert("شماره کارت: " + card);
-  }
-}
 
 const searchInput=document.getElementById("search");
 if(searchInput){

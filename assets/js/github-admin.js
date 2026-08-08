@@ -228,6 +228,5 @@
   $("requestSearch")?.addEventListener("input",renderRequests);
   document.querySelector(".admin-tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-tab]");if(!b)return;document.querySelectorAll(".admin-tabs button").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".tab-panel").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));if(b.dataset.tab==="requestsTab")fetchRequests();});
   $("connectBtn").onclick=connect;$("saveSettingsBtn").onclick=localSettingsSave;$("projectForm").onsubmit=saveProject;$("editorForm").onsubmit=saveEditor;$("newProjectBtn").onclick=resetProject;$("cancelProjectEdit").onclick=resetProject;$("newEditorBtn").onclick=resetEditor;$("cancelEditorEdit").onclick=resetEditor;$("projectsAdminList").onclick=listAction;$("editorsAdminList").onclick=listAction;
-  localSettingsLoad();resetProject();resetEditor();setRequestsLoggedIn(!!loadSupabaseSession());renderRequests();
-  testSupabaseConnection(false);
+  localSettingsLoad();resetProject();resetEditor();if($("requestsTab")){setRequestsLoggedIn(!!loadSupabaseSession());renderRequests();testSupabaseConnection(false);}
 })();
