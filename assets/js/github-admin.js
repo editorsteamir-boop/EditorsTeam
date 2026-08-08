@@ -153,6 +153,37 @@
     if((s.expires_at||0)-60<=Math.floor(Date.now()/1000))s=await refreshSupabaseSession(s);
     if(!s){saveSupabaseSession(null);setRequestsLoggedIn(false);}return s;
   }
+  let requestEditorsCache=null;
+  async function loadRequestEditors(){
+    if(requestEditorsCache)return requestEditorsCache;
+    try{
+      const r=await fetch(`./data/editors.json?requests=${Date.now()}`,{cache:"no-store"});
+      if(!r.ok)throw new Error("editors.json");
+      const data=await r.json();
+      requestEditorsCache=Array.isArray(data)?data:[];
+    }catch(_){requestEditorsCache=[];}
+    return requestEditorsCache;
+  }
+  function faDigitsToEn(value){
+    return String(value||"").replace(/[۰-۹]/g,d=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+  }
+  async function hydrateRequestPreviews(rows){
+    const editors=await loadRequestEditors();
+    if(!editors.length)return rows;
+    return rows.map(r=>{
+      if(r.thumbnail||r.media_src)return r;
+      const editor=editors.find(e=>String(e.id||"")===String(r.editor_id||"")) || editors.find(e=>String(e.fullName||"")===String(r.editor_name||""));
+      if(!editor)return r;
+      const rawNo=r.project_id||r.project_no||String(r.project_name||"").replace(/[^0-9۰-۹]/g,"");
+      const n=Number(faDigitsToEn(rawNo));
+      if(!Number.isFinite(n)||n<1)return r;
+      const media=Array.isArray(editor.portfolioMedia)&&editor.portfolioMedia.length?editor.portfolioMedia:(editor.portfolioImages||[]).map(src=>({type:"image",src}));
+      const item=media[n-1];
+      if(!item?.src)return r;
+      return {...r,thumbnail:new URL(item.src,window.location.href).href,media_type:item.type==="video"?"video":"image"};
+    });
+  }
+
   function renderRequests(){
     const el=$("requestsAdminList"), count=$("requestCount"), q=($("requestSearch")?.value||"").trim().toLowerCase();
     if(!el)return;
@@ -160,13 +191,13 @@
     if(count)count.textContent=`${requestRows.length} درخواست`;
     el.innerHTML=rows.length?rows.map(r=>{
       const mediaType=r.media_type==="video"?"video":"image";
-      const src=String(r.media_src||"").trim();
+      const src=String(r.thumbnail||r.media_src||"").trim();
       const preview=src
         ? (mediaType==="video"
           ? `<div class="request-project-preview request-project-video"><video src="${esc(src)}#t=0.1" muted playsinline preload="metadata"></video><span>▶</span><em>ویدئو</em></div>`
           : `<div class="request-project-preview"><img src="${esc(src)}" alt="پروژه ${esc(r.project_no||"")}" loading="lazy"><em>تصویر</em></div>`)
         : `<div class="request-project-preview request-project-fallback">✉<em>قدیمی</em></div>`;
-      const projectNo=r.project_no||String(r.project_name||"").replace(/[^0-9۰-۹]/g,"")||"—";
+      const projectNo=r.project_id||r.project_no||String(r.project_name||"").replace(/[^0-9۰-۹]/g,"")||"—";
       return `<article class="admin-row request-row">${preview}<div class="request-info"><h3>${esc(r.full_name||"بدون نام")}</h3><p>📞 ${esc(r.phone||"—")}<br>👤 ادیتور: ${esc(r.editor_name||"—")}<br>🎬 پروژه ${esc(projectNo)}<br>🕒 ${esc(r.created_at?new Date(r.created_at).toLocaleString("fa-IR"):"—")}</p></div><div class="row-actions"><button class="danger" data-request-delete="${esc(r.id)}">حذف درخواست</button></div></article>`;
     }).join(""):"<p>درخواستی برای نمایش وجود ندارد.</p>";
   }
@@ -178,7 +209,7 @@
     try{
       const r=await fetch(`${SUPABASE_URL}/rest/v1/training_requests?select=*&order=created_at.desc`,{headers:authHeaders(session.access_token)});
       const data=await r.json();if(!r.ok)throw new Error(data.message||"دریافت درخواست‌ها ناموفق بود");
-      requestRows=Array.isArray(data)?data:[];renderRequests();if(status)status.textContent=requestRows.length?"آخرین درخواست‌ها دریافت شدند.":"هنوز درخواستی ثبت نشده است.";
+      requestRows=Array.isArray(data)?data:[];requestRows=await hydrateRequestPreviews(requestRows);renderRequests();if(status)status.textContent=requestRows.length?"آخرین درخواست‌ها دریافت شدند.":"هنوز درخواستی ثبت نشده است.";
     }catch(err){if(status)status.textContent=`خطا: ${err.message}`;}
   }
   async function deleteRequest(id){
