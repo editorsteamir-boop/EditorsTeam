@@ -1,21 +1,26 @@
 const CACHE_PREFIX = "editors-team-";
-const STATIC_CACHE = `${CACHE_PREFIX}static-v10.1.0`;
-const PAGE_CACHE = `${CACHE_PREFIX}pages-v10.1.0`;
+const STATIC_CACHE = `${CACHE_PREFIX}static-v11-sales.1.0`;
+const PAGE_CACHE = `${CACHE_PREFIX}pages-v11-sales.1.0`;
 
 const ESSENTIAL_ASSETS = [
   "./",
   "./index.html",
   "./admin.html",
-  "./assets/css/admin.css?v=8.1.0",
-  "./assets/js/github-admin.js?v=10.1.0",
-  "./assets/css/main.css?v=6.0.2",
+  "./payment-result.html",
+  "./assets/css/sales.css?v=1.0.0",
+  "./assets/js/sales-public.js?v=1.0.0",
+  "./assets/js/sales-admin.js?v=1.0.0",
+  "./assets/js/payment-result.js?v=1.0.0",
+  "./assets/css/admin.css?v=11.0.0",
+  "./assets/js/github-admin.js?v=11.0.0",
+  "./assets/css/main.css?v=11.0.0",
   "./assets/js/plan.js?v=6.0.0",
-  "./assets/js/app.js?v=8.0.0",
-  "./assets/js/projects.js?v=6.2.0",
-  "./assets/js/editors.js?v=7.0.0",
-  "./assets/js/splash.js?v=6.0.0",
+  "./assets/js/app.js?v=11.0.0",
+  "./assets/js/projects.js?v=11.0.0",
+  "./assets/js/editors.js?v=9.0.0",
+  "./assets/js/splash.js?v=11.0.0",
   "./assets/css/portfolio.css?v=2.2.0",
-  "./assets/js/portfolio.js?v=10.1.0",
+  "./assets/js/portfolio.js?v=11.0.0",
   "./assets/images/logo-transparent.png",
   "./assets/images/icon-192.png"
 ];
@@ -83,7 +88,7 @@ self.addEventListener("fetch", event => {
     event.respondWith(networkFirst(request, PAGE_CACHE, 8000, true).catch(() => new Response("[]", { status: 200, headers: { "Content-Type": "application/json; charset=utf-8" } })));
     return;
   }
-  if (url.pathname.endsWith("/assets/js/github-admin.js") || url.pathname.endsWith("/assets/js/portfolio.js") || url.pathname.endsWith("/assets/css/admin.css")) {
+  if (url.pathname.endsWith("/assets/js/github-admin.js") || url.pathname.endsWith("/assets/js/portfolio.js") || url.pathname.endsWith("/assets/js/sales-public.js") || url.pathname.endsWith("/assets/js/sales-admin.js") || url.pathname.endsWith("/assets/js/payment-result.js") || url.pathname.endsWith("/assets/css/admin.css") || url.pathname.endsWith("/assets/css/sales.css")) {
     event.respondWith(networkFirst(request, STATIC_CACHE, 8000, false));
     return;
   }
