@@ -1,13 +1,13 @@
 const CACHE_PREFIX = "editors-team-";
-const STATIC_CACHE = `${CACHE_PREFIX}static-v11-sales.1.0`;
-const PAGE_CACHE = `${CACHE_PREFIX}pages-v11-sales.1.0`;
+const STATIC_CACHE = `${CACHE_PREFIX}static-v13-speed.1.0`;
+const PAGE_CACHE = `${CACHE_PREFIX}pages-v13-speed.1.0`;
 
 const ESSENTIAL_ASSETS = [
   "./",
   "./index.html",
   "./admin.html",
   "./payment-result.html",
-  "./assets/css/sales.css?v=1.0.0",
+  "./assets/css/sales.css?v=1.3.0",
   "./assets/js/sales-public.js?v=1.0.0",
   "./assets/js/sales-admin.js?v=1.0.0",
   "./assets/js/payment-result.js?v=1.0.0",
@@ -16,11 +16,11 @@ const ESSENTIAL_ASSETS = [
   "./assets/css/main.css?v=11.0.0",
   "./assets/js/plan.js?v=6.0.0",
   "./assets/js/app.js?v=11.0.0",
-  "./assets/js/projects.js?v=11.0.0",
-  "./assets/js/editors.js?v=9.0.0",
+  "./assets/js/projects.js?v=12.0.0",
+  "./assets/js/editors.js?v=10.0.0",
   "./assets/js/splash.js?v=11.0.0",
   "./assets/css/portfolio.css?v=2.2.0",
-  "./assets/js/portfolio.js?v=11.0.0",
+  "./assets/js/portfolio.js?v=12.0.0",
   "./assets/images/logo-transparent.png",
   "./assets/images/icon-192.png"
 ];

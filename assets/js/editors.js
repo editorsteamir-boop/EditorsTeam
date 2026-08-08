@@ -76,7 +76,7 @@
       list.innerHTML = '<div class="empty">هنوز ادیتوری ثبت نشده است.</div>';
       return;
     }
-    list.innerHTML = visible.map(editor => {
+    list.innerHTML = visible.map((editor,editorIndex) => {
       const mediaCount = editor.portfolioMedia.length || editor.portfolioImages.length;
       const portfolio = mediaCount
         ? `<a class="editor-portfolio" href="./portfolio.html?id=${encodeURIComponent(editor.id)}" data-editor-id="${escapeText(editor.id)}">مشاهده نمونه‌کارها <span>◀</span></a>`
@@ -84,7 +84,7 @@
       return `<article class="editor-card">
         <div class="editor-header">
           <div class="editor-avatar-wrap">
-            <img class="editor-avatar" src="${escapeText(editor.image)}" alt="تصویر ${escapeText(editor.fullName)}" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
+            <img class="editor-avatar" src="${escapeText(editor.image)}" alt="تصویر ${escapeText(editor.fullName)}" loading="${editorIndex<2?'eager':'lazy'}" decoding="async" ${editorIndex<2?'fetchpriority="high"':''} onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
             <span class="editor-status ${editor.online ? "online" : "offline"}" title="${editor.online ? "آنلاین" : "آفلاین"}"></span>
           </div>
           <div class="editor-heading">
@@ -116,7 +116,12 @@
     } catch (_) {}
   });
 
-  async function initializeEditors() { await loadEditors(); renderEditors(); }
+  async function initializeEditors() {
+    const cached=readEditorsBackup();
+    if(cached.length){editorsData=cached;renderEditors();}
+    await loadEditors();
+    renderEditors();
+  }
   window.renderEditors = renderEditors;
   window.EditorsStore = { STORAGE_KEY, loadEditors, renderEditors };
   document.addEventListener("DOMContentLoaded", initializeEditors);
