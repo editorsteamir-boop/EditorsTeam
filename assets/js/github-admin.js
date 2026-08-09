@@ -21,43 +21,6 @@
   async function putContent(path, contentB64, message){ const s=assertSettings(); const existing=await getContent(path); const url=`https://api.github.com/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${path.split('/').map(encodeURIComponent).join('/')}`; const body={message,content:contentB64,branch:s.branch}; if(existing?.sha)body.sha=existing.sha; return ghFetch(url,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); }
   async function saveJson(path,data,message){ return putContent(path,textToBase64(JSON.stringify(data,null,2)),message); }
   async function uploadFile(path,file,message){ return putContent(path,bytesToBase64(new Uint8Array(await file.arrayBuffer())),message); }
-  function repoPathFromSrc(src){
-    const p=String(src||"").split("?")[0].split("#")[0].replace(/\\/g,"/").replace(/^\.?\//,"");
-    return p.startsWith("assets/")?p:"";
-  }
-  async function deleteContent(path,message){
-    path=repoPathFromSrc(path)||String(path||"").replace(/^\.?\//,"");
-    if(!path)return false;
-    const s=assertSettings(),existing=await getContent(path);
-    if(!existing?.sha)return false;
-    const url=`https://api.github.com/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${path.split('/').map(encodeURIComponent).join('/')}`;
-    await ghFetch(url,{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({message,sha:existing.sha,branch:s.branch})});
-    return true;
-  }
-  async function deleteMediaList(srcs,label){
-    const unique=[...new Set((srcs||[]).map(repoPathFromSrc).filter(Boolean))];
-    const failed=[];
-    for(const path of unique){
-      try{await deleteContent(path,`Delete unused media: ${label}`);}
-      catch(e){failed.push(`${path}: ${e.message}`);}
-    }
-    if(failed.length)throw new Error(`اطلاعات ذخیره شد، اما حذف ${failed.length} فایل از GitHub ناموفق بود:\n${failed.join("\n")}`);
-  }
-  function imageToWebp(file,quality=.84){
-    if(!file||!String(file.type||"").startsWith("image/")||/image\/webp/i.test(file.type))return Promise.resolve(file);
-    return new Promise((resolve,reject)=>{
-      const img=new Image(),url=URL.createObjectURL(file);
-      img.onload=()=>{
-        try{
-          const c=document.createElement("canvas");c.width=img.naturalWidth;c.height=img.naturalHeight;
-          c.getContext("2d").drawImage(img,0,0);
-          c.toBlob(blob=>{URL.revokeObjectURL(url);if(!blob)return reject(new Error("تبدیل تصویر به WebP انجام نشد."));resolve(new File([blob],file.name.replace(/\.[^.]+$/,"")+".webp",{type:"image/webp"}));},"image/webp",quality);
-        }catch(e){URL.revokeObjectURL(url);reject(e);}
-      };
-      img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("تصویر قابل خواندن نیست."));};
-      img.src=url;
-    });
-  }
   function localSettingsLoad(){ try{const s=JSON.parse(localStorage.getItem("editorsTeam.github.settings")||"{}"); if(s.owner)$("ghOwner").value=s.owner;if(s.repo)$("ghRepo").value=s.repo;if(s.branch)$("ghBranch").value=s.branch;}catch{} }
   function localSettingsSave(){ const s=settings(); localStorage.setItem("editorsTeam.github.settings",JSON.stringify({owner:s.owner,repo:s.repo,branch:s.branch})); toast("تنظیمات غیرحساس ذخیره شد"); }
   async function connect(){ const status=$("connectionStatus"); status.className="status"; status.textContent="در حال اتصال..."; try{ const s=assertSettings(); const repoUrl=`https://api.github.com/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}`; await ghFetch(repoUrl); const [p,e]=await Promise.all([getContent("data/projects.json"),getContent("data/editors.json")]); state.projects=p?JSON.parse(base64ToText(p.content)):[]; state.editors=e?JSON.parse(base64ToText(e.content)):[]; state.projects=Array.isArray(state.projects)?state.projects:[];state.editors=Array.isArray(state.editors)?state.editors:[]; normalizeOrders();renderProjects();renderEditors();status.className="status ok";status.textContent="اتصال موفق بود و اطلاعات مخزن دریافت شد.";localSettingsSave(); }
@@ -69,30 +32,9 @@
   function resetProject(){ state.projectEdit=null;state.projectQueue=[];$("projectForm").reset();$("projectActive").checked=true;$("projectIcon").value="🎨";$("projectFormTitle").textContent="افزودن باکس پروژه";renderQueue(); }
   function editProject(i){ const p=state.projects[i];state.projectEdit=i;$("projectTitle").value=p.title||"";$("projectIcon").value=p.icon||"🎨";$("projectDescription").value=p.description||"";$("projectActive").checked=p.active!==false;state.projectQueue=(p.images||[]).map(x=>({type:"existing",src:x.src,alt:x.alt||""}));$("projectFormTitle").textContent="ویرایش پروژه";renderQueue();scrollTo({top:0,behavior:"smooth"}); }
   function renderQueue(){ $("projectImageQueue").innerHTML=state.projectQueue.map((x,i)=>`<div class="queue-item"><img src="${esc(x.preview||x.src)}"><small>${esc(x.name||x.alt||`تصویر ${i+1}`)}</small><div class="queue-actions"><button type="button" data-q="up" data-i="${i}">↑</button><button type="button" data-q="down" data-i="${i}">↓</button><button type="button" class="danger" data-q="remove" data-i="${i}">×</button></div></div>`).join(""); }
-  async function saveProject(e){ e.preventDefault(); try{
-    assertSettings();
-    const title=$("projectTitle").value.trim(); if(!title)throw new Error("نام پروژه را وارد کنید.");
-    const old=state.projectEdit===null?null:state.projects[state.projectEdit];
-    const oldPaths=(old?.images||[]).map(x=>x.src).filter(Boolean);
-    const id=old?.id||`${slug(title)}-${Date.now().toString().slice(-5)}`;
-    const images=[];let uploadIndex=0;
-    for(const item of state.projectQueue){
-      if(item.type==="existing"){images.push({src:item.src,alt:item.alt||title});continue;}
-      let file=await imageToWebp(item.file);
-      const path=`assets/images/projects/${id}/${Date.now()}-${String(++uploadIndex).padStart(2,"0")}.webp`;
-      toast(`در حال آپلود تصویر ${uploadIndex}...`);
-      await uploadFile(path,file,`Upload image for ${title}`);
-      images.push({src:`./${path}`,alt:`${title} ${images.length+1}`});
-    }
-    const record={id,title,icon:$("projectIcon").value.trim()||"🎨",description:$("projectDescription").value.trim()||`نمونه پروژه‌های ${title}`,active:$("projectActive").checked,order:old?.order||state.projects.length+1,images};
-    if(state.projectEdit===null)state.projects.push(record);else state.projects[state.projectEdit]=record;
-    normalizeOrders();
-    await saveJson("data/projects.json",state.projects,`Update projects: ${title}`);
-    const keep=new Set(images.map(x=>repoPathFromSrc(x.src)));
-    const removed=oldPaths.filter(x=>!keep.has(repoPathFromSrc(x)));
-    if(removed.length)await deleteMediaList(removed,title);
-    renderProjects();resetProject();toast("پروژه و فایل‌های آن روی GitHub به‌روزرسانی شد");
-  }catch(err){alert(err.message);} }
+  async function saveProject(e){ e.preventDefault(); try{ const s=assertSettings(); const title=$("projectTitle").value.trim(); if(!title)throw new Error("نام پروژه را وارد کنید."); const old=state.projectEdit===null?null:state.projects[state.projectEdit]; const id=old?.id||`${slug(title)}-${Date.now().toString().slice(-5)}`; const images=[]; let uploadIndex=0; for(const item of state.projectQueue){ if(item.type==="existing"){images.push({src:item.src,alt:item.alt||title});continue;} const ext=(item.file.name.split('.').pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg"; const path=`assets/images/projects/${id}/${Date.now()}-${String(++uploadIndex).padStart(2,"0")}.${ext}`; toast(`در حال آپلود تصویر ${uploadIndex}...`); await uploadFile(path,item.file,`Upload image for ${title}`); images.push({src:`./${path}`,alt:`${title} ${images.length+1}`}); }
+      const record={id,title,icon:$("projectIcon").value.trim()||"🎨",description:$("projectDescription").value.trim()||`نمونه پروژه‌های ${title}`,active:$("projectActive").checked,order:old?.order||state.projects.length+1,images}; if(state.projectEdit===null)state.projects.push(record);else state.projects[state.projectEdit]=record;normalizeOrders();await saveJson("data/projects.json",state.projects,`Update projects: ${title}`);renderProjects();resetProject();toast("پروژه روی GitHub ذخیره شد"); }
+    catch(err){alert(err.message);} }
   function inferPortfolioType(src, explicit){ if(explicit==="video"||explicit==="image")return explicit;return /\.(mp4|webm|mov|m4v|ogg)(\?|$)/i.test(String(src||""))?"video":"image"; }
   function existingPortfolioMedia(x){
     if(Array.isArray(x.portfolioMedia)&&x.portfolioMedia.length)return x.portfolioMedia.filter(Boolean).map((m,i)=>typeof m==="string"?{type:"existing",src:m,mediaType:inferPortfolioType(m),title:`پروژه ${i+1}`}:{type:"existing",src:m.src,mediaType:inferPortfolioType(m.src,m.type),title:m.title||`پروژه ${i+1}`}).filter(m=>m.src);
@@ -102,61 +44,18 @@
   function editEditor(i){ const x=state.editors[i];state.editorEdit=i;state.editorFile=null;state.editorExistingImage=x.image||DEFAULT_AVATAR;state.editorPortfolioQueue=existingPortfolioMedia(x); for(const id of ["fullName","badge","age","city","specialty","rating","bio"])$(id).value=x[id]||"";$("projectsDone").value=x.projects||"";$("verified").checked=!!x.verified;$("online").checked=!!x.online;$("editorActive").checked=x.active!==false;$("avatarPreview").src=state.editorExistingImage;$("editorFormTitle").textContent="ویرایش ادیتور";renderEditorPortfolioQueue();scrollTo({top:0,behavior:"smooth"}); }
 
   function renderEditorPortfolioQueue(){ const el=$("editorPortfolioQueue"); if(!el)return;el.innerHTML=state.editorPortfolioQueue.map((x,i)=>{const mediaType=x.mediaType||inferPortfolioType(x.src||x.name);const preview=x.preview||x.src;const visual=mediaType==="video"?`<div class="queue-video"><video src="${esc(preview)}#t=0.1" muted playsinline preload="metadata"></video><span>▶</span></div>`:`<img src="${esc(preview)}">`;return `<div class="queue-item">${visual}<small>${esc(x.name||x.title||`نمونه‌کار ${i+1}`)}</small><div class="queue-actions"><button type="button" data-epq="up" data-i="${i}">↑</button><button type="button" data-epq="down" data-i="${i}">↓</button><button type="button" class="danger" data-epq="remove" data-i="${i}">×</button></div></div>`;}).join(""); }
-  function validateSquareJpg(file){ return new Promise((resolve,reject)=>{ if(!String(file.type||"").startsWith("image/"))return reject(new Error("فایل انتخابی باید تصویر باشد.")); const img=new Image();const u=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(u);if(img.naturalWidth!==img.naturalHeight)return reject(new Error("ابعاد تصویر ادیتور باید دقیقاً نسبت ۱ به ۱ باشد."));resolve();};img.onerror=()=>{URL.revokeObjectURL(u);reject(new Error("تصویر قابل خواندن نیست."));};img.src=u; }); }
-  async function saveEditor(e){ e.preventDefault(); try{
-    assertSettings();const name=$("fullName").value.trim();if(!name)throw new Error("نام ادیتور را وارد کنید.");
-    const old=state.editorEdit===null?null:state.editors[state.editorEdit],id=old?.id||`editor-${Date.now()}`;
-    const oldMedia=existingPortfolioMedia(old||{}).map(x=>x.src).filter(Boolean);
-    const oldImage=old?.image||"";
-    let image=state.editorExistingImage;
-    if(state.editorFile){
-      const file=await imageToWebp(state.editorFile);
-      const path=`assets/images/editors/${id}.webp`;toast("در حال آپلود تصویر ادیتور...");
-      await uploadFile(path,file,`Upload editor photo: ${name}`);image=`./${path}?v=${Date.now()}`;
-    }
-    const portfolioMedia=[];let portfolioIndex=0;
-    for(const item of state.editorPortfolioQueue){
-      if(item.type==="existing"){portfolioMedia.push({src:item.src,type:item.mediaType||inferPortfolioType(item.src),title:item.title||`پروژه ${portfolioMedia.length+1}`});continue;}
-      const mediaType=item.mediaType||inferPortfolioType(item.file.name,item.file.type?.startsWith("video/")?"video":"image");
-      let file=item.file,ext;
-      if(mediaType==="image"){file=await imageToWebp(file);ext="webp";} else {ext=(file.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";}
-      const path=`assets/images/editors/${id}/portfolio/${Date.now()}-${String(++portfolioIndex).padStart(2,"0")}.${ext}`;
-      toast(`در حال آپلود نمونه‌کار ${portfolioIndex}...`);await uploadFile(path,file,`Upload portfolio ${mediaType}: ${name}`);
-      portfolioMedia.push({src:`./${path}`,type:mediaType,title:`پروژه ${portfolioMedia.length+1}`});
-    }
-    const portfolioImages=portfolioMedia.filter(m=>m.type==="image").map(m=>m.src);
-    const x={id,fullName:name,badge:$("badge").value.trim(),age:$("age").value.trim(),city:$("city").value.trim(),specialty:$("specialty").value.trim(),rating:$("rating").value.trim(),projects:$("projectsDone").value.trim(),portfolioImages,portfolioMedia,bio:$("bio").value.trim(),image,verified:$("verified").checked,online:$("online").checked,active:$("editorActive").checked,order:old?.order||state.editors.length+1};
-    if(state.editorEdit===null)state.editors.push(x);else state.editors[state.editorEdit]=x;
-    normalizeOrders();await saveJson("data/editors.json",state.editors,`Update editors: ${name}`);
-    const keep=new Set(portfolioMedia.map(m=>repoPathFromSrc(m.src)));
-    const removed=oldMedia.filter(s=>!keep.has(repoPathFromSrc(s)));
-    if(oldImage&&repoPathFromSrc(oldImage)!==repoPathFromSrc(image))removed.push(oldImage);
-    if(removed.length)await deleteMediaList(removed,name);
-    renderEditors();resetEditor();toast("ادیتور و فایل‌های آن روی GitHub به‌روزرسانی شد");
-  }catch(err){alert(err.message);} }
+  function validateSquareJpg(file){ return new Promise((resolve,reject)=>{ if(!/image\/jpeg/.test(file.type)&&!/(\.jpe?g)$/i.test(file.name))return reject(new Error("تصویر ادیتور باید با فرمت JPG باشد.")); const img=new Image();img.onload=()=>{URL.revokeObjectURL(img.src); if(img.naturalWidth!==img.naturalHeight)return reject(new Error("ابعاد تصویر ادیتور باید دقیقاً نسبت ۱ به ۱ باشد."));resolve();};img.onerror=()=>reject(new Error("تصویر قابل خواندن نیست."));img.src=URL.createObjectURL(file); }); }
+  async function saveEditor(e){ e.preventDefault(); try{assertSettings();const name=$("fullName").value.trim();if(!name)throw new Error("نام ادیتور را وارد کنید.");const old=state.editorEdit===null?null:state.editors[state.editorEdit];const id=old?.id||`editor-${Date.now()}`;let image=state.editorExistingImage;if(state.editorFile){const path=`assets/images/editors/${id}.jpg`;toast("در حال آپلود تصویر ادیتور...");await uploadFile(path,state.editorFile,`Upload editor photo: ${name}`);image=`./${path}?v=${Date.now()}`;}const portfolioMedia=[];let portfolioIndex=0;for(const item of state.editorPortfolioQueue){if(item.type==="existing"){portfolioMedia.push({src:item.src,type:item.mediaType||inferPortfolioType(item.src),title:item.title||`پروژه ${portfolioMedia.length+1}`});continue;}const mediaType=item.mediaType||inferPortfolioType(item.file.name,item.file.type?.startsWith("video/")?"video":"image");const ext=(item.file.name.split('.').pop()||(mediaType==="video"?"mp4":"jpg")).toLowerCase().replace(/[^a-z0-9]/g,"")||(mediaType==="video"?"mp4":"jpg");const path=`assets/images/editors/${id}/portfolio/${Date.now()}-${String(++portfolioIndex).padStart(2,"0")}.${ext}`;toast(`در حال آپلود نمونه‌کار ${portfolioIndex}...`);await uploadFile(path,item.file,`Upload portfolio ${mediaType}: ${name}`);portfolioMedia.push({src:`./${path}`,type:mediaType,title:`پروژه ${portfolioMedia.length+1}`});}const portfolioImages=portfolioMedia.filter(m=>m.type==="image").map(m=>m.src); const x={id,fullName:name,badge:$("badge").value.trim(),age:$("age").value.trim(),city:$("city").value.trim(),specialty:$("specialty").value.trim(),rating:$("rating").value.trim(),projects:$("projectsDone").value.trim(),portfolioImages,portfolioMedia,bio:$("bio").value.trim(),image,verified:$("verified").checked,online:$("online").checked,active:$("editorActive").checked,order:old?.order||state.editors.length+1};if(state.editorEdit===null)state.editors.push(x);else state.editors[state.editorEdit]=x;normalizeOrders();await saveJson("data/editors.json",state.editors,`Update editors: ${name}`);renderEditors();resetEditor();toast("ادیتور روی GitHub ذخیره شد");}catch(err){alert(err.message);} }
   async function persistOrder(kind){ normalizeOrders(); if(kind==="project")await saveJson("data/projects.json",state.projects,"Reorder projects");else await saveJson("data/editors.json",state.editors,"Reorder editors");toast("ترتیب روی GitHub ذخیره شد"); }
-  async function listAction(e){
-    const b=e.target.closest("button[data-kind]");if(!b)return;
-    const kind=b.dataset.kind,act=b.dataset.act,i=+b.dataset.i,arr=kind==="project"?state.projects:state.editors;
-    try{
-      if(act==="edit")return kind==="project"?editProject(i):editEditor(i);
-      if(act==="delete"){
-        if(!confirm("این مورد و فایل‌های آپلودشده آن از GitHub حذف شود؟"))return;
-        const item=arr[i],files=[];
-        if(kind==="project")files.push(...(item.images||[]).map(x=>x.src));
-        else{
-          if(item.image&&repoPathFromSrc(item.image)!==repoPathFromSrc(DEFAULT_AVATAR))files.push(item.image);
-          files.push(...existingPortfolioMedia(item).map(x=>x.src));
-        }
-        arr.splice(i,1);kind==="project"?renderProjects():renderEditors();await persistOrder(kind);
-        if(files.length)await deleteMediaList(files,kind==="project"?(item.title||"project"):(item.fullName||"editor"));
-        toast("مورد و فایل‌های آن از GitHub حذف شد");return;
-      }
-      if(act==="toggle")arr[i].active=arr[i].active===false;
-      if(act==="up"&&i>0)[arr[i-1],arr[i]]=[arr[i],arr[i-1]];
-      if(act==="down"&&i<arr.length-1)[arr[i+1],arr[i]]=[arr[i],arr[i+1]];
-      kind==="project"?renderProjects():renderEditors();await persistOrder(kind);
-    }catch(err){alert(err.message);}
+  async function listAction(e){ const b=e.target.closest("button[data-kind]");if(!b)return;const kind=b.dataset.kind,act=b.dataset.act,i=+b.dataset.i,arr=kind==="project"?state.projects:state.editors;try{if(act==="edit")return kind==="project"?editProject(i):editEditor(i);if(act==="delete"&&!confirm("این مورد حذف شود؟"))return;if(act==="delete")arr.splice(i,1);if(act==="toggle")arr[i].active=arr[i].active===false;if(act==="up"&&i>0)[arr[i-1],arr[i]]=[arr[i],arr[i-1]];if(act==="down"&&i<arr.length-1)[arr[i+1],arr[i]]=[arr[i],arr[i+1]];kind==="project"?renderProjects():renderEditors();await persistOrder(kind);}catch(err){alert(err.message);} }
+  $("tokenFile").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;$("ghToken").value=(await f.text()).trim();toast("توکن از فایل خوانده شد");});
+  $("projectImages").addEventListener("change",e=>{for(const file of e.target.files){state.projectQueue.push({type:"new",file,name:file.name,preview:URL.createObjectURL(file)});}renderQueue();e.target.value="";});
+  $("projectImageQueue").addEventListener("click",e=>{const b=e.target.closest("button[data-q]");if(!b)return;const i=+b.dataset.i,a=b.dataset.q;if(a==="remove")state.projectQueue.splice(i,1);if(a==="up"&&i>0)[state.projectQueue[i-1],state.projectQueue[i]]=[state.projectQueue[i],state.projectQueue[i-1]];if(a==="down"&&i<state.projectQueue.length-1)[state.projectQueue[i+1],state.projectQueue[i]]=[state.projectQueue[i],state.projectQueue[i+1]];renderQueue();});
+  $("editorImage").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{await validateSquareJpg(f);state.editorFile=f;$("avatarPreview").src=URL.createObjectURL(f);toast("تصویر معتبر است");}catch(err){e.target.value="";alert(err.message);}});
+  $("editorPortfolioImages").addEventListener("change",e=>{for(const file of e.target.files){const mediaType=file.type.startsWith("video/")?"video":"image";if(mediaType==="video"&&file.size>45*1024*1024){alert(`ویدئوی ${file.name} بیشتر از ۴۵ مگابایت است.`);continue;}state.editorPortfolioQueue.push({type:"new",file,name:file.name,mediaType,preview:URL.createObjectURL(file)});}renderEditorPortfolioQueue();e.target.value="";});
+  $("editorPortfolioQueue").addEventListener("click",e=>{const b=e.target.closest("button[data-epq]");if(!b)return;const i=+b.dataset.i,a=b.dataset.epq;if(a==="remove")state.editorPortfolioQueue.splice(i,1);if(a==="up"&&i>0)[state.editorPortfolioQueue[i-1],state.editorPortfolioQueue[i]]=[state.editorPortfolioQueue[i],state.editorPortfolioQueue[i-1]];if(a==="down"&&i<state.editorPortfolioQueue.length-1)[state.editorPortfolioQueue[i+1],state.editorPortfolioQueue[i]]=[state.editorPortfolioQueue[i],state.editorPortfolioQueue[i+1]];renderEditorPortfolioQueue();});
+  function loadSupabaseSession(){
+    try { return JSON.parse(sessionStorage.getItem(SUPABASE_SESSION_KEY) || "null"); } catch (_) { return null; }
   }
   function saveSupabaseSession(session){
     if(session) sessionStorage.setItem(SUPABASE_SESSION_KEY, JSON.stringify(session));
@@ -329,5 +228,6 @@
   $("requestSearch")?.addEventListener("input",renderRequests);
   document.querySelector(".admin-tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-tab]");if(!b)return;document.querySelectorAll(".admin-tabs button").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".tab-panel").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));if(b.dataset.tab==="requestsTab")fetchRequests();});
   $("connectBtn").onclick=connect;$("saveSettingsBtn").onclick=localSettingsSave;$("projectForm").onsubmit=saveProject;$("editorForm").onsubmit=saveEditor;$("newProjectBtn").onclick=resetProject;$("cancelProjectEdit").onclick=resetProject;$("newEditorBtn").onclick=resetEditor;$("cancelEditorEdit").onclick=resetEditor;$("projectsAdminList").onclick=listAction;$("editorsAdminList").onclick=listAction;
-  localSettingsLoad();resetProject();resetEditor();if($("requestsTab")){setRequestsLoggedIn(!!loadSupabaseSession());renderRequests();testSupabaseConnection(false);}
+  localSettingsLoad();resetProject();resetEditor();setRequestsLoggedIn(!!loadSupabaseSession());renderRequests();
+  testSupabaseConnection(false);
 })();

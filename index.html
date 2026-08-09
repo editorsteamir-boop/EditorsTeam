@@ -15,8 +15,7 @@
 <link rel="icon" href="./assets/images/icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="./assets/images/icon-192.png">
 <title>تقویم آموزش حرفه‌ای ادیت با موبایل در ۸۴ روز</title>
-<link rel="stylesheet" href="./assets/css/sales.css?v=16.0.0">
-<link rel="stylesheet" href="./assets/css/main.css?v=16.0.0">
+<link rel="stylesheet" href="./assets/css/main.css?v=6.0.2">
 <!-- Editors Calendar v15: offline font ready for GitHub/APK -->
 </head>
 <body class="splash-lock">
@@ -47,6 +46,7 @@
     <button class="navbtn" onclick="showView('calendar', this)">تقویم</button>
     <button class="navbtn" onclick="showView('notes', this)">یادداشت</button>
     <button class="navbtn" onclick="showView('projects', this)">پروژه‌ها</button>
+    <button class="navbtn" onclick="showView('solutions', this)">راه حل‌ها</button>
     <button class="navbtn" onclick="showView('editors', this)">ادیتورها</button>
   </div>
 </div>
@@ -94,21 +94,43 @@
 <img id="modalImage" src="" alt="">
 </div>
 
+<div id="solutions" class="view">
+<div class="section-title"><span>راه حل‌های بخش پروژه‌ها (در هر نسخه جدید نرم‌افزار، بروزرسانی و اضافه خواهند شد)</span><span>💳</span></div>
+<div class="solution-grid">
+<div class="solution-card" onclick="showPayment('پیکس آرت','400 هزار تومان')"><b>پیکس آرت</b><span>400 هزار تومان</span></div>
+</div>
+<a class="receipt-card" href="https://rubika.ir/joing/BBAHGBDCH0KMKZULFYKHNMHLBJHBGIYW" target="_blank">📤 ارسال فیش واریزی</a>
+</div>
 <div id="editors" class="view">
   <div class="section-title"><span>ادیتورها</span><span>✦</span></div>
   <div class="home-note">در لیست زیر مشخصات ادیتورها رو می‌تونی به‌دقت بررسی کنی 👇</div>
   <div id="editorsList" class="editors-list"></div>
 </div>
 
+<div id="paymentModal" class="payment-modal">
+    <div class="payment-box">
+      <h3 id="paymentTitle">پرداخت</h3>
+      <div class="home-note" id="paymentAmount"></div>
+      <div class="card-number" id="cardNumber">5041 7210 8423 6240</div>
+      <div class="owner-name">به نام: محمد علی عبدی نیا</div>
+      <div class="pay-actions">
+        <button class="copy-btn" onclick="copyCardNumber()">کپی شماره کارت</button>
+        <button class="close-pay" onclick="closePayment()">بستن</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
+
+
+
 <script src="./assets/js/plan.js?v=6.0.0" defer></script>
-<script src="./assets/js/app.js?v=16.0.0" defer></script>
-<script src="./assets/js/sales-public.js?v=1.0.0" defer></script>
-<script src="./assets/js/projects.js?v=16.0.0" defer></script>
-<script src="./assets/js/editors.js?v=16.0.0" defer></script>
+<script src="./assets/js/app.js?v=8.0.0" defer></script>
+<script src="./assets/js/projects.js?v=6.2.0" defer></script>
+<script src="./assets/js/editors.js?v=9.0.0" defer></script>
 <div id="noteToast" class="note-toast">یادداشت ثبت شد</div>
 
-<script src="./assets/js/splash.js?v=16.0.0" defer></script>
+<script src="./assets/js/splash.js?v=9.0.0" defer></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#090b14">
   <title>پنل مدیریت EditorsTeam</title>
-  <link rel="stylesheet" href="./assets/css/admin.css?v=16.0.0">
+  <link rel="stylesheet" href="./assets/css/admin.css?v=8.1.0">
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -16,7 +16,7 @@
       <nav class="side-nav">
         <button class="active" data-tab-link="projectsTab"><span>▦</span><b>پروژه‌ها</b></button>
         <button data-tab-link="editorsTab"><span>◉</span><b>ادیتورها</b></button>
-        <button data-tab-link="salesTab"><span>🛒</span><b>فروش و خریدها</b></button>
+        <button data-tab-link="requestsTab"><span>✉</span><b>درخواست‌ها</b></button>
         <button data-scroll="githubPanel"><span>⌁</span><b>اتصال GitHub</b></button>
       </nav>
       <div class="sidebar-tip"><span>🔒</span><p>توکن در فایل‌های پروژه ذخیره نمی‌شود و فقط در حافظه همین صفحه می‌ماند.</p></div>
@@ -49,7 +49,7 @@
         <nav class="admin-tabs">
           <button class="active" data-tab="projectsTab"><span>▦</span><div><b>مدیریت پروژه‌ها</b><small>افزودن و مرتب‌سازی گالری‌ها</small></div></button>
           <button data-tab="editorsTab"><span>◉</span><div><b>مدیریت ادیتورها</b><small>پروفایل و اطلاعات اعضا</small></div></button>
-          <button data-tab="salesTab"><span>🛒</span><div><b>فروش و خریدها</b><small>قیمت، لینک آموزش و تراکنش‌ها</small></div></button>
+          <button data-tab="requestsTab"><span>✉</span><div><b>بررسی درخواست‌ها</b><small>درخواست ویدئوی آموزشی پروژه‌ها</small></div></button>
         </nav>
 
         <section id="projectsTab" class="tab-panel active">
@@ -98,23 +98,36 @@
           </div>
         </section>
 
-        <section id="salesTab" class="tab-panel">
+        <section id="requestsTab" class="tab-panel">
           <div class="panel requests-panel">
-            <div class="panel-title"><div><span class="section-kicker">فروش و پرداخت</span><h2>مدیریت فروش ویدئوهای آموزشی</h2><p>قیمت و لینک خصوصی Google Drive هر پروژه را اینجا ثبت کنید. لینک دانلود برای کاربران عمومی نمایش داده نمی‌شود.</p></div><span id="purchaseCount" class="count-badge">۰ خرید</span></div>
-            <div id="salesAuthBox" class="requests-auth-box"><div><b>ورود مدیر Supabase</b><p>برای ذخیره لینک‌های دانلود و مشاهده خریدها وارد حساب مدیر شوید.</p></div><div class="requests-auth-form"><input id="salesEmail" type="email" autocomplete="username" placeholder="ایمیل مدیر"><input id="salesPassword" type="password" autocomplete="current-password" placeholder="رمز عبور"><button id="salesCheckBtn" type="button" class="secondary">بررسی اتصال دیتابیس</button><button id="salesLoginBtn" type="button">ورود به مدیریت فروش</button></div><div id="salesConnectionStatus" class="db-connection-status neutral">وضعیت اتصال هنوز بررسی نشده است.</div></div>
-            <div id="salesWorkspace" hidden>
-              <div class="sales-toolbar"><button id="salesReloadBtn" type="button" class="secondary">↻ دریافت پروژه‌ها و قیمت‌ها</button><button id="salesLogoutBtn" type="button" class="danger">خروج مدیر</button></div>
-              <div id="salesStatus" class="requests-status">برای شروع، اطلاعات فروش را دریافت کنید.</div>
-              <div class="sales-two-col"><div><h3>قیمت و لینک آموزش</h3><div id="saleItemsAdminList" class="sale-admin-list"></div></div><div><h3>خریدهای ثبت‌شده</h3><div id="purchasesAdminList" class="admin-list requests-list"></div></div></div>
+            <div class="panel-title"><div><span class="section-kicker">صندوق درخواست‌ها</span><h2>درخواست‌های آموزش پروژه</h2><p>درخواست‌های همه کاربران از Supabase دریافت می‌شوند.</p></div><span id="requestCount" class="count-badge">۰ درخواست</span></div>
+            <div id="requestsAuthBox" class="requests-auth-box">
+              <div>
+                <b>ورود مدیر Supabase</b>
+                <p>برای مشاهده شماره تلفن‌ها و مدیریت درخواست‌ها وارد حساب مدیر شوید.</p>
+              </div>
+              <div class="requests-auth-form">
+                <input id="supabaseEmail" type="email" autocomplete="username" placeholder="ایمیل مدیر">
+                <input id="supabasePassword" type="password" autocomplete="current-password" placeholder="رمز عبور">
+                <button id="supabaseCheckBtn" type="button" class="secondary">بررسی اتصال دیتابیس</button>
+                <button id="supabaseLoginBtn" type="button">ورود و دریافت درخواست‌ها</button>
+              </div>
+              <div id="supabaseConnectionStatus" class="db-connection-status neutral">وضعیت اتصال هنوز بررسی نشده است.</div>
             </div>
+            <div id="requestsToolbar" class="requests-toolbar" hidden>
+              <input id="requestSearch" type="search" placeholder="جستجو در نام، تلفن، ادیتور یا پروژه...">
+              <button id="refreshRequestsBtn" type="button" class="secondary">↻ بروزرسانی</button>
+              <button id="supabaseLogoutBtn" type="button" class="danger">خروج مدیر</button>
+            </div>
+            <div id="requestsStatus" class="requests-status">برای مشاهده درخواست‌ها ابتدا وارد شوید.</div>
+            <div id="requestsAdminList" class="admin-list requests-list"></div>
           </div>
         </section>
       </main>
     </div>
   </div>
   <div id="toast" class="toast"></div>
-  <script src="./assets/js/github-admin.js?v=16.0.0"></script>
-  <script src="./assets/js/sales-admin.js?v=1.0.0"></script>
+  <script src="./assets/js/github-admin.js?v=10.1.0"></script>
   <script>
     document.querySelectorAll('[data-tab-link]').forEach(btn=>btn.addEventListener('click',()=>document.querySelector('.admin-tabs button[data-tab="'+btn.dataset.tabLink+'"]').click()));
     document.querySelectorAll('[data-scroll]').forEach(btn=>btn.addEventListener('click',()=>document.getElementById(btn.dataset.scroll).scrollIntoView({behavior:'smooth'})));

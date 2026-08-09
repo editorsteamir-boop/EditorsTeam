@@ -194,6 +194,22 @@ function closeImage(){
 }
 
 
+function showPayment(title, amount){
+  document.getElementById("paymentTitle").textContent = "پرداخت برای " + title;
+  document.getElementById("paymentAmount").textContent = "مبلغ: " + amount;
+  document.getElementById("paymentModal").classList.add("active");
+}
+function closePayment(){
+  document.getElementById("paymentModal").classList.remove("active");
+}
+function copyCardNumber(){
+  const card = "5041721084236240";
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(card).then(()=>alert("شماره کارت کپی شد"));
+  }else{
+    alert("شماره کارت: " + card);
+  }
+}
 
 const searchInput=document.getElementById("search");
 if(searchInput){
@@ -234,5 +250,10 @@ initTabs(); renderSummary(); renderList(); updateProgress();
 })();
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js?v=16.0.0",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});
+  window.addEventListener("load", async () => {
+    try {
+      const registration = await navigator.serviceWorker.register("./sw.js?v=8.0.0", { updateViaCache: "none" });
+      await registration.update();
+    } catch (_) {}
+  });
 }

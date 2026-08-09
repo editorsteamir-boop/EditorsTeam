@@ -53,14 +53,15 @@
 
   async function loadEditors() {
     try {
-      const response = await fetch("./data/editors.json?v=16.0.0", { cache: "no-cache" });
-      if (!response.ok) return;
+      const response = await fetch("./data/editors.json?v=6.2.0", { cache: "no-cache" });
+      if (!response.ok) throw new Error("editors.json not found");
       const value = await response.json();
-      if (!Array.isArray(value)) return;
+      if (!Array.isArray(value)) throw new Error("editors.json invalid");
       editorsData = value.map(normalizeEditor);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
-      renderEditors();
-    } catch (_) {}
+    } catch (_) {
+      editorsData = readEditorsBackup();
+    }
   }
 
   function info(icon, label, value) {
@@ -75,7 +76,7 @@
       list.innerHTML = '<div class="empty">هنوز ادیتوری ثبت نشده است.</div>';
       return;
     }
-    list.innerHTML = visible.map((editor,editorIndex) => {
+    list.innerHTML = visible.map(editor => {
       const mediaCount = editor.portfolioMedia.length || editor.portfolioImages.length;
       const portfolio = mediaCount
         ? `<a class="editor-portfolio" href="./portfolio.html?id=${encodeURIComponent(editor.id)}" data-editor-id="${escapeText(editor.id)}">مشاهده نمونه‌کارها <span>◀</span></a>`
@@ -83,7 +84,7 @@
       return `<article class="editor-card">
         <div class="editor-header">
           <div class="editor-avatar-wrap">
-            <img class="editor-avatar" loading="lazy" decoding="async" src="${escapeText(editor.image)}" alt="تصویر ${escapeText(editor.fullName)}" loading="${editorIndex<2?'eager':'lazy'}" decoding="async" ${editorIndex<2?'fetchpriority="high"':''} onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
+            <img class="editor-avatar" src="${escapeText(editor.image)}" alt="تصویر ${escapeText(editor.fullName)}" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
             <span class="editor-status ${editor.online ? "online" : "offline"}" title="${editor.online ? "آنلاین" : "آفلاین"}"></span>
           </div>
           <div class="editor-heading">
@@ -115,12 +116,7 @@
     } catch (_) {}
   });
 
-  function initializeEditors() {
-    const cached=readEditorsBackup();
-    editorsData=cached.length?cached:[];
-    if(cached.length) renderEditors();
-    loadEditors();
-  }
+  async function initializeEditors() { await loadEditors(); renderEditors(); }
   window.renderEditors = renderEditors;
   window.EditorsStore = { STORAGE_KEY, loadEditors, renderEditors };
   document.addEventListener("DOMContentLoaded", initializeEditors);

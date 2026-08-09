@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#020617">
 <title>نمونه‌کارهای ادیتور</title>
-<link rel="stylesheet" href="./assets/css/main.css?v=16.0.0">
-<link rel="stylesheet" href="./assets/css/sales.css?v=16.0.0">
-<link rel="stylesheet" href="./assets/css/portfolio.css?v=16.0.0">
+<link rel="stylesheet" href="./assets/css/main.css?v=6.1.0">
+<link rel="stylesheet" href="./assets/css/portfolio.css?v=2.2.0">
 </head>
 <body class="portfolio-body">
 <main class="portfolio-page">
@@ -16,7 +15,7 @@
     <img id="portfolioAvatar" src="./assets/images/default-avatar.svg" alt="تصویر ادیتور">
     <h1 id="portfolioName">در حال دریافت...</h1>
   </header>
-  <p class="portfolio-request-hint">جهت خرید ویدئو آموزشی مربوط به هر پروژه ، بر روی آیکون سبد خرید ضربه بزنید .</p>
+  <p class="portfolio-request-hint">جهت درخواست ویدئوی آموزشی هر کدام از پروژه های زیر ، بر روی علامت + پایین پروژه‌ ضربه بزنید.</p>
   <div id="portfolioGallery" class="gallery-grid portfolio-gallery"></div>
 </main>
 
@@ -26,6 +25,21 @@
   <video id="portfolioModalVideo" controls playsinline hidden></video>
 </div>
 
-<script src="./assets/js/sales-public.js?v=1.0.0"></script>
-<script src="./assets/js/portfolio.js?v=16.0.0" defer></script>
+<div id="requestModal" class="request-modal" hidden>
+  <div class="request-dialog">
+    <button id="requestClose" class="request-close" type="button">×</button>
+    <h2>ثبت درخواست آموزش</h2>
+    <p id="requestProjectLabel" class="request-project-label"></p>
+    <form id="requestForm">
+      <input id="requestMediaIndex" type="hidden">
+      <label>نام و نشان<input id="requestFullName" required autocomplete="name" placeholder="نام و نام خانوادگی"></label>
+      <label>شماره تلفن<input id="requestPhone" required inputmode="tel" autocomplete="tel" placeholder="09xxxxxxxxx"></label>
+      <button type="submit" class="request-submit">ثبت درخواست</button>
+    </form>
+    <p class="request-note">درخواست شما به‌صورت آنلاین برای تیم ادیتورها ارسال می‌شود.</p>
+  </div>
+</div>
+
+<div id="requestToast" class="portfolio-toast">درخواست ثبت شد</div>
+<script src="./assets/js/portfolio.js?v=10.1.0" defer></script>
 </body></html>

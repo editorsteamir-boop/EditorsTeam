@@ -452,36 +452,3 @@ h1 .title-line2{
     letter-spacing:-.15px;
   }
 }
-
-html.skip-splash .splash-screen,html.skip-splash #splash,html.skip-splash #splashIntro{display:none!important;visibility:hidden!important;opacity:0!important}
-
-
-/* v40 - five equal main navigation tabs */
-.nav-inner{
-  display:grid !important;
-  grid-template-columns:repeat(5,minmax(0,1fr)) !important;
-  align-items:stretch !important;
-  gap:3px !important;
-  width:100% !important;
-  max-width:none !important;
-  padding:7px 6px !important;
-  overflow:hidden !important;
-}
-.navbtn{
-  width:100% !important;
-  min-width:0 !important;
-  max-width:none !important;
-  margin:0 !important;
-  padding:10px 2px !important;
-  font-size:13px !important;
-  line-height:1.25 !important;
-  white-space:nowrap !important;
-  text-align:center !important;
-}
-@media(max-width:420px){
-  .nav-inner{gap:2px !important;padding-inline:4px !important}
-  .navbtn{font-size:12px !important;padding-inline:1px !important}
-}
-
-/* v16: splash transition is deliberately short */
-body.splash-done .app{transition:opacity .16s ease,transform .16s ease}
