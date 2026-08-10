@@ -1,6 +1,6 @@
 const CACHE_PREFIX="editors-team-";
-const STATIC_CACHE=`${CACHE_PREFIX}static-v16-fast`;
-const PAGE_CACHE=`${CACHE_PREFIX}pages-v16-fast`;
+const STATIC_CACHE=`${CACHE_PREFIX}static-v17-fonto`;
+const PAGE_CACHE=`${CACHE_PREFIX}pages-v17-fonto`;
 
 self.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil((async()=>{
