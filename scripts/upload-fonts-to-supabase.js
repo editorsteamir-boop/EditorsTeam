@@ -1,12 +1,17 @@
 const fs = require('fs');
 const path = require('path');
+const ws = require('ws');
 const { createClient } = require('@supabase/supabase-js');
+
+global.WebSocket = ws;
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY,
   {
-    realtime: { enabled: false }
+    realtime: {
+      enabled: false
+    }
   }
 );
 
@@ -29,9 +34,10 @@ async function main() {
   for (const file of fonts) {
     const name = path.basename(file);
     const buffer = fs.readFileSync(file);
+
     const { error } = await supabase.storage
       .from('fonto-fonts')
-      .upload(name, buffer, { upsert: true, contentType: 'font/ttf' });
+      .upload(name, buffer, { upsert: true });
 
     if (error) throw error;
 
