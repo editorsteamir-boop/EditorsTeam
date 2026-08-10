@@ -1,19 +1,14 @@
 const fs = require('fs');
 const path = require('path');
+const AdmZip = require('adm-zip');
 const ws = require('ws');
 const { createClient } = require('@supabase/supabase-js');
 
 global.WebSocket = ws;
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  {
-    realtime: {
-      enabled: false
-    }
-  }
-);
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
+  realtime: { enabled: false }
+});
 
 async function findFonts(dir) {
   let files = [];
@@ -27,31 +22,27 @@ async function findFonts(dir) {
   return files;
 }
 
+function extractApk() {
+  const apk = fs.readdirSync('.').find(f => /fonto.*\.apk$/i.test(f));
+  if (!apk) return;
+  console.log('Extracting APK:', apk);
+  const zip = new AdmZip(apk);
+  zip.extractAllTo('apk-extracted', true);
+}
+
 async function main() {
+  extractApk();
   const fonts = await findFonts('.');
   console.log(`Found ${fonts.length} fonts`);
 
   for (const file of fonts) {
     const name = path.basename(file);
     const buffer = fs.readFileSync(file);
-
-    const { error } = await supabase.storage
-      .from('fonto-fonts')
-      .upload(name, buffer, { upsert: true });
-
+    const { error } = await supabase.storage.from('fonto-fonts').upload(name, buffer, { upsert: true });
     if (error) throw error;
-
-    await supabase.from('fonto_fonts').upsert({
-      name,
-      file_path: name,
-      format: path.extname(name).replace('.', '')
-    });
-
+    await supabase.from('fonto_fonts').upsert({ name, file_path: name, format: path.extname(name).replace('.', '') });
     console.log(`Uploaded ${name}`);
   }
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+main().catch(err => { console.error(err); process.exit(1); });
