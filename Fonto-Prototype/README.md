@@ -1,12 +1,20 @@
 # Fonto Prototype v0.1
 
-Prototype structure prepared for the Fonto editor.
+Prototype structure for the Fonto editor.
 
-## Modules
+## Current modules
 - Canvas Editor
 - PNG Text Box Manager
 - Font Controls
-- Local Project Save
-- Supabase migration path
+- Project Draft Save
+- Export Pipeline
 
-Heavy assets (fonts, PNG boxes, backgrounds) will be stored in Supabase Storage.
+## Backend migration plan
+Local storage -> Supabase
+
+Supabase modules:
+- Authentication
+- Storage
+- Database
+
+Heavy assets (fonts, transparent PNG text boxes, backgrounds and previews) will live in Supabase Storage to keep GitHub lightweight and improve loading speed.
