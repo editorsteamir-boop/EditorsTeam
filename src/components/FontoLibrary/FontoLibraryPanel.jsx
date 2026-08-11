@@ -7,18 +7,42 @@ export default function FontoLibraryPanel({ onSelect }) {
   return (
     <div className="fonto-library-panel">
       <h3>Text Boxes</h3>
-      {textBoxes.map((item) => (
-        <button key={item.id} onClick={() => onSelect?.(item)}>
-          {item.name}
-        </button>
-      ))}
+      <div
+        className="fonto-textbox-scroll"
+        style={{
+          display: "flex",
+          overflowX: "auto",
+          gap: "12px",
+          flexWrap: "nowrap",
+        }}
+      >
+        {textBoxes.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => onSelect?.(item)}
+            style={{ minWidth: "120px" }}
+          >
+            {item.title || item.name}
+          </button>
+        ))}
+      </div>
 
       <h3>Styles</h3>
-      {styles.map((item) => (
-        <button key={item.id} onClick={() => onSelect?.(item)}>
-          {item.name}
-        </button>
-      ))}
+      <div
+        className="fonto-style-scroll"
+        style={{
+          display: "flex",
+          overflowX: "auto",
+          gap: "12px",
+          flexWrap: "nowrap",
+        }}
+      >
+        {styles.map((item) => (
+          <button key={item.id} onClick={() => onSelect?.(item)}>
+            {item.name}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
