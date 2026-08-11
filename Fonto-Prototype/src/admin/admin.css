@@ -1,0 +1,25 @@
+.fonto-admin-card{
+  padding:20px;
+  border-radius:16px;
+  background:#111;
+  color:#fff;
+}
+
+.fonto-admin-field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.fonto-admin-field input{
+  padding:10px;
+  border-radius:8px;
+}
+
+#adminUploadBox{
+  padding:12px 20px;
+  border:0;
+  border-radius:10px;
+  cursor:pointer;
+}
