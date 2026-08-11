@@ -1,0 +1,16 @@
+{
+  "source": "Fonto.apk",
+  "type": "text_boxes",
+  "layout": "horizontal_scroll",
+  "note": "Extracted textbox candidates from Fonto assets. Fonts are excluded.",
+  "items": [
+    {"name":"borderBox","asset":"assets/flutter_assets/assets/images/labels/borderBox.jpg"},
+    {"name":"standardBox","asset":"assets/flutter_assets/assets/images/labels/standardBox.png"},
+    {"name":"roundedBox3DShadow","asset":"assets/flutter_assets/assets/images/labels/roundedBox3DShadow.png"},
+    {"name":"gradientBox","asset":"assets/flutter_assets/assets/images/labels/gradientBox.png"},
+    {"name":"glassBox","asset":"assets/flutter_assets/assets/images/labels/glassBox.png"},
+    {"name":"shadowBox","asset":"assets/flutter_assets/assets/images/labels/shadowBox.png"},
+    {"name":"quotesBox1","asset":"assets/flutter_assets/assets/images/labels/quotesBox1.png"},
+    {"name":"quotesDialogueBox","asset":"assets/flutter_assets/assets/images/labels/quotesDialogueBox.png"}
+  ]
+}
