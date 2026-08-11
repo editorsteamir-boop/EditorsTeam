@@ -1,6 +1,6 @@
 const CACHE_PREFIX="editors-team-";
-const STATIC_CACHE=`${CACHE_PREFIX}static-v19-fonto-library`;
-const PAGE_CACHE=`${CACHE_PREFIX}pages-v19-fonto-library`;
+const STATIC_CACHE=`${CACHE_PREFIX}static-v20-fonto-transparent-assets`;
+const PAGE_CACHE=`${CACHE_PREFIX}pages-v20-fonto-transparent-assets`;
 
 self.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil((async()=>{

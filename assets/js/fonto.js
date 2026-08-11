@@ -15,7 +15,7 @@
     unlocked: false,
     canvas: null,
     ctx: null,
-    bg: "transparent",
+    bg: "#1769e0",
     bgImage: null,
     textBoxImage: null,
     textBox: null,
@@ -23,7 +23,7 @@
     text: "متن خود را بنویسید",
     font: "Tahoma",
     fontUrl: "",
-    size: 82,
+    size: 44,
     color: "#ffffff",
     stroke: "#000000",
     strokeWidth: 0,
@@ -60,9 +60,13 @@
     note: "یادداشت",
     brush: "براش",
     separator: "خطوط",
+    pixel: "پیکسلی",
+    dotted: "نقطه‌ای",
+    instagram: "اینستاگرام",
   };
 
   let textBoxAssets = [];
+  let quickStyleAssets = [];
   let activeCategory = "all";
 
   function status(text, type = "neutral") {
@@ -181,6 +185,31 @@
       .filter((item) => item.url && item.preview);
   }
 
+  async function getQuickStyles() {
+    const rows = await api(
+      "fonto_styles",
+      "select=*&is_active=eq.true&order=sort_order.asc,created_at.desc",
+    );
+    return rows
+      .map((item) => {
+        const effects = item.effects_json || {};
+        const url = publicUrl("fonto-text-boxes", item.preview_url);
+        return {
+          ...item,
+          title: effects.label || `ترند ${Number(item.sort_order || 0).toLocaleString("fa-IR")}`,
+          url,
+          preview: url,
+          text_area: {
+            x: 0.5,
+            y: 0.5,
+            text_color: effects.text_color || "#ffffff",
+          },
+          source: "quick",
+        };
+      })
+      .filter((item) => item.url && item.preview);
+  }
+
   async function cacheFetch(url) {
     if (!("caches" in window)) return fetch(url);
     const cache = await caches.open(FONT_CACHE);
@@ -267,7 +296,7 @@
       <button id="fontoClearTextBox" type="button" class="fonto-action fonto-clear-asset">حذف باکس انتخاب‌شده</button>
     `;
 
-    const textPanel = controls.querySelector(".fonto-panel");
+    const textPanel = controls.querySelector(".fonto-font-panel") || controls.querySelector(".fonto-panel");
     if (textPanel) textPanel.after(panel);
     else controls.prepend(panel);
 
@@ -280,7 +309,8 @@
     $("fontoClearTextBox")?.addEventListener("click", () => {
       state.textBox = null;
       state.textBoxImage = null;
-      document.querySelectorAll(".fonto-asset-card").forEach((card) => card.classList.remove("active"));
+      document.querySelectorAll(".fonto-asset-card,.fonto-template-card").forEach((card) => card.classList.remove("active"));
+      renderQuickStyles();
       draw();
     });
     return panel;
@@ -288,38 +318,37 @@
 
   function ensurePresetPanel() {
     let panel = $("fontoPresetPanel");
-    if (!panel) {
-      const controls = document.querySelector(".fonto-controls");
-      if (!controls) return null;
-      panel = document.createElement("section");
-      panel.id = "fontoPresetPanel";
-      panel.className = "fonto-panel";
-      panel.innerHTML = '<h3>استایل‌های سریع</h3><div id="fontoPresetGrid" class="fonto-template-grid"></div>';
-      const libraryPanel = ensureTextBoxPanel();
-      if (libraryPanel) libraryPanel.after(panel);
-      else controls.prepend(panel);
-    }
-
-    const grid = $("fontoPresetGrid");
-    if (!grid || grid.children.length) return panel;
-    for (const [key, label] of PRESETS) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = `fonto-template-card${key === "none" ? " active" : ""}`;
-      button.dataset.preset = key;
-      button.innerHTML = `<span class="fonto-template-preview ${key}"><i></i></span><small>${label}</small>`;
-      button.addEventListener("click", () => {
-        state.preset = key;
-        state.textBox = null;
-        state.textBoxImage = null;
-        grid.querySelectorAll(".fonto-template-card").forEach((item) => {
-          item.classList.toggle("active", item === button);
-        });
-        document.querySelectorAll(".fonto-asset-card").forEach((card) => card.classList.remove("active"));
-        draw();
-      });
-      grid.appendChild(button);
-    }
+    if (panel) return panel;
+    const controls = document.querySelector(".fonto-controls");
+    if (!controls) return null;
+    panel = document.createElement("section");
+    panel.id = "fontoPresetPanel";
+    panel.className = "fonto-panel fonto-library-panel fonto-quick-panel";
+    panel.innerHTML = `
+      <div class="fonto-library-heading">
+        <div>
+          <h3>استایل‌های سریع</h3>
+          <small id="fontoQuickStyleCount">در حال دریافت...</small>
+        </div>
+        <div class="fonto-library-nav" aria-label="پیمایش استایل‌ها">
+          <button id="fontoQuickPrev" type="button" aria-label="قبلی">‹</button>
+          <button id="fontoQuickNext" type="button" aria-label="بعدی">›</button>
+        </div>
+      </div>
+      <div id="fontoPresetGrid" class="fonto-template-grid" aria-live="polite">
+        <span class="fonto-library-message">در حال دریافت استایل‌های PNG...</span>
+      </div>
+      <p class="fonto-library-help">۳۰ باکس PNG ترند؛ برای انتخاب، روی هر طرح بزنید.</p>
+    `;
+    const libraryPanel = ensureTextBoxPanel();
+    if (libraryPanel) libraryPanel.after(panel);
+    else controls.prepend(panel);
+    $("fontoQuickPrev")?.addEventListener("click", () => {
+      $("fontoPresetGrid")?.scrollBy({ left: 280, behavior: "smooth" });
+    });
+    $("fontoQuickNext")?.addEventListener("click", () => {
+      $("fontoPresetGrid")?.scrollBy({ left: -280, behavior: "smooth" });
+    });
     return panel;
   }
 
@@ -386,6 +415,46 @@
     }
   }
 
+  function renderQuickStyles() {
+    const wrap = $("fontoPresetGrid");
+    const count = $("fontoQuickStyleCount");
+    if (!wrap) return;
+    if (count) count.textContent = `${quickStyleAssets.length.toLocaleString("fa-IR")} استایل PNG`;
+    wrap.replaceChildren();
+
+    if (!quickStyleAssets.length) {
+      const message = document.createElement("span");
+      message.className = "fonto-library-message";
+      message.textContent = "استایل PNG در دسترس نیست.";
+      wrap.appendChild(message);
+      return;
+    }
+
+    for (const style of quickStyleAssets) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `fonto-template-card${state.textBox?.id === style.id ? " active" : ""}`;
+      button.dataset.styleId = style.id;
+      button.title = style.title;
+
+      const preview = document.createElement("span");
+      preview.className = "fonto-template-preview";
+      const image = document.createElement("img");
+      image.src = style.preview;
+      image.alt = style.title;
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.addEventListener("error", () => preview.classList.add("is-missing"));
+      preview.appendChild(image);
+
+      const title = document.createElement("small");
+      title.textContent = style.title;
+      button.append(preview, title);
+      button.addEventListener("click", () => chooseTextBox(style));
+      wrap.appendChild(button);
+    }
+  }
+
   function syncPositionControls() {
     if ($("fontoX")) $("fontoX").value = String(state.x);
     if ($("fontoY")) $("fontoY").value = String(state.y);
@@ -401,11 +470,13 @@
       const textArea = box.text_area || {};
       if (Number.isFinite(Number(textArea.x))) state.x = Number(textArea.x) > 1 ? Number(textArea.x) / 720 : Number(textArea.x);
       if (Number.isFinite(Number(textArea.y))) state.y = Number(textArea.y) > 1 ? Number(textArea.y) / 1280 : Number(textArea.y);
+      if (/^#[0-9a-f]{6}$/i.test(textArea.text_color || "")) {
+        state.color = textArea.text_color;
+        if ($("fontoColor")) $("fontoColor").value = state.color;
+      }
       syncPositionControls();
-      document.querySelectorAll(".fonto-template-card").forEach((item) => {
-        item.classList.toggle("active", item.dataset.preset === "none");
-      });
       renderTextBoxes();
+      renderQuickStyles();
       draw();
     };
     image.onerror = () => status(`بارگذاری باکس «${box.title || ""}» ناموفق بود.`, "bad");
@@ -424,6 +495,20 @@
       const wrap = $("fontoTextBoxes");
       if (wrap) wrap.innerHTML = '<span class="fonto-library-message">کتابخانه در دسترس نیست؛ دوباره تلاش کنید.</span>';
       const count = $("fontoTextBoxCount");
+      if (count) count.textContent = "خطا در دریافت";
+    }
+  }
+
+  async function populateQuickStyles() {
+    ensurePresetPanel();
+    try {
+      quickStyleAssets = await getQuickStyles();
+      renderQuickStyles();
+    } catch (error) {
+      console.error(error);
+      const wrap = $("fontoPresetGrid");
+      if (wrap) wrap.innerHTML = '<span class="fonto-library-message">استایل‌های سریع در دسترس نیستند.</span>';
+      const count = $("fontoQuickStyleCount");
       if (count) count.textContent = "خطا در دریافت";
     }
   }
@@ -508,7 +593,7 @@
     const mobile = window.matchMedia("(max-width:760px)").matches;
     const target = mobile ? Math.min(parentWidth, 300) : Math.min(parentWidth, 520);
     const width = Math.max(230, target);
-    const height = Math.round((width * 16) / 9);
+    const height = Math.round((width * 4) / 9);
     const density = Math.min(devicePixelRatio || 1, 2);
     canvas.width = width * density;
     canvas.height = height * density;
@@ -518,12 +603,19 @@
     draw();
   }
 
+  function syncStickyComposerOffset() {
+    const nav = document.querySelector(".bottom-nav");
+    const navHeight = nav?.getBoundingClientRect().height || 0;
+    const top = Math.max(12, Math.round(navHeight + 20));
+    document.documentElement.style.setProperty("--fonto-composer-top", `${top}px`);
+  }
+
   async function draw() {
     const canvas = state.canvas;
     const ctx = state.ctx;
     if (!canvas || !ctx) return;
     const width = Number(canvas.dataset.w) || 300;
-    const height = Number(canvas.dataset.h) || 533;
+    const height = Number(canvas.dataset.h) || 133;
     ctx.clearRect(0, 0, width, height);
 
     if (state.bgImage) {
@@ -534,7 +626,7 @@
     }
 
     if (state.textBoxImage) {
-      const fit = Math.min(width / state.textBoxImage.width, height / state.textBoxImage.height);
+      const fit = Math.min((width * 0.96) / state.textBoxImage.width, (height * 0.92) / state.textBoxImage.height);
       const boxWidth = state.textBoxImage.width * fit;
       const boxHeight = state.textBoxImage.height * fit;
       ctx.drawImage(
@@ -671,13 +763,13 @@
 
     bind("fontoReset", "click", () => {
       Object.assign(state, {
-        bg: "transparent",
+        bg: "#1769e0",
         bgImage: null,
         textBox: null,
         textBoxImage: null,
         preset: "none",
         text: "متن خود را بنویسید",
-        size: 82,
+        size: 44,
         color: "#ffffff",
         stroke: "#000000",
         strokeWidth: 0,
@@ -689,10 +781,12 @@
         y: 0.5,
         scale: 1,
       });
-      document.querySelectorAll(".fonto-template-card").forEach((item) => {
-        item.classList.toggle("active", item.dataset.preset === "none");
-      });
+      if ($("fontoText")) $("fontoText").value = state.text;
+      if ($("fontoSize")) $("fontoSize").value = String(state.size);
+      if ($("fontoColor")) $("fontoColor").value = state.color;
+      if ($("fontoBgColor")) $("fontoBgColor").value = state.bg;
       renderTextBoxes();
+      renderQuickStyles();
       syncPositionControls();
       draw();
     });
@@ -736,14 +830,16 @@
     ensureTextBoxPanel();
     ensurePresetPanel();
     status("در حال دریافت دارایی‌های ابزار فونت...", "checking");
-    await Promise.allSettled([populateFonts(), populateTextBoxes()]);
+    await Promise.allSettled([populateFonts(), populateTextBoxes(), populateQuickStyles()]);
     status("ابزار فونت آماده است.", "ok");
+    syncStickyComposerOffset();
     resize();
   }
 
   function activate() {
-    if (hasSession()) unlock();
-    else $("fontoGate")?.classList.remove("hidden");
+    if (hasSession()) return unlock();
+    $("fontoGate")?.classList.remove("hidden");
+    return Promise.resolve();
   }
 
   function applyVisibleLabels() {
@@ -764,7 +860,11 @@
       if (event.key === "Enter") verify();
     });
     bindControls();
-    window.addEventListener("resize", () => state.unlocked && resize());
+    window.addEventListener("resize", () => {
+      if (!state.unlocked) return;
+      syncStickyComposerOffset();
+      resize();
+    });
     if (location.hash === "#fonto") activate();
   });
 

@@ -234,5 +234,5 @@ initTabs(); renderSummary(); renderList(); updateProgress();
 })();
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js?v=19.0.0",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});
+  navigator.serviceWorker.register("./sw.js?v=20.0.0",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});
 }
