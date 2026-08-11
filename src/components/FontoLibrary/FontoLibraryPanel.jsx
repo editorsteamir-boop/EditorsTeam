@@ -5,11 +5,12 @@ export default function FontoLibraryPanel({ onSelect }) {
   const { textBoxes, styles } = useFontoAssets();
 
   const cardStyle = {
-    minWidth: "150px",
+    minWidth: "180px",
     flex: "0 0 auto",
-    padding: "16px",
+    padding: "12px",
     borderRadius: "16px",
     cursor: "pointer",
+    overflow: "hidden",
   };
 
   const rowStyle = {
@@ -22,32 +23,31 @@ export default function FontoLibraryPanel({ onSelect }) {
     WebkitOverflowScrolling: "touch",
   };
 
+  const renderCard = (item, type = "textbox") => (
+    <button key={item.id} onClick={() => onSelect?.(item)} style={cardStyle}>
+      {(item.preview_url || item.image_url) && (
+        <img
+          src={item.preview_url || item.image_url}
+          alt={item.title || item.name || type}
+          style={{ width: "100%", height: "120px", objectFit: "contain" }}
+        />
+      )}
+      <div>{item.title || item.name}</div>
+    </button>
+  );
+
   return (
     <div className="fonto-library-panel">
       <h3>Text Boxes</h3>
       <div className="fonto-textbox-scroll" style={rowStyle}>
-        {textBoxes.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onSelect?.(item)}
-            style={cardStyle}
-          >
-            {item.title || item.name}
-          </button>
-        ))}
+        {textBoxes
+          .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+          .map((item) => renderCard(item))}
       </div>
 
       <h3>Styles</h3>
       <div className="fonto-style-scroll" style={rowStyle}>
-        {styles.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onSelect?.(item)}
-            style={cardStyle}
-          >
-            {item.name}
-          </button>
-        ))}
+        {styles.map((item) => renderCard(item, "style"))}
       </div>
     </div>
   );
