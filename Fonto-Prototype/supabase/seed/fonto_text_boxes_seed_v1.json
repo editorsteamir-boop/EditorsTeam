@@ -1,0 +1,37 @@
+[
+  {
+    "title": "borderBox",
+    "category": "basic",
+    "image_url": "",
+    "preview_url": "",
+    "text_area": {}
+  },
+  {
+    "title": "borderText",
+    "category": "text",
+    "image_url": "",
+    "preview_url": "",
+    "text_area": {}
+  },
+  {
+    "title": "glassBox",
+    "category": "effect",
+    "image_url": "",
+    "preview_url": "",
+    "text_area": {}
+  },
+  {
+    "title": "gradientBox",
+    "category": "effect",
+    "image_url": "",
+    "preview_url": "",
+    "text_area": {}
+  },
+  {
+    "title": "shadowBox",
+    "category": "effect",
+    "image_url": "",
+    "preview_url": "",
+    "text_area": {}
+  }
+]
