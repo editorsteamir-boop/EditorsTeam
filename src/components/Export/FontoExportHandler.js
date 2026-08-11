@@ -1,8 +1,14 @@
-export default function FontoExportHandler({ canvasElement }) {
+export default function FontoExportHandler({ canvasElement, filename = 'fonto-export.png' }) {
   const exportPNG = () => {
     if (!canvasElement) return null;
 
-    return canvasElement.toDataURL('image/png');
+    const dataUrl = canvasElement.toDataURL('image/png');
+
+    return {
+      filename,
+      format: 'png',
+      dataUrl,
+    };
   };
 
   return {
