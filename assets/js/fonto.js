@@ -1,50 +1,772 @@
-/* EditorsTeam Fonto Pro — Supabase fonts + PNG text boxes + built-in presets */
+/* EditorsTeam Fonto Pro — Supabase fonts, textbox previews, and canvas editor */
 (() => {
-'use strict';
-const SUPABASE_URL='https://yxzekduddsewulkbdcoz.supabase.co';
-const SUPABASE_KEY='sb_publishable_rr0hMzT-HuRk4a-frH4QPQ_ZWCgQyHB';
-const SESSION_KEY='editorsTeam.fonto.access.v2', FONT_CACHE='editorsTeam-fonto-fonts-v3';
-const $=id=>document.getElementById(id), clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-const loaded=new Map();
-const state={unlocked:false,canvas:null,ctx:null,bg:'transparent',bgImage:null,textBoxImage:null,textBox:null,preset:'none',text:'متن خود را بنویسید',font:'Tahoma',fontUrl:'',size:82,color:'#fff',stroke:'#000',strokeWidth:0,shadow:true,shadowBlur:12,gradient:false,gradientA:'#fff',gradientB:'#18d96b',rotate:0,x:.5,y:.5,scale:1};
-const PRESETS=[
-  ['none','بدون باکس'],['border','حاشیه'],['glass','شیشه‌ای'],['gradient','گرادیان'],
-  ['quote','نقل‌قول'],['note','یادداشت'],['banner','بنر'],['neon','نئون'],['solid','ساده']
-];
-function status(t,c='neutral'){const e=$('fontoStatus');if(e){e.textContent=t;e.className='fonto-status '+c}}
-function remember(){sessionStorage.setItem(SESSION_KEY,JSON.stringify({ok:true,at:Date.now()}))}
-function hasSession(){try{const s=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');return !!(s?.ok&&Date.now()-s.at<28800000)}catch{return false}}
-function encodeStoragePath(p){return String(p||'').replace(/^\/+/, '').split('/').map(encodeURIComponent).join('/')}
-function publicUrl(bucket,path){if(!path)return '';if(/^https?:\/\//i.test(path))return path;const clean=String(path).replace(new RegExp(`^${bucket}/`),'');return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${encodeStoragePath(clean)}`}
-async function api(table,query){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`,{headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,Accept:'application/json'}});if(!r.ok)throw new Error(`${table} ${r.status}`);return r.json()}
-async function verify(){const input=$('fontoPassword'),password=input?.value||'';if(!password)return status('لطفاً رمز ورود را وارد کنید.','bad');const b=$('fontoLoginBtn');if(b){b.disabled=true;b.textContent='در حال بررسی...'}try{const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/verify_fonto_password`,{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({input_password:password})});const ok=r.ok?await r.json():false;if(ok===true){remember();unlock()}else status('رمز ورود صحیح نیست.','bad')}catch{status('اتصال به Supabase برقرار نشد.','bad')}finally{if(b){b.disabled=false;b.textContent='ورود به فونتو'}if(input)input.value=''}}
-async function getFonts(){const rows=await api('fonto_fonts','select=*&is_active=eq.true&order=name.asc');return rows.map(x=>{const file=x.file_url||x.file_name;return {name:x.name||x.family||file?.replace(/\.(ttf|otf|woff2?)$/i,''),url:publicUrl('fonto-fonts',file)}}).filter(x=>x.name&&x.url)}
-async function getTextBoxes(){const rows=await api('fonto_text_boxes','select=*&is_active=eq.true&order=sort_order.asc,created_at.desc');return rows.map(x=>({...x,url:publicUrl('fonto-text-boxes',x.image_url)})).filter(x=>x.url)}
-async function cacheFetch(url){if(!('caches'in window))return fetch(url);const c=await caches.open(FONT_CACHE),hit=await c.match(url);if(hit)return hit;const r=await fetch(url,{mode:'cors'});if(!r.ok)throw new Error(`font ${r.status}`);await c.put(url,r.clone());return r}
-function hash(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return Math.abs(h)}
-async function loadFont(name,url){if(!url)return name;if(loaded.has(url))return loaded.get(url);const r=await cacheFetch(url),blob=await r.blob(),obj=URL.createObjectURL(blob),family=`Fonto_${hash(url)}`,face=new FontFace(family,`url(${obj})`);await face.load();document.fonts.add(face);loaded.set(url,family);return family}
-async function populateFonts(){const s=$('fontoFont');if(!s)return;try{const fonts=await getFonts();s.innerHTML='';for(const f of fonts){const o=document.createElement('option');o.value=f.name;o.textContent=f.name;o.dataset.url=f.url;s.appendChild(o)}if(!fonts.length)throw new Error('empty');state.font=s.options[0].value;state.fontUrl=s.options[0].dataset.url}catch(e){console.error(e);s.innerHTML='<option value="Tahoma">Tahoma</option><option value="Arial">Arial</option>';state.font='Tahoma';state.fontUrl=''}}
-function ensurePresetPanel(){let panel=$('fontoPresetPanel');if(panel)return panel;const controls=document.querySelector('.fonto-controls');if(!controls)return null;panel=document.createElement('div');panel.id='fontoPresetPanel';panel.className='fonto-panel';panel.innerHTML=`<h3>باکس‌های آماده</h3><div id="fontoPresetGrid" class="fonto-template-grid"></div>`;controls.insertBefore(panel,controls.firstChild);const grid=$('fontoPresetGrid');PRESETS.forEach(([key,label])=>{const b=document.createElement('button');b.type='button';b.className='fonto-template-card'+(key==='none'?' active':'');b.dataset.preset=key;b.innerHTML=`<span class="fonto-template-preview ${key}"><i></i></span><small>${label}</small>`;b.addEventListener('click',()=>{state.preset=key;state.textBox=null;state.textBoxImage=null;grid.querySelectorAll('.fonto-template-card').forEach(x=>x.classList.toggle('active',x===b));draw()});grid.appendChild(b)});return panel}
-function ensureTextBoxPanel(){let panel=$('fontoTextBoxesPanel');if(panel)return panel;const controls=document.querySelector('.fonto-controls');if(!controls)return null;panel=document.createElement('div');panel.id='fontoTextBoxesPanel';panel.className='fonto-panel';panel.innerHTML='<h3>PNGهای آپلودی</h3><div id="fontoTextBoxes" class="fonto-presets"><span>در حال دریافت...</span></div><button id="fontoClearTextBox" type="button" class="fonto-action">حذف PNG انتخاب‌شده</button>';const preset=$('fontoPresetPanel');preset?.after(panel);$('fontoClearTextBox')?.addEventListener('click',()=>{state.textBox=null;state.textBoxImage=null;draw()});return panel}
-async function chooseTextBox(box){const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{state.preset='none';state.textBox=box;state.textBoxImage=im;document.querySelectorAll('.fonto-template-card').forEach(x=>x.classList.toggle('active',x.dataset.preset==='none'));const a=box.text_area||{};if(Number.isFinite(+a.x))state.x=+a.x>1?+a.x/720:+a.x;if(Number.isFinite(+a.y))state.y=+a.y>1?+a.y/1280:+a.y;draw()};im.onerror=()=>status(`لود تکس‌باکس «${box.title||''}» ناموفق بود.`,'bad');im.src=box.url}
-async function populateTextBoxes(){ensureTextBoxPanel();const wrap=$('fontoTextBoxes');if(!wrap)return;try{const boxes=await getTextBoxes();wrap.innerHTML='';for(const box of boxes){const b=document.createElement('button');b.type='button';b.textContent=box.title||box.category||'Text Box';b.title=box.category||'';b.addEventListener('click',()=>chooseTextBox(box));wrap.appendChild(b)}if(!boxes.length)wrap.innerHTML='<span>هنوز PNGای آپلود نشده؛ باکس‌های آماده بالا همیشه قابل استفاده‌اند.</span>'}catch(e){console.error(e);wrap.innerHTML='<span>PNGهای Supabase فعلاً در دسترس نیستند؛ باکس‌های آماده بالا فعال‌اند.</span>'}}
-function roundRect(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
-function drawPreset(ctx,kind,tw,size){if(kind==='none')return;const padX=Math.max(28,size*.42),padY=Math.max(18,size*.24),w=Math.min(tw+padX*2,620),h=size+padY*2,x=-w/2,y=-h/2,r=Math.max(10,size*.16);ctx.save();ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;roundRect(ctx,x,y,w,h,r);
-  if(kind==='border'){ctx.strokeStyle='rgba(255,255,255,.92)';ctx.lineWidth=Math.max(2,size*.035);ctx.stroke()}
-  else if(kind==='glass'){ctx.fillStyle='rgba(255,255,255,.18)';ctx.fill();ctx.strokeStyle='rgba(255,255,255,.42)';ctx.lineWidth=2;ctx.stroke()}
-  else if(kind==='gradient'){const g=ctx.createLinearGradient(x,0,x+w,0);g.addColorStop(0,'#7c3aed');g.addColorStop(1,'#06b6d4');ctx.fillStyle=g;ctx.fill()}
-  else if(kind==='quote'){ctx.fillStyle='rgba(10,12,22,.72)';ctx.fill();ctx.font=`700 ${Math.max(34,size*.55)}px Georgia`;ctx.fillStyle='rgba(255,255,255,.8)';ctx.fillText('“',x+28,y+28)}
-  else if(kind==='note'){ctx.fillStyle='#fff59d';ctx.fill();ctx.strokeStyle='#efd94e';ctx.lineWidth=2;ctx.stroke()}
-  else if(kind==='banner'){ctx.fillStyle='rgba(0,0,0,.68)';ctx.fill()}
-  else if(kind==='neon'){ctx.fillStyle='#070b18';ctx.fill();ctx.strokeStyle='#22d3ee';ctx.lineWidth=3;ctx.shadowColor='#22d3ee';ctx.shadowBlur=16;ctx.stroke()}
-  else if(kind==='solid'){ctx.fillStyle='rgba(255,255,255,.2)';ctx.fill()}
-  ctx.restore()}
-function resize(){const c=state.canvas;if(!c)return;const parent=Math.floor(c.parentElement.getBoundingClientRect().width);const mobile=window.matchMedia('(max-width:760px)').matches;const target=mobile?Math.min(parent,300):Math.min(parent,520);const w=Math.max(230,target),h=Math.round(w*16/9),d=Math.min(devicePixelRatio||1,2);c.width=w*d;c.height=h*d;c.dataset.w=w;c.dataset.h=h;state.ctx.setTransform(d,0,0,d,0,0);draw()}
-async function draw(){const c=state.canvas,x=state.ctx;if(!c||!x)return;const w=+c.dataset.w||300,h=+c.dataset.h||533;x.clearRect(0,0,w,h);if(state.bgImage)x.drawImage(state.bgImage,0,0,w,h);else if(state.bg!=='transparent'){x.fillStyle=state.bg;x.fillRect(0,0,w,h)}if(state.textBoxImage)x.drawImage(state.textBoxImage,0,0,w,h);let family=state.font;try{if(state.fontUrl)family=await loadFont(state.font,state.fontUrl)}catch(e){console.warn(e)}x.save();x.translate(state.x*w,state.y*h);x.rotate(state.rotate*Math.PI/180);x.scale(state.scale,state.scale);x.font=`800 ${state.size}px "${family}",Tahoma,Arial,sans-serif`;x.textAlign='center';x.textBaseline='middle';const m=x.measureText(state.text);drawPreset(x,state.preset,m.width,state.size);if(state.shadow){x.shadowColor='#000';x.shadowBlur=state.shadowBlur;x.shadowOffsetY=5}if(state.strokeWidth){x.lineWidth=state.strokeWidth;x.strokeStyle=state.stroke;x.strokeText(state.text,0,0)}if(state.gradient){const g=x.createLinearGradient(-m.width/2,0,m.width/2,0);g.addColorStop(0,state.gradientA);g.addColorStop(1,state.gradientB);x.fillStyle=g}else x.fillStyle=state.preset==='note'?'#171717':state.color;x.fillText(state.text,0,0);x.restore()}
-function bind(id,event,fn){$(id)?.addEventListener(event,fn)}
-function bindControls(){bind('fontoText','input',e=>{state.text=e.target.value;draw()});bind('fontoFont','change',async e=>{const o=e.target.selectedOptions[0];state.font=o.value;state.fontUrl=o.dataset.url||'';try{await loadFont(state.font,state.fontUrl)}catch{}draw()});[['fontoSize','size'],['fontoStrokeWidth','strokeWidth'],['fontoShadowBlur','shadowBlur'],['fontoRotate','rotate'],['fontoX','x'],['fontoY','y'],['fontoScale','scale']].forEach(([id,k])=>bind(id,'input',e=>{state[k]=+e.target.value;draw()}));[['fontoColor','color'],['fontoStroke','stroke'],['fontoGradientA','gradientA'],['fontoGradientB','gradientB']].forEach(([id,k])=>bind(id,'input',e=>{state[k]=e.target.value;draw()}));bind('fontoShadow','change',e=>{state.shadow=e.target.checked;draw()});bind('fontoGradient','change',e=>{state.gradient=e.target.checked;draw()});document.querySelectorAll('[data-fonto-bg]').forEach(b=>b.addEventListener('click',()=>{state.bg=b.dataset.fontoBg;state.bgImage=null;draw()}));bind('fontoBgColor','input',e=>{state.bg=e.target.value;state.bgImage=null;draw()});bind('fontoBgImage','change',e=>{const f=e.target.files?.[0];if(!f)return;const im=new Image();im.onload=()=>{state.bgImage=im;state.bg='image';draw()};im.src=URL.createObjectURL(f)});bind('fontoDownload','click',async()=>{await draw();const a=document.createElement('a');a.download=`fonto-${Date.now()}.png`;a.href=state.canvas.toDataURL('image/png');a.click()});bind('fontoReset','click',()=>{Object.assign(state,{bg:'transparent',bgImage:null,textBox:null,textBoxImage:null,preset:'none',text:'متن خود را بنویسید',size:82,color:'#fff',stroke:'#000',strokeWidth:0,shadow:true,shadowBlur:12,gradient:false,rotate:0,x:.5,y:.5,scale:1});document.querySelectorAll('.fonto-template-card').forEach(x=>x.classList.toggle('active',x.dataset.preset==='none'));draw()});bind('fontoLogout','click',()=>{sessionStorage.removeItem(SESSION_KEY);location.reload()});let drag=false,c=$('fontoCanvas');if(c){c.addEventListener('pointerdown',e=>{drag=true;e.preventDefault()});window.addEventListener('pointermove',e=>{if(!drag)return;const r=c.getBoundingClientRect();state.x=clamp((e.clientX-r.left)/r.width,0,1);state.y=clamp((e.clientY-r.top)/r.height,0,1);draw()});window.addEventListener('pointerup',()=>drag=false)}}
-async function unlock(){if(state.unlocked)return;state.unlocked=true;$('fontoGate')?.classList.add('hidden');$('fontoEditor')?.classList.remove('hidden');state.canvas=$('fontoCanvas');state.ctx=state.canvas?.getContext('2d');ensurePresetPanel();status('در حال دریافت دارایی‌های Fonto...','checking');await Promise.allSettled([populateFonts(),populateTextBoxes()]);status('Fonto آماده است.','ok');resize()}
-function activate(){if(hasSession())unlock();else $('fontoGate')?.classList.remove('hidden')}
-document.addEventListener('DOMContentLoaded',()=>{bind('fontoLoginBtn','click',verify);bind('fontoPassword','keydown',e=>{if(e.key==='Enter')verify()});bindControls();window.addEventListener('resize',()=>state.unlocked&&resize());if(location.hash==='#fonto')activate()});
-window.initFonto=activate;
+  "use strict";
+
+  const SUPABASE_URL = "https://yxzekduddsewulkbdcoz.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_rr0hMzT-HuRk4a-frH4QPQ_ZWCgQyHB";
+  const SESSION_KEY = "editorsTeam.fonto.access.v2";
+  const FONT_CACHE = "editorsTeam-fonto-fonts-v3";
+
+  const $ = (id) => document.getElementById(id);
+  const clamp = (number, min, max) => Math.max(min, Math.min(max, number));
+  const loadedFonts = new Map();
+
+  const state = {
+    unlocked: false,
+    canvas: null,
+    ctx: null,
+    bg: "transparent",
+    bgImage: null,
+    textBoxImage: null,
+    textBox: null,
+    preset: "none",
+    text: "متن خود را بنویسید",
+    font: "Tahoma",
+    fontUrl: "",
+    size: 82,
+    color: "#ffffff",
+    stroke: "#000000",
+    strokeWidth: 0,
+    shadow: true,
+    shadowBlur: 12,
+    gradient: false,
+    gradientA: "#ffffff",
+    gradientB: "#18d96b",
+    rotate: 0,
+    x: 0.5,
+    y: 0.5,
+    scale: 1,
+  };
+
+  const PRESETS = [
+    ["none", "بدون باکس"],
+    ["border", "حاشیه"],
+    ["glass", "شیشه‌ای"],
+    ["gradient", "گرادیان"],
+    ["quote", "نقل‌قول"],
+    ["note", "یادداشت"],
+    ["banner", "بنر"],
+    ["neon", "نئون"],
+    ["solid", "ساده"],
+  ];
+
+  const CATEGORY_LABELS = {
+    all: "همه",
+    simple: "ساده",
+    quote: "نقل‌قول",
+    glass: "شیشه‌ای",
+    "3d": "سه‌بعدی",
+    neon: "نئون",
+    note: "یادداشت",
+    brush: "براش",
+    separator: "خطوط",
+  };
+
+  let textBoxAssets = [];
+  let activeCategory = "all";
+
+  function status(text, type = "neutral") {
+    const element = $("fontoStatus");
+    if (!element) return;
+    element.textContent = text;
+    element.className = `fonto-status ${type}`;
+  }
+
+  function remember() {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ok: true, at: Date.now() }));
+  }
+
+  function hasSession() {
+    try {
+      const session = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null");
+      return Boolean(session?.ok && Date.now() - session.at < 28_800_000);
+    } catch {
+      return false;
+    }
+  }
+
+  function encodeStoragePath(path) {
+    return String(path || "")
+      .replace(/^\/+/, "")
+      .split("/")
+      .map(encodeURIComponent)
+      .join("/");
+  }
+
+  function publicUrl(bucket, path) {
+    if (!path) return "";
+    if (/^https?:\/\//i.test(path)) return path;
+    const cleanPath = String(path).replace(new RegExp(`^${bucket}/`), "");
+    return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${encodeStoragePath(cleanPath)}`;
+  }
+
+  async function api(table, query) {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        Accept: "application/json",
+      },
+    });
+    if (!response.ok) throw new Error(`${table} ${response.status}`);
+    return response.json();
+  }
+
+  async function verify() {
+    const input = $("fontoPassword");
+    const password = input?.value || "";
+    if (!password) {
+      status("لطفاً رمز ورود را وارد کنید.", "bad");
+      return;
+    }
+
+    const button = $("fontoLoginBtn");
+    if (button) {
+      button.disabled = true;
+      button.textContent = "در حال بررسی...";
+    }
+
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/verify_fonto_password`, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ input_password: password }),
+      });
+      const allowed = response.ok ? await response.json() : false;
+      if (allowed === true) {
+        remember();
+        await unlock();
+      } else {
+        status("رمز ورود صحیح نیست.", "bad");
+      }
+    } catch {
+      status("اتصال به Supabase برقرار نشد.", "bad");
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = "ورود به ابزار فونت";
+      }
+      if (input) input.value = "";
+    }
+  }
+
+  async function getFonts() {
+    const rows = await api("fonto_fonts", "select=*&is_active=eq.true&order=name.asc");
+    return rows
+      .map((item) => {
+        const file = item.file_url || item.file_name;
+        return {
+          name: item.name || item.family || file?.replace(/\.(ttf|otf|woff2?)$/i, ""),
+          url: publicUrl("fonto-fonts", file),
+        };
+      })
+      .filter((item) => item.name && item.url);
+  }
+
+  async function getTextBoxes() {
+    const rows = await api(
+      "fonto_text_boxes",
+      "select=*&is_active=eq.true&order=sort_order.asc,created_at.desc",
+    );
+    return rows
+      .map((item) => ({
+        ...item,
+        url: publicUrl("fonto-text-boxes", item.image_url),
+        preview: publicUrl("fonto-text-boxes", item.preview_url || item.image_url),
+      }))
+      .filter((item) => item.url && item.preview);
+  }
+
+  async function cacheFetch(url) {
+    if (!("caches" in window)) return fetch(url);
+    const cache = await caches.open(FONT_CACHE);
+    const cached = await cache.match(url);
+    if (cached) return cached;
+    const response = await fetch(url, { mode: "cors" });
+    if (!response.ok) throw new Error(`font ${response.status}`);
+    await cache.put(url, response.clone());
+    return response;
+  }
+
+  function hash(value) {
+    let result = 0;
+    for (let index = 0; index < value.length; index += 1) {
+      result = (result << 5) - result + value.charCodeAt(index);
+      result |= 0;
+    }
+    return Math.abs(result);
+  }
+
+  async function loadFont(name, url) {
+    if (!url) return name;
+    if (loadedFonts.has(url)) return loadedFonts.get(url);
+    const response = await cacheFetch(url);
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    const family = `Fonto_${hash(url)}`;
+    const face = new FontFace(family, `url(${objectUrl})`);
+    await face.load();
+    document.fonts.add(face);
+    loadedFonts.set(url, family);
+    return family;
+  }
+
+  async function populateFonts() {
+    const select = $("fontoFont");
+    if (!select) return;
+    try {
+      const fonts = await getFonts();
+      select.replaceChildren();
+      for (const font of fonts) {
+        const option = document.createElement("option");
+        option.value = font.name;
+        option.textContent = font.name;
+        option.dataset.url = font.url;
+        select.appendChild(option);
+      }
+      if (!fonts.length) throw new Error("No active fonts");
+      state.font = select.options[0].value;
+      state.fontUrl = select.options[0].dataset.url || "";
+    } catch (error) {
+      console.error(error);
+      select.innerHTML = '<option value="Tahoma">Tahoma</option><option value="Arial">Arial</option>';
+      state.font = "Tahoma";
+      state.fontUrl = "";
+    }
+  }
+
+  function ensureTextBoxPanel() {
+    let panel = $("fontoTextBoxesPanel");
+    if (panel) return panel;
+    const controls = document.querySelector(".fonto-controls");
+    if (!controls) return null;
+
+    panel = document.createElement("section");
+    panel.id = "fontoTextBoxesPanel";
+    panel.className = "fonto-panel fonto-library-panel";
+    panel.innerHTML = `
+      <div class="fonto-library-heading">
+        <div>
+          <h3>باکس‌های آماده</h3>
+          <small id="fontoTextBoxCount">در حال دریافت...</small>
+        </div>
+        <div class="fonto-library-nav" aria-label="پیمایش کتابخانه">
+          <button id="fontoTextBoxPrev" type="button" aria-label="قبلی">‹</button>
+          <button id="fontoTextBoxNext" type="button" aria-label="بعدی">›</button>
+        </div>
+      </div>
+      <div id="fontoCategoryChips" class="fonto-category-scroll" aria-label="دسته‌بندی باکس‌ها"></div>
+      <div id="fontoTextBoxes" class="fonto-asset-scroll" aria-live="polite">
+        <span class="fonto-library-message">در حال دریافت پیش‌نمایش‌ها...</span>
+      </div>
+      <p class="fonto-library-help">برای اضافه‌کردن باکس، روی پیش‌نمایش آن بزنید.</p>
+      <button id="fontoClearTextBox" type="button" class="fonto-action fonto-clear-asset">حذف باکس انتخاب‌شده</button>
+    `;
+
+    const textPanel = controls.querySelector(".fonto-panel");
+    if (textPanel) textPanel.after(panel);
+    else controls.prepend(panel);
+
+    $("fontoTextBoxPrev")?.addEventListener("click", () => {
+      $("fontoTextBoxes")?.scrollBy({ left: 280, behavior: "smooth" });
+    });
+    $("fontoTextBoxNext")?.addEventListener("click", () => {
+      $("fontoTextBoxes")?.scrollBy({ left: -280, behavior: "smooth" });
+    });
+    $("fontoClearTextBox")?.addEventListener("click", () => {
+      state.textBox = null;
+      state.textBoxImage = null;
+      document.querySelectorAll(".fonto-asset-card").forEach((card) => card.classList.remove("active"));
+      draw();
+    });
+    return panel;
+  }
+
+  function ensurePresetPanel() {
+    let panel = $("fontoPresetPanel");
+    if (!panel) {
+      const controls = document.querySelector(".fonto-controls");
+      if (!controls) return null;
+      panel = document.createElement("section");
+      panel.id = "fontoPresetPanel";
+      panel.className = "fonto-panel";
+      panel.innerHTML = '<h3>استایل‌های سریع</h3><div id="fontoPresetGrid" class="fonto-template-grid"></div>';
+      const libraryPanel = ensureTextBoxPanel();
+      if (libraryPanel) libraryPanel.after(panel);
+      else controls.prepend(panel);
+    }
+
+    const grid = $("fontoPresetGrid");
+    if (!grid || grid.children.length) return panel;
+    for (const [key, label] of PRESETS) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `fonto-template-card${key === "none" ? " active" : ""}`;
+      button.dataset.preset = key;
+      button.innerHTML = `<span class="fonto-template-preview ${key}"><i></i></span><small>${label}</small>`;
+      button.addEventListener("click", () => {
+        state.preset = key;
+        state.textBox = null;
+        state.textBoxImage = null;
+        grid.querySelectorAll(".fonto-template-card").forEach((item) => {
+          item.classList.toggle("active", item === button);
+        });
+        document.querySelectorAll(".fonto-asset-card").forEach((card) => card.classList.remove("active"));
+        draw();
+      });
+      grid.appendChild(button);
+    }
+    return panel;
+  }
+
+  function renderCategoryChips() {
+    const wrap = $("fontoCategoryChips");
+    if (!wrap) return;
+    const categories = ["all", ...new Set(textBoxAssets.map((item) => item.category).filter(Boolean))];
+    wrap.replaceChildren();
+    for (const category of categories) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `fonto-category-chip${category === activeCategory ? " active" : ""}`;
+      button.textContent = CATEGORY_LABELS[category] || category;
+      button.addEventListener("click", () => {
+        activeCategory = category;
+        renderCategoryChips();
+        renderTextBoxes();
+      });
+      wrap.appendChild(button);
+    }
+  }
+
+  function renderTextBoxes() {
+    const wrap = $("fontoTextBoxes");
+    const count = $("fontoTextBoxCount");
+    if (!wrap) return;
+    const visible = activeCategory === "all"
+      ? textBoxAssets
+      : textBoxAssets.filter((item) => item.category === activeCategory);
+
+    if (count) count.textContent = `${visible.length} باکس`;
+    wrap.replaceChildren();
+
+    if (!visible.length) {
+      const message = document.createElement("span");
+      message.className = "fonto-library-message";
+      message.textContent = "در این دسته باکسی وجود ندارد.";
+      wrap.appendChild(message);
+      return;
+    }
+
+    for (const box of visible) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `fonto-asset-card${state.textBox?.id === box.id ? " active" : ""}`;
+      button.dataset.boxId = box.id;
+      button.title = box.title || "باکس آماده";
+
+      const preview = document.createElement("span");
+      preview.className = "fonto-asset-preview";
+      const image = document.createElement("img");
+      image.src = box.preview;
+      image.alt = box.title || "پیش‌نمایش باکس";
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.addEventListener("error", () => preview.classList.add("is-missing"));
+      preview.appendChild(image);
+
+      const title = document.createElement("small");
+      title.textContent = box.title || CATEGORY_LABELS[box.category] || "باکس آماده";
+      button.append(preview, title);
+      button.addEventListener("click", () => chooseTextBox(box));
+      wrap.appendChild(button);
+    }
+  }
+
+  function syncPositionControls() {
+    if ($("fontoX")) $("fontoX").value = String(state.x);
+    if ($("fontoY")) $("fontoY").value = String(state.y);
+  }
+
+  async function chooseTextBox(box) {
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => {
+      state.preset = "none";
+      state.textBox = box;
+      state.textBoxImage = image;
+      const textArea = box.text_area || {};
+      if (Number.isFinite(Number(textArea.x))) state.x = Number(textArea.x) > 1 ? Number(textArea.x) / 720 : Number(textArea.x);
+      if (Number.isFinite(Number(textArea.y))) state.y = Number(textArea.y) > 1 ? Number(textArea.y) / 1280 : Number(textArea.y);
+      syncPositionControls();
+      document.querySelectorAll(".fonto-template-card").forEach((item) => {
+        item.classList.toggle("active", item.dataset.preset === "none");
+      });
+      renderTextBoxes();
+      draw();
+    };
+    image.onerror = () => status(`بارگذاری باکس «${box.title || ""}» ناموفق بود.`, "bad");
+    image.src = box.url;
+  }
+
+  async function populateTextBoxes() {
+    ensureTextBoxPanel();
+    try {
+      textBoxAssets = await getTextBoxes();
+      activeCategory = "all";
+      renderCategoryChips();
+      renderTextBoxes();
+    } catch (error) {
+      console.error(error);
+      const wrap = $("fontoTextBoxes");
+      if (wrap) wrap.innerHTML = '<span class="fonto-library-message">کتابخانه در دسترس نیست؛ دوباره تلاش کنید.</span>';
+      const count = $("fontoTextBoxCount");
+      if (count) count.textContent = "خطا در دریافت";
+    }
+  }
+
+  function roundRect(ctx, x, y, width, height, radius) {
+    const r = Math.min(radius, width / 2, height / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + width, y, x + width, y + height, r);
+    ctx.arcTo(x + width, y + height, x, y + height, r);
+    ctx.arcTo(x, y + height, x, y, r);
+    ctx.arcTo(x, y, x + width, y, r);
+    ctx.closePath();
+  }
+
+  function drawPreset(ctx, kind, textWidth, size) {
+    if (kind === "none") return;
+    const paddingX = Math.max(28, size * 0.42);
+    const paddingY = Math.max(18, size * 0.24);
+    const width = Math.min(textWidth + paddingX * 2, 620);
+    const height = size + paddingY * 2;
+    const x = -width / 2;
+    const y = -height / 2;
+    const radius = Math.max(10, size * 0.16);
+
+    ctx.save();
+    ctx.shadowColor = "transparent";
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    roundRect(ctx, x, y, width, height, radius);
+
+    if (kind === "border") {
+      ctx.strokeStyle = "rgba(255,255,255,.92)";
+      ctx.lineWidth = Math.max(2, size * 0.035);
+      ctx.stroke();
+    } else if (kind === "glass") {
+      ctx.fillStyle = "rgba(255,255,255,.18)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.42)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    } else if (kind === "gradient") {
+      const gradient = ctx.createLinearGradient(x, 0, x + width, 0);
+      gradient.addColorStop(0, "#7c3aed");
+      gradient.addColorStop(1, "#06b6d4");
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    } else if (kind === "quote") {
+      ctx.fillStyle = "rgba(10,12,22,.72)";
+      ctx.fill();
+      ctx.font = `700 ${Math.max(34, size * 0.55)}px Georgia`;
+      ctx.fillStyle = "rgba(255,255,255,.8)";
+      ctx.fillText("“", x + 28, y + 28);
+    } else if (kind === "note") {
+      ctx.fillStyle = "#fff59d";
+      ctx.fill();
+      ctx.strokeStyle = "#efd94e";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    } else if (kind === "banner") {
+      ctx.fillStyle = "rgba(0,0,0,.68)";
+      ctx.fill();
+    } else if (kind === "neon") {
+      ctx.fillStyle = "#070b18";
+      ctx.fill();
+      ctx.strokeStyle = "#22d3ee";
+      ctx.lineWidth = 3;
+      ctx.shadowColor = "#22d3ee";
+      ctx.shadowBlur = 16;
+      ctx.stroke();
+    } else if (kind === "solid") {
+      ctx.fillStyle = "rgba(255,255,255,.2)";
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function resize() {
+    const canvas = state.canvas;
+    if (!canvas) return;
+    const parentWidth = Math.floor(canvas.parentElement.getBoundingClientRect().width);
+    const mobile = window.matchMedia("(max-width:760px)").matches;
+    const target = mobile ? Math.min(parentWidth, 300) : Math.min(parentWidth, 520);
+    const width = Math.max(230, target);
+    const height = Math.round((width * 16) / 9);
+    const density = Math.min(devicePixelRatio || 1, 2);
+    canvas.width = width * density;
+    canvas.height = height * density;
+    canvas.dataset.w = String(width);
+    canvas.dataset.h = String(height);
+    state.ctx.setTransform(density, 0, 0, density, 0, 0);
+    draw();
+  }
+
+  async function draw() {
+    const canvas = state.canvas;
+    const ctx = state.ctx;
+    if (!canvas || !ctx) return;
+    const width = Number(canvas.dataset.w) || 300;
+    const height = Number(canvas.dataset.h) || 533;
+    ctx.clearRect(0, 0, width, height);
+
+    if (state.bgImage) {
+      ctx.drawImage(state.bgImage, 0, 0, width, height);
+    } else if (state.bg !== "transparent") {
+      ctx.fillStyle = state.bg;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    if (state.textBoxImage) {
+      const fit = Math.min(width / state.textBoxImage.width, height / state.textBoxImage.height);
+      const boxWidth = state.textBoxImage.width * fit;
+      const boxHeight = state.textBoxImage.height * fit;
+      ctx.drawImage(
+        state.textBoxImage,
+        (width - boxWidth) / 2,
+        (height - boxHeight) / 2,
+        boxWidth,
+        boxHeight,
+      );
+    }
+
+    let family = state.font;
+    try {
+      if (state.fontUrl) family = await loadFont(state.font, state.fontUrl);
+    } catch (error) {
+      console.warn(error);
+    }
+
+    ctx.save();
+    ctx.translate(state.x * width, state.y * height);
+    ctx.rotate((state.rotate * Math.PI) / 180);
+    ctx.scale(state.scale, state.scale);
+    ctx.font = `800 ${state.size}px "${family}",Tahoma,Arial,sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const metrics = ctx.measureText(state.text);
+    drawPreset(ctx, state.preset, metrics.width, state.size);
+
+    if (state.shadow) {
+      ctx.shadowColor = "#000000";
+      ctx.shadowBlur = state.shadowBlur;
+      ctx.shadowOffsetY = 5;
+    }
+    if (state.strokeWidth) {
+      ctx.lineWidth = state.strokeWidth;
+      ctx.strokeStyle = state.stroke;
+      ctx.strokeText(state.text, 0, 0);
+    }
+    if (state.gradient) {
+      const gradient = ctx.createLinearGradient(-metrics.width / 2, 0, metrics.width / 2, 0);
+      gradient.addColorStop(0, state.gradientA);
+      gradient.addColorStop(1, state.gradientB);
+      ctx.fillStyle = gradient;
+    } else {
+      ctx.fillStyle = state.preset === "note" ? "#171717" : state.color;
+    }
+    ctx.fillText(state.text, 0, 0);
+    ctx.restore();
+  }
+
+  function bind(id, event, handler) {
+    $(id)?.addEventListener(event, handler);
+  }
+
+  function bindControls() {
+    bind("fontoText", "input", (event) => {
+      state.text = event.target.value;
+      draw();
+    });
+    bind("fontoFont", "change", async (event) => {
+      const option = event.target.selectedOptions[0];
+      state.font = option.value;
+      state.fontUrl = option.dataset.url || "";
+      try {
+        await loadFont(state.font, state.fontUrl);
+      } catch {}
+      draw();
+    });
+
+    [
+      ["fontoSize", "size"],
+      ["fontoStrokeWidth", "strokeWidth"],
+      ["fontoShadowBlur", "shadowBlur"],
+      ["fontoRotate", "rotate"],
+      ["fontoX", "x"],
+      ["fontoY", "y"],
+      ["fontoScale", "scale"],
+    ].forEach(([id, key]) => bind(id, "input", (event) => {
+      state[key] = Number(event.target.value);
+      draw();
+    }));
+
+    [
+      ["fontoColor", "color"],
+      ["fontoStroke", "stroke"],
+      ["fontoGradientA", "gradientA"],
+      ["fontoGradientB", "gradientB"],
+    ].forEach(([id, key]) => bind(id, "input", (event) => {
+      state[key] = event.target.value;
+      draw();
+    }));
+
+    bind("fontoShadow", "change", (event) => {
+      state.shadow = event.target.checked;
+      draw();
+    });
+    bind("fontoGradient", "change", (event) => {
+      state.gradient = event.target.checked;
+      draw();
+    });
+
+    document.querySelectorAll("[data-fonto-bg]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.bg = button.dataset.fontoBg;
+        state.bgImage = null;
+        draw();
+      });
+    });
+
+    bind("fontoBgColor", "input", (event) => {
+      state.bg = event.target.value;
+      state.bgImage = null;
+      draw();
+    });
+    bind("fontoBgImage", "change", (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const image = new Image();
+      image.onload = () => {
+        state.bgImage = image;
+        state.bg = "image";
+        draw();
+      };
+      image.src = URL.createObjectURL(file);
+    });
+
+    bind("fontoDownload", "click", async () => {
+      await draw();
+      const link = document.createElement("a");
+      link.download = `fonto-${Date.now()}.png`;
+      link.href = state.canvas.toDataURL("image/png");
+      link.click();
+    });
+
+    bind("fontoReset", "click", () => {
+      Object.assign(state, {
+        bg: "transparent",
+        bgImage: null,
+        textBox: null,
+        textBoxImage: null,
+        preset: "none",
+        text: "متن خود را بنویسید",
+        size: 82,
+        color: "#ffffff",
+        stroke: "#000000",
+        strokeWidth: 0,
+        shadow: true,
+        shadowBlur: 12,
+        gradient: false,
+        rotate: 0,
+        x: 0.5,
+        y: 0.5,
+        scale: 1,
+      });
+      document.querySelectorAll(".fonto-template-card").forEach((item) => {
+        item.classList.toggle("active", item.dataset.preset === "none");
+      });
+      renderTextBoxes();
+      syncPositionControls();
+      draw();
+    });
+
+    bind("fontoLogout", "click", () => {
+      sessionStorage.removeItem(SESSION_KEY);
+      location.reload();
+    });
+
+    const canvas = $("fontoCanvas");
+    let dragging = false;
+    if (canvas) {
+      canvas.addEventListener("pointerdown", (event) => {
+        dragging = true;
+        canvas.setPointerCapture?.(event.pointerId);
+        event.preventDefault();
+      });
+      canvas.addEventListener("pointermove", (event) => {
+        if (!dragging) return;
+        const rect = canvas.getBoundingClientRect();
+        state.x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+        state.y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+        syncPositionControls();
+        draw();
+      });
+      const stopDragging = () => {
+        dragging = false;
+      };
+      canvas.addEventListener("pointerup", stopDragging);
+      canvas.addEventListener("pointercancel", stopDragging);
+    }
+  }
+
+  async function unlock() {
+    if (state.unlocked) return;
+    state.unlocked = true;
+    $("fontoGate")?.classList.add("hidden");
+    $("fontoEditor")?.classList.remove("hidden");
+    state.canvas = $("fontoCanvas");
+    state.ctx = state.canvas?.getContext("2d");
+    ensureTextBoxPanel();
+    ensurePresetPanel();
+    status("در حال دریافت دارایی‌های ابزار فونت...", "checking");
+    await Promise.allSettled([populateFonts(), populateTextBoxes()]);
+    status("ابزار فونت آماده است.", "ok");
+    resize();
+  }
+
+  function activate() {
+    if (hasSession()) unlock();
+    else $("fontoGate")?.classList.remove("hidden");
+  }
+
+  function applyVisibleLabels() {
+    const navButton = document.querySelector("button[onclick*=\"'fonto'\"]");
+    const sectionTitle = document.querySelector("#fonto > .section-title span:first-child");
+    const gateTitle = document.querySelector(".fonto-gate-title");
+    if (navButton) navButton.textContent = "ابزار فونت";
+    if (sectionTitle) sectionTitle.textContent = "ابزار فونت";
+    if (gateTitle) gateTitle.textContent = "ورود به ابزار فونت";
+    if ($("fontoLoginBtn")) $("fontoLoginBtn").textContent = "ورود به ابزار فونت";
+    if ($("fontoLogout")) $("fontoLogout").textContent = "خروج از ابزار فونت";
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    applyVisibleLabels();
+    bind("fontoLoginBtn", "click", verify);
+    bind("fontoPassword", "keydown", (event) => {
+      if (event.key === "Enter") verify();
+    });
+    bindControls();
+    window.addEventListener("resize", () => state.unlocked && resize());
+    if (location.hash === "#fonto") activate();
+  });
+
+  window.initFonto = activate;
 })();
