@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#090b14">
+  <title>مدیریت Fonto</title>
+  <link rel="stylesheet" href="./assets/css/admin.css?v=16.0.0">
+  <style>
+    .fonto-admin-shell{max-width:1100px;margin:0 auto;padding:28px}.fonto-admin-grid{display:grid;grid-template-columns:380px 1fr;gap:20px}.fonto-card{background:#111522;border:1px solid #252b3d;border-radius:18px;padding:20px}.fonto-card h2{margin-top:0}.fonto-form{display:grid;gap:12px}.fonto-form input,.fonto-form select{width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid #30374d;background:#0b0e17;color:#fff}.fonto-form button,.fonto-row button{padding:11px 14px;border:0;border-radius:12px;cursor:pointer}.fonto-primary{background:#18d96b;color:#06150d;font-weight:700}.fonto-danger{background:#ff5c6c;color:#fff}.fonto-secondary{background:#242b3c;color:#fff}.fonto-list{display:grid;gap:10px}.fonto-item{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;border:1px solid #252b3d;border-radius:14px;padding:10px}.fonto-item img{width:64px;height:64px;object-fit:contain;background:#0a0d14;border-radius:10px}.fonto-actions{display:flex;gap:8px;flex-wrap:wrap}.fonto-status{margin-top:10px;min-height:24px;color:#aab3c8}.fonto-login{max-width:420px;margin:70px auto}.fonto-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.fonto-top a{color:#9cc8ff}.fonto-hidden{display:none!important}@media(max-width:800px){.fonto-admin-grid{grid-template-columns:1fr}.fonto-admin-shell{padding:16px}}
+  </style>
+</head>
+<body>
+  <div class="fonto-admin-shell">
+    <div class="fonto-top"><div><h1>Fonto Admin</h1><p>آپلود و مدیریت تکس‌باکس‌های PNG</p></div><a href="./admin.html">پنل اصلی ←</a></div>
+
+    <section id="fontoAdminLogin" class="fonto-card fonto-login">
+      <h2>ورود مدیر</h2>
+      <div class="fonto-form">
+        <input id="fontoAdminEmail" type="email" autocomplete="username" placeholder="ایمیل مدیر">
+        <input id="fontoAdminPassword" type="password" autocomplete="current-password" placeholder="رمز عبور">
+        <button id="fontoAdminLoginBtn" class="fonto-primary" type="button">ورود</button>
+      </div>
+      <div id="fontoAdminLoginStatus" class="fonto-status"></div>
+    </section>
+
+    <section id="fontoAdminWorkspace" class="fonto-hidden">
+      <div class="fonto-top"><span id="fontoAdminIdentity"></span><button id="fontoAdminLogoutBtn" class="fonto-secondary" type="button">خروج</button></div>
+      <div class="fonto-admin-grid">
+        <div class="fonto-card">
+          <h2>افزودن Text Box</h2>
+          <div class="fonto-form">
+            <input id="fontoBoxTitle" placeholder="عنوان تکس‌باکس">
+            <input id="fontoBoxCategory" placeholder="دسته‌بندی؛ مثلاً glass">
+            <input id="fontoBoxFile" type="file" accept="image/png">
+            <button id="fontoBoxUploadBtn" class="fonto-primary" type="button">آپلود و ثبت</button>
+          </div>
+          <div id="fontoBoxUploadStatus" class="fonto-status"></div>
+        </div>
+
+        <div class="fonto-card">
+          <div class="fonto-top"><h2>Text Boxها</h2><button id="fontoBoxReloadBtn" class="fonto-secondary" type="button">↻ بروزرسانی</button></div>
+          <div id="fontoBoxList" class="fonto-list"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script src="./assets/js/fonto-admin.js?v=1.0.0"></script>
+</body>
+</html>
