@@ -1,4 +1,4 @@
-/* EditorsTeam Fonto Pro — Supabase fonts, textbox previews, and canvas editor */
+/* EditorsTeam Fonto — Supabase fonts, real Fonto text styles, and canvas editor */
 (() => {
   "use strict";
 
@@ -17,63 +17,40 @@
     ctx: null,
     bg: "#1769e0",
     bgImage: null,
-    textBoxImage: null,
-    textBox: null,
+    styleId: null,
     preset: "none",
     text: "متن خود را بنویسید",
     font: "Tahoma",
     fontUrl: "",
+    fontWeight: 800,
     size: 44,
     color: "#ffffff",
     stroke: "#000000",
     strokeWidth: 0,
     shadow: true,
     shadowBlur: 12,
+    shadowColor: "#000000",
+    shadowOffsetX: 0,
+    shadowOffsetY: 5,
     gradient: false,
     gradientA: "#ffffff",
     gradientB: "#18d96b",
+    depth: 0,
+    depthColor: "#111111",
+    opacity: 1,
     rotate: 0,
     x: 0.5,
     y: 0.5,
     scale: 1,
   };
 
-  const PRESETS = [
-    ["none", "بدون باکس"],
-    ["border", "حاشیه"],
-    ["glass", "شیشه‌ای"],
-    ["gradient", "گرادیان"],
-    ["quote", "نقل‌قول"],
-    ["note", "یادداشت"],
-    ["banner", "بنر"],
-    ["neon", "نئون"],
-    ["solid", "ساده"],
-  ];
+  let textStyles = [];
 
-  const CATEGORY_LABELS = {
-    all: "همه",
-    simple: "ساده",
-    quote: "نقل‌قول",
-    glass: "شیشه‌ای",
-    "3d": "سه‌بعدی",
-    neon: "نئون",
-    note: "یادداشت",
-    brush: "براش",
-    separator: "خطوط",
-    pixel: "پیکسلی",
-    dotted: "نقطه‌ای",
-    instagram: "اینستاگرام",
-  };
-
-  let textBoxAssets = [];
-  let quickStyleAssets = [];
-  let activeCategory = "all";
-
-  function status(text, type = "neutral") {
+  function status(message, type = "neutral") {
     const element = $("fontoStatus");
     if (!element) return;
-    element.textContent = text;
-    element.className = `fonto-status ${type}`;
+    element.textContent = message;
+    element.className = "fonto-status " + type;
   }
 
   function remember() {
@@ -100,19 +77,19 @@
   function publicUrl(bucket, path) {
     if (!path) return "";
     if (/^https?:\/\//i.test(path)) return path;
-    const cleanPath = String(path).replace(new RegExp(`^${bucket}/`), "");
-    return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${encodeStoragePath(cleanPath)}`;
+    const cleanPath = String(path).replace(new RegExp("^" + bucket + "/"), "");
+    return SUPABASE_URL + "/storage/v1/object/public/" + bucket + "/" + encodeStoragePath(cleanPath);
   }
 
   async function api(table, query) {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+    const response = await fetch(SUPABASE_URL + "/rest/v1/" + table + "?" + query, {
       headers: {
         apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`,
+        Authorization: "Bearer " + SUPABASE_KEY,
         Accept: "application/json",
       },
     });
-    if (!response.ok) throw new Error(`${table} ${response.status}`);
+    if (!response.ok) throw new Error(table + " " + response.status);
     return response.json();
   }
 
@@ -131,11 +108,11 @@
     }
 
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/verify_fonto_password`, {
+      const response = await fetch(SUPABASE_URL + "/rest/v1/rpc/verify_fonto_password", {
         method: "POST",
         headers: {
           apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Authorization: "Bearer " + SUPABASE_KEY,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ input_password: password }),
@@ -171,43 +148,22 @@
       .filter((item) => item.name && item.url);
   }
 
-  async function getTextBoxes() {
-    const rows = await api(
-      "fonto_text_boxes",
-      "select=*&is_active=eq.true&order=sort_order.asc,created_at.desc",
-    );
-    return rows
-      .map((item) => ({
-        ...item,
-        url: publicUrl("fonto-text-boxes", item.image_url),
-        preview: publicUrl("fonto-text-boxes", item.preview_url || item.image_url),
-      }))
-      .filter((item) => item.url && item.preview);
-  }
-
-  async function getQuickStyles() {
+  async function getTextStyles() {
     const rows = await api(
       "fonto_styles",
-      "select=*&is_active=eq.true&order=sort_order.asc,created_at.desc",
+      "select=*&is_active=eq.true&order=sort_order.asc,created_at.asc",
     );
     return rows
       .map((item) => {
         const effects = item.effects_json || {};
-        const url = publicUrl("fonto-text-boxes", item.preview_url);
         return {
           ...item,
-          title: effects.label || `ترند ${Number(item.sort_order || 0).toLocaleString("fa-IR")}`,
-          url,
-          preview: url,
-          text_area: {
-            x: 0.5,
-            y: 0.5,
-            text_color: effects.text_color || "#ffffff",
-          },
-          source: "quick",
+          effects,
+          title: effects.label || item.name || "استایل فونتو",
+          preview: publicUrl("fonto-text-boxes", item.preview_url),
         };
       })
-      .filter((item) => item.url && item.preview);
+      .filter((item) => item.preview);
   }
 
   async function cacheFetch(url) {
@@ -216,7 +172,7 @@
     const cached = await cache.match(url);
     if (cached) return cached;
     const response = await fetch(url, { mode: "cors" });
-    if (!response.ok) throw new Error(`font ${response.status}`);
+    if (!response.ok) throw new Error("font " + response.status);
     await cache.put(url, response.clone());
     return response;
   }
@@ -236,8 +192,8 @@
     const response = await cacheFetch(url);
     const blob = await response.blob();
     const objectUrl = URL.createObjectURL(blob);
-    const family = `Fonto_${hash(url)}`;
-    const face = new FontFace(family, `url(${objectUrl})`);
+    const family = "Fonto_" + hash(url);
+    const face = new FontFace(family, "url(" + objectUrl + ")");
     await face.load();
     document.fonts.add(face);
     loadedFonts.set(url, family);
@@ -268,172 +224,63 @@
     }
   }
 
-  function ensureTextBoxPanel() {
-    let panel = $("fontoTextBoxesPanel");
+  function ensureTextStylesPanel() {
+    let panel = $("fontoTextStylesPanel");
     if (panel) return panel;
     const controls = document.querySelector(".fonto-controls");
     if (!controls) return null;
 
     panel = document.createElement("section");
-    panel.id = "fontoTextBoxesPanel";
-    panel.className = "fonto-panel fonto-library-panel";
-    panel.innerHTML = `
-      <div class="fonto-library-heading">
-        <div>
-          <h3>باکس‌های آماده</h3>
-          <small id="fontoTextBoxCount">در حال دریافت...</small>
-        </div>
-        <div class="fonto-library-nav" aria-label="پیمایش کتابخانه">
-          <button id="fontoTextBoxPrev" type="button" aria-label="قبلی">‹</button>
-          <button id="fontoTextBoxNext" type="button" aria-label="بعدی">›</button>
-        </div>
-      </div>
-      <div id="fontoCategoryChips" class="fonto-category-scroll" aria-label="دسته‌بندی باکس‌ها"></div>
-      <div id="fontoTextBoxes" class="fonto-asset-scroll" aria-live="polite">
-        <span class="fonto-library-message">در حال دریافت پیش‌نمایش‌ها...</span>
-      </div>
-      <p class="fonto-library-help">برای اضافه‌کردن باکس، روی پیش‌نمایش آن بزنید.</p>
-      <button id="fontoClearTextBox" type="button" class="fonto-action fonto-clear-asset">حذف باکس انتخاب‌شده</button>
-    `;
+    panel.id = "fontoTextStylesPanel";
+    panel.className = "fonto-panel fonto-library-panel fonto-style-panel";
+    panel.innerHTML =
+      '<div class="fonto-library-heading">' +
+        "<div>" +
+          "<h3>استایل‌های متن فونتو</h3>" +
+          '<small id="fontoTextStyleCount">در حال دریافت...</small>' +
+        "</div>" +
+        '<div class="fonto-library-nav" aria-label="پیمایش استایل‌های متن">' +
+          '<button id="fontoStylePrev" type="button" aria-label="قبلی">‹</button>' +
+          '<button id="fontoStyleNext" type="button" aria-label="بعدی">›</button>' +
+        "</div>" +
+      "</div>" +
+      '<div id="fontoTextStyles" class="fonto-template-grid" aria-live="polite">' +
+        '<span class="fonto-library-message">در حال دریافت پیش‌نمایش استایل‌ها...</span>' +
+      "</div>" +
+      '<p class="fonto-library-help">با انتخاب هر پیش‌نمایش، همان افکت روی متن فعلی اعمال می‌شود.</p>';
 
-    const textPanel = controls.querySelector(".fonto-font-panel") || controls.querySelector(".fonto-panel");
-    if (textPanel) textPanel.after(panel);
+    const fontPanel = controls.querySelector(".fonto-font-panel");
+    if (fontPanel) fontPanel.after(panel);
     else controls.prepend(panel);
 
-    $("fontoTextBoxPrev")?.addEventListener("click", () => {
-      $("fontoTextBoxes")?.scrollBy({ left: 280, behavior: "smooth" });
+    $("fontoStylePrev")?.addEventListener("click", () => {
+      $("fontoTextStyles")?.scrollBy({ left: 300, behavior: "smooth" });
     });
-    $("fontoTextBoxNext")?.addEventListener("click", () => {
-      $("fontoTextBoxes")?.scrollBy({ left: -280, behavior: "smooth" });
-    });
-    $("fontoClearTextBox")?.addEventListener("click", () => {
-      state.textBox = null;
-      state.textBoxImage = null;
-      document.querySelectorAll(".fonto-asset-card,.fonto-template-card").forEach((card) => card.classList.remove("active"));
-      renderQuickStyles();
-      draw();
+    $("fontoStyleNext")?.addEventListener("click", () => {
+      $("fontoTextStyles")?.scrollBy({ left: -300, behavior: "smooth" });
     });
     return panel;
   }
 
-  function ensurePresetPanel() {
-    let panel = $("fontoPresetPanel");
-    if (panel) return panel;
-    const controls = document.querySelector(".fonto-controls");
-    if (!controls) return null;
-    panel = document.createElement("section");
-    panel.id = "fontoPresetPanel";
-    panel.className = "fonto-panel fonto-library-panel fonto-quick-panel";
-    panel.innerHTML = `
-      <div class="fonto-library-heading">
-        <div>
-          <h3>استایل‌های سریع</h3>
-          <small id="fontoQuickStyleCount">در حال دریافت...</small>
-        </div>
-        <div class="fonto-library-nav" aria-label="پیمایش استایل‌ها">
-          <button id="fontoQuickPrev" type="button" aria-label="قبلی">‹</button>
-          <button id="fontoQuickNext" type="button" aria-label="بعدی">›</button>
-        </div>
-      </div>
-      <div id="fontoPresetGrid" class="fonto-template-grid" aria-live="polite">
-        <span class="fonto-library-message">در حال دریافت استایل‌های PNG...</span>
-      </div>
-      <p class="fonto-library-help">۳۰ باکس PNG ترند؛ برای انتخاب، روی هر طرح بزنید.</p>
-    `;
-    const libraryPanel = ensureTextBoxPanel();
-    if (libraryPanel) libraryPanel.after(panel);
-    else controls.prepend(panel);
-    $("fontoQuickPrev")?.addEventListener("click", () => {
-      $("fontoPresetGrid")?.scrollBy({ left: 280, behavior: "smooth" });
-    });
-    $("fontoQuickNext")?.addEventListener("click", () => {
-      $("fontoPresetGrid")?.scrollBy({ left: -280, behavior: "smooth" });
-    });
-    return panel;
-  }
-
-  function renderCategoryChips() {
-    const wrap = $("fontoCategoryChips");
+  function renderTextStyles() {
+    const wrap = $("fontoTextStyles");
+    const count = $("fontoTextStyleCount");
     if (!wrap) return;
-    const categories = ["all", ...new Set(textBoxAssets.map((item) => item.category).filter(Boolean))];
-    wrap.replaceChildren();
-    for (const category of categories) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = `fonto-category-chip${category === activeCategory ? " active" : ""}`;
-      button.textContent = CATEGORY_LABELS[category] || category;
-      button.addEventListener("click", () => {
-        activeCategory = category;
-        renderCategoryChips();
-        renderTextBoxes();
-      });
-      wrap.appendChild(button);
-    }
-  }
-
-  function renderTextBoxes() {
-    const wrap = $("fontoTextBoxes");
-    const count = $("fontoTextBoxCount");
-    if (!wrap) return;
-    const visible = activeCategory === "all"
-      ? textBoxAssets
-      : textBoxAssets.filter((item) => item.category === activeCategory);
-
-    if (count) count.textContent = `${visible.length} باکس`;
+    if (count) count.textContent = textStyles.length.toLocaleString("fa-IR") + " استایل واقعی";
     wrap.replaceChildren();
 
-    if (!visible.length) {
+    if (!textStyles.length) {
       const message = document.createElement("span");
       message.className = "fonto-library-message";
-      message.textContent = "در این دسته باکسی وجود ندارد.";
+      message.textContent = "استایل متن در دسترس نیست.";
       wrap.appendChild(message);
       return;
     }
 
-    for (const box of visible) {
+    for (const style of textStyles) {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = `fonto-asset-card${state.textBox?.id === box.id ? " active" : ""}`;
-      button.dataset.boxId = box.id;
-      button.title = box.title || "باکس آماده";
-
-      const preview = document.createElement("span");
-      preview.className = "fonto-asset-preview";
-      const image = document.createElement("img");
-      image.src = box.preview;
-      image.alt = box.title || "پیش‌نمایش باکس";
-      image.loading = "lazy";
-      image.decoding = "async";
-      image.addEventListener("error", () => preview.classList.add("is-missing"));
-      preview.appendChild(image);
-
-      const title = document.createElement("small");
-      title.textContent = box.title || CATEGORY_LABELS[box.category] || "باکس آماده";
-      button.append(preview, title);
-      button.addEventListener("click", () => chooseTextBox(box));
-      wrap.appendChild(button);
-    }
-  }
-
-  function renderQuickStyles() {
-    const wrap = $("fontoPresetGrid");
-    const count = $("fontoQuickStyleCount");
-    if (!wrap) return;
-    if (count) count.textContent = `${quickStyleAssets.length.toLocaleString("fa-IR")} استایل PNG`;
-    wrap.replaceChildren();
-
-    if (!quickStyleAssets.length) {
-      const message = document.createElement("span");
-      message.className = "fonto-library-message";
-      message.textContent = "استایل PNG در دسترس نیست.";
-      wrap.appendChild(message);
-      return;
-    }
-
-    for (const style of quickStyleAssets) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = `fonto-template-card${state.textBox?.id === style.id ? " active" : ""}`;
+      button.className = "fonto-template-card" + (state.styleId === style.id ? " active" : "");
       button.dataset.styleId = style.id;
       button.title = style.title;
 
@@ -441,7 +288,7 @@
       preview.className = "fonto-template-preview";
       const image = document.createElement("img");
       image.src = style.preview;
-      image.alt = style.title;
+      image.alt = "پیش‌نمایش " + style.title;
       image.loading = "lazy";
       image.decoding = "async";
       image.addEventListener("error", () => preview.classList.add("is-missing"));
@@ -450,65 +297,70 @@
       const title = document.createElement("small");
       title.textContent = style.title;
       button.append(preview, title);
-      button.addEventListener("click", () => chooseTextBox(style));
+      button.addEventListener("click", () => applyTextStyle(style));
       wrap.appendChild(button);
     }
   }
 
-  function syncPositionControls() {
-    if ($("fontoX")) $("fontoX").value = String(state.x);
-    if ($("fontoY")) $("fontoY").value = String(state.y);
+  function effectNumber(effects, key, fallback) {
+    const value = Number(effects[key]);
+    return Number.isFinite(value) ? value : fallback;
   }
 
-  async function chooseTextBox(box) {
-    const image = new Image();
-    image.crossOrigin = "anonymous";
-    image.onload = () => {
-      state.preset = "none";
-      state.textBox = box;
-      state.textBoxImage = image;
-      const textArea = box.text_area || {};
-      if (Number.isFinite(Number(textArea.x))) state.x = Number(textArea.x) > 1 ? Number(textArea.x) / 720 : Number(textArea.x);
-      if (Number.isFinite(Number(textArea.y))) state.y = Number(textArea.y) > 1 ? Number(textArea.y) / 1280 : Number(textArea.y);
-      if (/^#[0-9a-f]{6}$/i.test(textArea.text_color || "")) {
-        state.color = textArea.text_color;
-        if ($("fontoColor")) $("fontoColor").value = state.color;
+  function effectColor(effects, key, fallback) {
+    const value = String(effects[key] || "");
+    return /^#[0-9a-f]{6}$/i.test(value) ? value : fallback;
+  }
+
+  function syncEffectControls() {
+    if ($("fontoColor")) $("fontoColor").value = state.color;
+    if ($("fontoStroke")) $("fontoStroke").value = state.stroke;
+    if ($("fontoStrokeWidth")) $("fontoStrokeWidth").value = String(state.strokeWidth);
+    if ($("fontoShadow")) $("fontoShadow").checked = state.shadow;
+    if ($("fontoShadowBlur")) $("fontoShadowBlur").value = String(state.shadowBlur);
+    if ($("fontoGradient")) $("fontoGradient").checked = state.gradient;
+    if ($("fontoGradientA")) $("fontoGradientA").value = state.gradientA;
+    if ($("fontoGradientB")) $("fontoGradientB").value = state.gradientB;
+  }
+
+  function applyTextStyle(style) {
+    const effects = style.effects || {};
+    Object.assign(state, {
+      styleId: style.id,
+      preset: effects.preset || "none",
+      fontWeight: effectNumber(effects, "font_weight", 800),
+      color: effectColor(effects, "color", "#ffffff"),
+      stroke: effectColor(effects, "stroke", "#000000"),
+      strokeWidth: clamp(effectNumber(effects, "stroke_width", 0), 0, 20),
+      shadow: effects.shadow === true,
+      shadowBlur: clamp(effectNumber(effects, "shadow_blur", 0), 0, 40),
+      shadowColor: effectColor(effects, "shadow_color", "#000000"),
+      shadowOffsetX: effectNumber(effects, "shadow_offset_x", 0),
+      shadowOffsetY: effectNumber(effects, "shadow_offset_y", 5),
+      gradient: effects.gradient === true,
+      gradientA: effectColor(effects, "gradient_a", "#ffffff"),
+      gradientB: effectColor(effects, "gradient_b", "#18d96b"),
+      depth: clamp(effectNumber(effects, "depth", 0), 0, 14),
+      depthColor: effectColor(effects, "depth_color", "#111111"),
+      opacity: clamp(effectNumber(effects, "opacity", 1), 0.2, 1),
+    });
+    syncEffectControls();
+    renderTextStyles();
+    draw();
+  }
+
+  async function populateTextStyles() {
+    ensureTextStylesPanel();
+    try {
+      textStyles = await getTextStyles();
+      renderTextStyles();
+    } catch (error) {
+      console.error(error);
+      const wrap = $("fontoTextStyles");
+      if (wrap) {
+        wrap.innerHTML = '<span class="fonto-library-message">استایل‌های متن در دسترس نیستند.</span>';
       }
-      syncPositionControls();
-      renderTextBoxes();
-      renderQuickStyles();
-      draw();
-    };
-    image.onerror = () => status(`بارگذاری باکس «${box.title || ""}» ناموفق بود.`, "bad");
-    image.src = box.url;
-  }
-
-  async function populateTextBoxes() {
-    ensureTextBoxPanel();
-    try {
-      textBoxAssets = await getTextBoxes();
-      activeCategory = "all";
-      renderCategoryChips();
-      renderTextBoxes();
-    } catch (error) {
-      console.error(error);
-      const wrap = $("fontoTextBoxes");
-      if (wrap) wrap.innerHTML = '<span class="fonto-library-message">کتابخانه در دسترس نیست؛ دوباره تلاش کنید.</span>';
-      const count = $("fontoTextBoxCount");
-      if (count) count.textContent = "خطا در دریافت";
-    }
-  }
-
-  async function populateQuickStyles() {
-    ensurePresetPanel();
-    try {
-      quickStyleAssets = await getQuickStyles();
-      renderQuickStyles();
-    } catch (error) {
-      console.error(error);
-      const wrap = $("fontoPresetGrid");
-      if (wrap) wrap.innerHTML = '<span class="fonto-library-message">استایل‌های سریع در دسترس نیستند.</span>';
-      const count = $("fontoQuickStyleCount");
+      const count = $("fontoTextStyleCount");
       if (count) count.textContent = "خطا در دریافت";
     }
   }
@@ -527,20 +379,92 @@
   function drawPreset(ctx, kind, textWidth, size) {
     if (kind === "none") return;
     const paddingX = Math.max(28, size * 0.42);
-    const paddingY = Math.max(18, size * 0.24);
+    const paddingY = Math.max(16, size * 0.22);
     const width = Math.min(textWidth + paddingX * 2, 620);
     const height = size + paddingY * 2;
     const x = -width / 2;
     const y = -height / 2;
-    const radius = Math.max(10, size * 0.16);
+    const radius = Math.max(10, size * 0.18);
 
     ctx.save();
     ctx.shadowColor = "transparent";
     ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
     roundRect(ctx, x, y, width, height, radius);
 
-    if (kind === "border") {
+    if (kind === "gradient-label") {
+      const gradient = ctx.createLinearGradient(x, 0, x + width, 0);
+      gradient.addColorStop(0, "#f725e9");
+      gradient.addColorStop(1, "#12cde8");
+      ctx.shadowColor = "rgba(0,0,0,.35)";
+      ctx.shadowBlur = 7;
+      ctx.shadowOffsetY = 6;
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    } else if (kind === "gold-label") {
+      const gradient = ctx.createLinearGradient(x, y, x + width, y + height);
+      gradient.addColorStop(0, "#fff45c");
+      gradient.addColorStop(1, "#f2a900");
+      ctx.shadowColor = "rgba(0,0,0,.42)";
+      ctx.shadowBlur = 6;
+      ctx.shadowOffsetY = 7;
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      ctx.strokeStyle = "#fff2a6";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    } else if (kind === "shadow-box") {
+      ctx.shadowColor = "#ff4338";
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 8;
+      ctx.fillStyle = "#1d3485";
+      ctx.fill();
+    } else if (kind === "modern-box") {
+      ctx.shadowColor = "rgba(0,0,0,.45)";
+      ctx.shadowBlur = 7;
+      ctx.shadowOffsetX = -6;
+      ctx.shadowOffsetY = 7;
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+    } else if (kind === "rounded-box") {
+      ctx.shadowColor = "rgba(0,0,0,.42)";
+      ctx.shadowBlur = 4;
+      ctx.shadowOffsetY = 7;
+      ctx.fillStyle = "#ffe629";
+      ctx.fill();
+    } else if (kind === "quote-yellow") {
+      ctx.fillStyle = "#ffdf2c";
+      ctx.fill();
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = "#111111";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font = "700 " + Math.max(26, size * 0.45) + "px Georgia";
+      ctx.fillStyle = "#111111";
+      ctx.fillText("”", x + 24, y + height - 8);
+    } else if (kind === "question-box") {
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+      ctx.strokeStyle = "#111111";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x + 24, y + height);
+      ctx.lineTo(x + 37, y + height + 13);
+      ctx.lineTo(x + 47, y + height);
+      ctx.closePath();
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+      ctx.stroke();
+    } else if (kind === "cover-label") {
+      ctx.fillStyle = "rgba(10, 14, 30, .58)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.38)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    } else if (kind === "border") {
       ctx.strokeStyle = "rgba(255,255,255,.92)";
       ctx.lineWidth = Math.max(2, size * 0.035);
       ctx.stroke();
@@ -559,9 +483,6 @@
     } else if (kind === "quote") {
       ctx.fillStyle = "rgba(10,12,22,.72)";
       ctx.fill();
-      ctx.font = `700 ${Math.max(34, size * 0.55)}px Georgia`;
-      ctx.fillStyle = "rgba(255,255,255,.8)";
-      ctx.fillText("“", x + 28, y + 28);
     } else if (kind === "note") {
       ctx.fillStyle = "#fff59d";
       ctx.fill();
@@ -603,11 +524,22 @@
     draw();
   }
 
-  function syncStickyComposerOffset() {
+  function syncStickyCanvasOffset() {
     const nav = document.querySelector(".bottom-nav");
     const navHeight = nav?.getBoundingClientRect().height || 0;
-    const top = Math.max(12, Math.round(navHeight + 20));
-    document.documentElement.style.setProperty("--fonto-composer-top", `${top}px`);
+    const top = Math.max(12, Math.round(navHeight + 22));
+    document.documentElement.style.setProperty("--fonto-canvas-top", top + "px");
+  }
+
+  function setMainTextFill(ctx, metrics) {
+    if (state.gradient) {
+      const gradient = ctx.createLinearGradient(-metrics.width / 2, 0, metrics.width / 2, 0);
+      gradient.addColorStop(0, state.gradientA);
+      gradient.addColorStop(1, state.gradientB);
+      ctx.fillStyle = gradient;
+    } else {
+      ctx.fillStyle = state.preset === "note" ? "#171717" : state.color;
+    }
   }
 
   async function draw() {
@@ -625,19 +557,6 @@
       ctx.fillRect(0, 0, width, height);
     }
 
-    if (state.textBoxImage) {
-      const fit = Math.min((width * 0.96) / state.textBoxImage.width, (height * 0.92) / state.textBoxImage.height);
-      const boxWidth = state.textBoxImage.width * fit;
-      const boxHeight = state.textBoxImage.height * fit;
-      ctx.drawImage(
-        state.textBoxImage,
-        (width - boxWidth) / 2,
-        (height - boxHeight) / 2,
-        boxWidth,
-        boxHeight,
-      );
-    }
-
     let family = state.font;
     try {
       if (state.fontUrl) family = await loadFont(state.font, state.fontUrl);
@@ -649,30 +568,43 @@
     ctx.translate(state.x * width, state.y * height);
     ctx.rotate((state.rotate * Math.PI) / 180);
     ctx.scale(state.scale, state.scale);
-    ctx.font = `800 ${state.size}px "${family}",Tahoma,Arial,sans-serif`;
+    ctx.globalAlpha = state.opacity;
+    ctx.font = state.fontWeight + " " + state.size + 'px "' + family + '",Tahoma,Arial,sans-serif';
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     const metrics = ctx.measureText(state.text);
     drawPreset(ctx, state.preset, metrics.width, state.size);
 
+    const depth = Math.round(state.depth);
+    if (depth > 0) {
+      ctx.save();
+      ctx.shadowColor = "transparent";
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = state.depthColor;
+      ctx.strokeStyle = state.depthColor;
+      ctx.lineWidth = Math.max(state.strokeWidth, 1);
+      for (let layer = depth; layer >= 1; layer -= 1) {
+        const offsetX = layer * 0.55;
+        const offsetY = layer;
+        if (state.strokeWidth) ctx.strokeText(state.text, offsetX, offsetY);
+        ctx.fillText(state.text, offsetX, offsetY);
+      }
+      ctx.restore();
+    }
+
     if (state.shadow) {
-      ctx.shadowColor = "#000000";
+      ctx.shadowColor = state.shadowColor;
       ctx.shadowBlur = state.shadowBlur;
-      ctx.shadowOffsetY = 5;
+      ctx.shadowOffsetX = state.shadowOffsetX;
+      ctx.shadowOffsetY = state.shadowOffsetY;
     }
     if (state.strokeWidth) {
       ctx.lineWidth = state.strokeWidth;
+      ctx.lineJoin = "round";
       ctx.strokeStyle = state.stroke;
       ctx.strokeText(state.text, 0, 0);
     }
-    if (state.gradient) {
-      const gradient = ctx.createLinearGradient(-metrics.width / 2, 0, metrics.width / 2, 0);
-      gradient.addColorStop(0, state.gradientA);
-      gradient.addColorStop(1, state.gradientB);
-      ctx.fillStyle = gradient;
-    } else {
-      ctx.fillStyle = state.preset === "note" ? "#171717" : state.color;
-    }
+    setMainTextFill(ctx, metrics);
     ctx.fillText(state.text, 0, 0);
     ctx.restore();
   }
@@ -756,7 +688,7 @@
     bind("fontoDownload", "click", async () => {
       await draw();
       const link = document.createElement("a");
-      link.download = `fonto-${Date.now()}.png`;
+      link.download = "fonto-" + Date.now() + ".png";
       link.href = state.canvas.toDataURL("image/png");
       link.click();
     });
@@ -765,17 +697,25 @@
       Object.assign(state, {
         bg: "#1769e0",
         bgImage: null,
-        textBox: null,
-        textBoxImage: null,
+        styleId: null,
         preset: "none",
         text: "متن خود را بنویسید",
+        fontWeight: 800,
         size: 44,
         color: "#ffffff",
         stroke: "#000000",
         strokeWidth: 0,
         shadow: true,
         shadowBlur: 12,
+        shadowColor: "#000000",
+        shadowOffsetX: 0,
+        shadowOffsetY: 5,
         gradient: false,
+        gradientA: "#ffffff",
+        gradientB: "#18d96b",
+        depth: 0,
+        depthColor: "#111111",
+        opacity: 1,
         rotate: 0,
         x: 0.5,
         y: 0.5,
@@ -783,10 +723,9 @@
       });
       if ($("fontoText")) $("fontoText").value = state.text;
       if ($("fontoSize")) $("fontoSize").value = String(state.size);
-      if ($("fontoColor")) $("fontoColor").value = state.color;
       if ($("fontoBgColor")) $("fontoBgColor").value = state.bg;
-      renderTextBoxes();
-      renderQuickStyles();
+      syncEffectControls();
+      renderTextStyles();
       syncPositionControls();
       draw();
     });
@@ -820,6 +759,11 @@
     }
   }
 
+  function syncPositionControls() {
+    if ($("fontoX")) $("fontoX").value = String(state.x);
+    if ($("fontoY")) $("fontoY").value = String(state.y);
+  }
+
   async function unlock() {
     if (state.unlocked) return;
     state.unlocked = true;
@@ -827,12 +771,11 @@
     $("fontoEditor")?.classList.remove("hidden");
     state.canvas = $("fontoCanvas");
     state.ctx = state.canvas?.getContext("2d");
-    ensureTextBoxPanel();
-    ensurePresetPanel();
-    status("در حال دریافت دارایی‌های ابزار فونت...", "checking");
-    await Promise.allSettled([populateFonts(), populateTextBoxes(), populateQuickStyles()]);
+    ensureTextStylesPanel();
+    status("در حال دریافت فونت‌ها و استایل‌های اصلی فونتو...", "checking");
+    await Promise.allSettled([populateFonts(), populateTextStyles()]);
     status("ابزار فونت آماده است.", "ok");
-    syncStickyComposerOffset();
+    syncStickyCanvasOffset();
     resize();
   }
 
@@ -862,11 +805,11 @@
     bindControls();
     window.addEventListener("resize", () => {
       if (!state.unlocked) return;
-      syncStickyComposerOffset();
+      syncStickyCanvasOffset();
       resize();
     });
     if (location.hash === "#fonto") activate();
   });
 
-  window.initFonto = activate;
+window.initFonto = activate;
 })();

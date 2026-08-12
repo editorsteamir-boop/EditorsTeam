@@ -1,21 +1,21 @@
-# Fonto Assets Storage
+# Fonto Text Style Preview Storage
 
-Bucket: `fonto-assets`
+Bucket: `fonto-text-boxes`
 
 Folders:
 
 ```
-fonto-assets/
-├── text-boxes/
-└── styles/
+fonto-text-boxes/
+└── library-v1-a7f4c9b1e2d3/
+    └── <style-preview>.png
 ```
 
 Import flow:
 
-ZIP Asset
+Fonto APK style preview
 -> Extract
 -> Upload to Storage
 -> Save public URL
--> Insert into fonto_text_boxes / fonto_styles
+-> Insert effect settings into fonto_styles
 
 Next step: connect FontoImportPage to Supabase Storage.

@@ -1,16 +1,4 @@
--- Fonto library schema used by the static editor.
-
-create table if not exists public.fonto_text_boxes (
-  id uuid primary key default gen_random_uuid(),
-  title text not null,
-  category text not null default 'simple',
-  image_url text not null,
-  preview_url text,
-  text_area jsonb not null default '{}'::jsonb,
-  is_active boolean not null default true,
-  sort_order integer not null default 0,
-  created_at timestamptz not null default now()
-);
+-- Fonto text-style library schema used by the static editor.
 
 create table if not exists public.fonto_styles (
   id uuid primary key default gen_random_uuid(),
@@ -31,30 +19,13 @@ create table if not exists public.fonto_import_history (
   created_at timestamptz not null default now()
 );
 
-alter table public.fonto_text_boxes enable row level security;
 alter table public.fonto_styles enable row level security;
 
-revoke all on table public.fonto_text_boxes from anon, authenticated;
 revoke all on table public.fonto_styles from anon, authenticated;
-grant select on table public.fonto_text_boxes to anon, authenticated;
 grant select on table public.fonto_styles to anon, authenticated;
 
 do $$
 begin
-  if not exists (
-    select 1
-    from pg_policies
-    where schemaname = 'public'
-      and tablename = 'fonto_text_boxes'
-      and policyname = 'Active Fonto text boxes are publicly readable'
-  ) then
-    create policy "Active Fonto text boxes are publicly readable"
-      on public.fonto_text_boxes
-      for select
-      to anon, authenticated
-      using (is_active = true);
-  end if;
-
   if not exists (
     select 1
     from pg_policies
