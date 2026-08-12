@@ -49,12 +49,14 @@
     const box=c.parentElement.getBoundingClientRect();const w=Math.max(320,Math.min(1080,Math.floor(box.width)));const h=Math.round(w*16/9);
     const dpr=Math.min(window.devicePixelRatio||1,2);c.width=w*dpr;c.height=h*dpr;c.style.aspectRatio='9/16';c.dataset.cssw=w;c.dataset.cssh=h;state.ctx.setTransform(dpr,0,0,dpr,0,0);draw();
   }
-  function draw(){
+  function draw(skipPreviewBackground=false){
     const c=state.canvas,ctx=state.ctx;if(!c||!ctx)return;const w=+c.dataset.cssw||c.width,h=+c.dataset.cssh||c.height;
     ctx.clearRect(0,0,w,h);
-    if(state.bg==='transparent'){const s=22;for(let y=0;y<h;y+=s)for(let x=0;x<w;x+=s){ctx.fillStyle=((x/s+y/s)%2)?'#eeeeee':'#d8d8d8';ctx.fillRect(x,y,s,s);}}
-    else if(state.bgImage){ctx.drawImage(state.bgImage,0,0,w,h);}
-    else{ctx.fillStyle=state.bg;ctx.fillRect(0,0,w,h);}
+    if(!skipPreviewBackground){
+      if(state.bg==='transparent'){const s=22;for(let y=0;y<h;y+=s)for(let x=0;x<w;x+=s){ctx.fillStyle=((x/s+y/s)%2)?'#eeeeee':'#d8d8d8';ctx.fillRect(x,y,s,s);}}
+      else if(state.bgImage){ctx.drawImage(state.bgImage,0,0,w,h);}
+      else{ctx.fillStyle=state.bg;ctx.fillRect(0,0,w,h);}
+    }
     const x=state.x*w,y=state.y*h;ctx.save();ctx.translate(x,y);ctx.rotate(state.rotate*Math.PI/180);ctx.scale(state.scale,state.scale);
     ctx.textAlign=state.align;ctx.textBaseline='middle';ctx.font=`800 ${state.size}px "${state.font}", Tahoma, Arial, sans-serif`;
     if(state.shadow){ctx.shadowColor=state.shadowColor;ctx.shadowBlur=state.shadowBlur;ctx.shadowOffsetX=0;ctx.shadowOffsetY=5;}else ctx.shadowColor='transparent';
@@ -88,9 +90,11 @@
     window.addEventListener('resize',()=>{if(state.unlocked)resizeCanvas();});
   }
   function download(){
-    const c=state.canvas;if(!c)return;const old=state.bg;
-    if(old==='transparent'){state.bg='transparent';const ctx=state.ctx,w=+c.dataset.cssw,h=+c.dataset.cssh;ctx.clearRect(0,0,w,h);draw();}
-    const a=document.createElement('a');a.download=`fonto-${Date.now()}.png`;a.href=c.toDataURL('image/png');a.click();
+    const c=state.canvas;if(!c)return;
+    draw(true);
+    const png=c.toDataURL('image/png');
+    draw(false);
+    const a=document.createElement('a');a.download=`fonto-${Date.now()}.png`;a.href=png;a.click();
   }
   function activate(){
     if(!state.unlocked){if(hasSession())unlock();else $('fontoGate')?.classList.remove('hidden');}
