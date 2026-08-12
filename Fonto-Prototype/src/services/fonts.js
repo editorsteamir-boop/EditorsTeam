@@ -25,9 +25,21 @@ export function getFontPublicUrl(path) {
 }
 
 export async function loadFont(font) {
-  const family = font.family || font.name;
+  const family = `FontoFont_${font.id}`;
   const url = getFontPublicUrl(font.file_url);
-  const face = new FontFace(family, `url(${JSON.stringify(url)})`);
+
+  if (document.fonts.check(`16px ${family}`)) {
+    return family;
+  }
+
+  const face = new FontFace(
+    family,
+    `url(${JSON.stringify(url)})`,
+    {
+      display: 'swap'
+    }
+  );
+
   const loaded = await face.load();
   document.fonts.add(loaded);
   return family;
