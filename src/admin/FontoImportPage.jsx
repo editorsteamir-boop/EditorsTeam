@@ -11,7 +11,8 @@ export default function FontoImportPage() {
     // Next step:
     // 1. Extract ZIP
     // 2. Upload assets to Supabase Storage
-    // 3. Insert text-style previews and effect settings into fonto_styles
+    // 3. Insert quick PNG styles into fonto_quick_styles
+    // 4. Insert bilingual text effects into fonto_text_themes
 
     setStatus("Ready for Supabase import");
   }

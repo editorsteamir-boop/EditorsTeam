@@ -1,0 +1,302 @@
+[
+  {
+    "slug": "quick-01",
+    "title": "غروب — کپسول گرادیانی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-01-sunset-pill.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-01-sunset-pill.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 1
+  },
+  {
+    "slug": "quick-02",
+    "title": "غروب — شیشه‌ای نرم",
+    "category": "glass",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-02-sunset-glass.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-02-sunset-glass.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 2
+  },
+  {
+    "slug": "quick-03",
+    "title": "غروب — قاب نئون",
+    "category": "neon",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-03-sunset-neon.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-03-sunset-neon.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 3
+  },
+  {
+    "slug": "quick-04",
+    "title": "غروب — حباب مدرن",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-04-sunset-bubble.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-04-sunset-bubble.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 4
+  },
+  {
+    "slug": "quick-05",
+    "title": "غروب — لایه‌ای سه‌بعدی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-05-sunset-layered.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-05-sunset-layered.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 5
+  },
+  {
+    "slug": "quick-06",
+    "title": "آبی — کپسول گرادیانی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-06-aqua-pill.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-06-aqua-pill.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 6
+  },
+  {
+    "slug": "quick-07",
+    "title": "آبی — شیشه‌ای نرم",
+    "category": "glass",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-07-aqua-glass.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-07-aqua-glass.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 7
+  },
+  {
+    "slug": "quick-08",
+    "title": "آبی — قاب نئون",
+    "category": "neon",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-08-aqua-neon.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-08-aqua-neon.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 8
+  },
+  {
+    "slug": "quick-09",
+    "title": "آبی — حباب مدرن",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-09-aqua-bubble.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-09-aqua-bubble.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 9
+  },
+  {
+    "slug": "quick-10",
+    "title": "آبی — لایه‌ای سه‌بعدی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-10-aqua-layered.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-10-aqua-layered.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 10
+  },
+  {
+    "slug": "quick-11",
+    "title": "نعنایی — کپسول گرادیانی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-11-mint-pill.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-11-mint-pill.png",
+    "text_color": "#06281e",
+    "is_active": true,
+    "sort_order": 11
+  },
+  {
+    "slug": "quick-12",
+    "title": "نعنایی — شیشه‌ای نرم",
+    "category": "glass",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-12-mint-glass.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-12-mint-glass.png",
+    "text_color": "#06281e",
+    "is_active": true,
+    "sort_order": 12
+  },
+  {
+    "slug": "quick-13",
+    "title": "نعنایی — قاب نئون",
+    "category": "neon",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-13-mint-neon.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-13-mint-neon.png",
+    "text_color": "#06281e",
+    "is_active": true,
+    "sort_order": 13
+  },
+  {
+    "slug": "quick-14",
+    "title": "نعنایی — حباب مدرن",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-14-mint-bubble.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-14-mint-bubble.png",
+    "text_color": "#06281e",
+    "is_active": true,
+    "sort_order": 14
+  },
+  {
+    "slug": "quick-15",
+    "title": "نعنایی — لایه‌ای سه‌بعدی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-15-mint-layered.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-15-mint-layered.png",
+    "text_color": "#06281e",
+    "is_active": true,
+    "sort_order": 15
+  },
+  {
+    "slug": "quick-16",
+    "title": "بری — کپسول گرادیانی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-16-berry-pill.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-16-berry-pill.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 16
+  },
+  {
+    "slug": "quick-17",
+    "title": "بری — شیشه‌ای نرم",
+    "category": "glass",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-17-berry-glass.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-17-berry-glass.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 17
+  },
+  {
+    "slug": "quick-18",
+    "title": "بری — قاب نئون",
+    "category": "neon",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-18-berry-neon.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-18-berry-neon.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 18
+  },
+  {
+    "slug": "quick-19",
+    "title": "بری — حباب مدرن",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-19-berry-bubble.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-19-berry-bubble.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 19
+  },
+  {
+    "slug": "quick-20",
+    "title": "بری — لایه‌ای سه‌بعدی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-20-berry-layered.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-20-berry-layered.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 20
+  },
+  {
+    "slug": "quick-21",
+    "title": "طلایی — کپسول گرادیانی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-21-gold-pill.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-21-gold-pill.png",
+    "text_color": "#201500",
+    "is_active": true,
+    "sort_order": 21
+  },
+  {
+    "slug": "quick-22",
+    "title": "طلایی — شیشه‌ای نرم",
+    "category": "glass",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-22-gold-glass.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-22-gold-glass.png",
+    "text_color": "#201500",
+    "is_active": true,
+    "sort_order": 22
+  },
+  {
+    "slug": "quick-23",
+    "title": "طلایی — قاب نئون",
+    "category": "neon",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-23-gold-neon.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-23-gold-neon.png",
+    "text_color": "#201500",
+    "is_active": true,
+    "sort_order": 23
+  },
+  {
+    "slug": "quick-24",
+    "title": "طلایی — حباب مدرن",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-24-gold-bubble.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-24-gold-bubble.png",
+    "text_color": "#201500",
+    "is_active": true,
+    "sort_order": 24
+  },
+  {
+    "slug": "quick-25",
+    "title": "طلایی — لایه‌ای سه‌بعدی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-25-gold-layered.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-25-gold-layered.png",
+    "text_color": "#201500",
+    "is_active": true,
+    "sort_order": 25
+  },
+  {
+    "slug": "quick-26",
+    "title": "آسمانی — کپسول گرادیانی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-26-sky-pill.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-26-sky-pill.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 26
+  },
+  {
+    "slug": "quick-27",
+    "title": "آسمانی — شیشه‌ای نرم",
+    "category": "glass",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-27-sky-glass.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-27-sky-glass.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 27
+  },
+  {
+    "slug": "quick-28",
+    "title": "آسمانی — قاب نئون",
+    "category": "neon",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-28-sky-neon.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-28-sky-neon.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 28
+  },
+  {
+    "slug": "quick-29",
+    "title": "آسمانی — حباب مدرن",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-29-sky-bubble.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-29-sky-bubble.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 29
+  },
+  {
+    "slug": "quick-30",
+    "title": "آسمانی — لایه‌ای سه‌بعدی",
+    "category": "instagram",
+    "asset_url": "library-v2-e8c1d4f7/quick/trend-30-sky-layered.png",
+    "preview_url": "library-v2-e8c1d4f7/quick/trend-30-sky-layered.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 30
+  }
+]

@@ -1,4 +1,4 @@
-/* EditorsTeam Fonto — Supabase fonts, real Fonto text styles, and canvas editor */
+/* EditorsTeam Fonto — Supabase fonts, quick PNG styles, bilingual text themes, and canvas editor */
 (() => {
   "use strict";
 
@@ -6,7 +6,6 @@
   const SUPABASE_KEY = "sb_publishable_rr0hMzT-HuRk4a-frH4QPQ_ZWCgQyHB";
   const SESSION_KEY = "editorsTeam.fonto.access.v2";
   const FONT_CACHE = "editorsTeam-fonto-fonts-v3";
-
   const $ = (id) => document.getElementById(id);
   const clamp = (number, min, max) => Math.max(min, Math.min(max, number));
   const loadedFonts = new Map();
@@ -17,26 +16,33 @@
     ctx: null,
     bg: "#1769e0",
     bgImage: null,
-    styleId: null,
-    preset: "none",
+    quickStyle: null,
+    quickStyleImage: null,
+    themeId: null,
     text: "متن خود را بنویسید",
     font: "Tahoma",
     fontUrl: "",
     fontWeight: 800,
     size: 44,
     color: "#ffffff",
+    fillStops: [],
+    gradientDirection: "horizontal",
     stroke: "#000000",
     strokeWidth: 0,
+    outlineLayers: [],
     shadow: true,
     shadowBlur: 12,
     shadowColor: "#000000",
     shadowOffsetX: 0,
     shadowOffsetY: 5,
+    shadowLayers: [],
     gradient: false,
     gradientA: "#ffffff",
     gradientB: "#18d96b",
     depth: 0,
     depthColor: "#111111",
+    depthOffsetX: 0.55,
+    depthOffsetY: 1,
     opacity: 1,
     rotate: 0,
     x: 0.5,
@@ -44,7 +50,19 @@
     scale: 1,
   };
 
-  let textStyles = [];
+  const THEME_CATEGORY_LABELS = {
+    all: "همه",
+    trend: "ترند",
+    metallic: "طلایی و نقره‌ای",
+    neon: "نئون",
+    "3d": "سه‌بعدی",
+    minimal: "مینیمال",
+    cinematic: "سینمایی",
+  };
+
+  let quickStyles = [];
+  let textThemes = [];
+  let activeThemeCategory = "all";
 
   function status(message, type = "neutral") {
     const element = $("fontoStatus");
@@ -67,11 +85,7 @@
   }
 
   function encodeStoragePath(path) {
-    return String(path || "")
-      .replace(/^\/+/, "")
-      .split("/")
-      .map(encodeURIComponent)
-      .join("/");
+    return String(path || "").replace(/^\/+/, "").split("/").map(encodeURIComponent).join("/");
   }
 
   function publicUrl(bucket, path) {
@@ -96,17 +110,12 @@
   async function verify() {
     const input = $("fontoPassword");
     const password = input?.value || "";
-    if (!password) {
-      status("لطفاً رمز ورود را وارد کنید.", "bad");
-      return;
-    }
-
+    if (!password) return status("لطفاً رمز ورود را وارد کنید.", "bad");
     const button = $("fontoLoginBtn");
     if (button) {
       button.disabled = true;
       button.textContent = "در حال بررسی...";
     }
-
     try {
       const response = await fetch(SUPABASE_URL + "/rest/v1/rpc/verify_fonto_password", {
         method: "POST",
@@ -135,6 +144,23 @@
     }
   }
 
+  function fontPriority(name) {
+    const normalized = String(name || "").toLowerCase();
+    const preferred = [
+      "iransansx-900",
+      "dana-bold",
+      "estedad",
+      "shabnam-bold",
+      "fa_peyda_bold",
+      "graphik arabic bold",
+      "diodrumarabic-bold",
+      "noto",
+      "open sans",
+    ];
+    const index = preferred.findIndex((item) => normalized.includes(item));
+    return index === -1 ? 999 : index;
+  }
+
   async function getFonts() {
     const rows = await api("fonto_fonts", "select=*&is_active=eq.true&order=name.asc");
     return rows
@@ -145,25 +171,29 @@
           url: publicUrl("fonto-fonts", file),
         };
       })
-      .filter((item) => item.name && item.url);
+      .filter((item) => item.name && item.url)
+      .sort((a, b) => fontPriority(a.name) - fontPriority(b.name) || a.name.localeCompare(b.name));
   }
 
-  async function getTextStyles() {
+  async function getQuickStyles() {
     const rows = await api(
-      "fonto_styles",
+      "fonto_quick_styles",
       "select=*&is_active=eq.true&order=sort_order.asc,created_at.asc",
     );
     return rows
-      .map((item) => {
-        const effects = item.effects_json || {};
-        return {
-          ...item,
-          effects,
-          title: effects.label || item.name || "استایل فونتو",
-          preview: publicUrl("fonto-text-boxes", item.preview_url),
-        };
-      })
-      .filter((item) => item.preview);
+      .map((item) => ({
+        ...item,
+        asset: publicUrl("fonto-text-boxes", item.asset_url),
+        preview: publicUrl("fonto-text-boxes", item.preview_url || item.asset_url),
+      }))
+      .filter((item) => item.asset && item.preview);
+  }
+
+  async function getTextThemes() {
+    return api(
+      "fonto_text_themes",
+      "select=*&is_active=eq.true&supports_fa=eq.true&supports_en=eq.true&order=sort_order.asc,created_at.asc",
+    );
   }
 
   async function cacheFetch(url) {
@@ -224,68 +254,84 @@
     }
   }
 
-  function ensureTextStylesPanel() {
-    let panel = $("fontoTextStylesPanel");
+  function scrollLibrary(id, amount) {
+    $(id)?.scrollBy({ left: amount, behavior: "smooth" });
+  }
+
+  function ensureQuickStylesPanel() {
+    let panel = $("fontoQuickStylesPanel");
     if (panel) return panel;
     const controls = document.querySelector(".fonto-controls");
     if (!controls) return null;
-
     panel = document.createElement("section");
-    panel.id = "fontoTextStylesPanel";
-    panel.className = "fonto-panel fonto-library-panel fonto-style-panel";
+    panel.id = "fontoQuickStylesPanel";
+    panel.className = "fonto-panel fonto-library-panel fonto-quick-panel";
     panel.innerHTML =
-      '<div class="fonto-library-heading">' +
-        "<div>" +
-          "<h3>استایل‌های متن فونتو</h3>" +
-          '<small id="fontoTextStyleCount">در حال دریافت...</small>' +
-        "</div>" +
-        '<div class="fonto-library-nav" aria-label="پیمایش استایل‌های متن">' +
-          '<button id="fontoStylePrev" type="button" aria-label="قبلی">‹</button>' +
-          '<button id="fontoStyleNext" type="button" aria-label="بعدی">›</button>' +
-        "</div>" +
-      "</div>" +
-      '<div id="fontoTextStyles" class="fonto-template-grid" aria-live="polite">' +
-        '<span class="fonto-library-message">در حال دریافت پیش‌نمایش استایل‌ها...</span>' +
-      "</div>" +
-      '<p class="fonto-library-help">با انتخاب هر پیش‌نمایش، همان افکت روی متن فعلی اعمال می‌شود.</p>';
-
+      '<div class="fonto-library-heading"><div><h3>استایل‌های سریع</h3>' +
+      '<small id="fontoQuickStyleCount">در حال دریافت...</small></div>' +
+      '<div class="fonto-library-nav" aria-label="پیمایش استایل‌های سریع">' +
+      '<button id="fontoQuickPrev" type="button" aria-label="قبلی">‹</button>' +
+      '<button id="fontoQuickNext" type="button" aria-label="بعدی">›</button></div></div>' +
+      '<div id="fontoQuickStyles" class="fonto-template-grid" aria-live="polite">' +
+      '<span class="fonto-library-message">در حال دریافت استایل‌های سریع...</span></div>' +
+      '<p class="fonto-library-help">استایل PNG دلخواه را انتخاب کنید؛ می‌توانید آن را با یک تم متن ترکیب کنید.</p>' +
+      '<button id="fontoClearQuickStyle" type="button" class="fonto-action fonto-clear-asset">حذف استایل سریع انتخاب‌شده</button>';
     const fontPanel = controls.querySelector(".fonto-font-panel");
     if (fontPanel) fontPanel.after(panel);
     else controls.prepend(panel);
-
-    $("fontoStylePrev")?.addEventListener("click", () => {
-      $("fontoTextStyles")?.scrollBy({ left: 300, behavior: "smooth" });
-    });
-    $("fontoStyleNext")?.addEventListener("click", () => {
-      $("fontoTextStyles")?.scrollBy({ left: -300, behavior: "smooth" });
-    });
+    $("fontoQuickPrev")?.addEventListener("click", () => scrollLibrary("fontoQuickStyles", 300));
+    $("fontoQuickNext")?.addEventListener("click", () => scrollLibrary("fontoQuickStyles", -300));
+    $("fontoClearQuickStyle")?.addEventListener("click", clearQuickStyle);
     return panel;
   }
 
-  function renderTextStyles() {
-    const wrap = $("fontoTextStyles");
-    const count = $("fontoTextStyleCount");
-    if (!wrap) return;
-    if (count) count.textContent = textStyles.length.toLocaleString("fa-IR") + " استایل واقعی";
-    wrap.replaceChildren();
+  function ensureTextThemesPanel() {
+    let panel = $("fontoTextThemesPanel");
+    if (panel) return panel;
+    const controls = document.querySelector(".fonto-controls");
+    if (!controls) return null;
+    panel = document.createElement("section");
+    panel.id = "fontoTextThemesPanel";
+    panel.className = "fonto-panel fonto-library-panel fonto-theme-panel";
+    panel.innerHTML =
+      '<div class="fonto-library-heading"><div><h3>تم‌های متن</h3>' +
+      '<small id="fontoTextThemeCount">در حال دریافت...</small></div>' +
+      '<div class="fonto-library-nav" aria-label="پیمایش تم‌های متن">' +
+      '<button id="fontoThemePrev" type="button" aria-label="قبلی">‹</button>' +
+      '<button id="fontoThemeNext" type="button" aria-label="بعدی">›</button></div></div>' +
+      '<div id="fontoThemeCategories" class="fonto-category-scroll" aria-label="دسته‌بندی تم‌ها"></div>' +
+      '<div id="fontoTextThemes" class="fonto-template-grid fonto-theme-grid" aria-live="polite">' +
+      '<span class="fonto-library-message">در حال ساخت پیش‌نمایش تم‌ها...</span></div>' +
+      '<p class="fonto-library-help">هر تم فقط روی متن اعمال می‌شود و برای فارسی و انگلیسی آزمایش شده است.</p>';
+    const quickPanel = ensureQuickStylesPanel();
+    if (quickPanel) quickPanel.after(panel);
+    else controls.prepend(panel);
+    $("fontoThemePrev")?.addEventListener("click", () => scrollLibrary("fontoTextThemes", 300));
+    $("fontoThemeNext")?.addEventListener("click", () => scrollLibrary("fontoTextThemes", -300));
+    return panel;
+  }
 
-    if (!textStyles.length) {
+  function renderQuickStyles() {
+    const wrap = $("fontoQuickStyles");
+    const count = $("fontoQuickStyleCount");
+    if (!wrap) return;
+    if (count) count.textContent = quickStyles.length.toLocaleString("fa-IR") + " استایل";
+    wrap.replaceChildren();
+    if (!quickStyles.length) {
       const message = document.createElement("span");
       message.className = "fonto-library-message";
-      message.textContent = "استایل متن در دسترس نیست.";
+      message.textContent = "استایل سریع در دسترس نیست.";
       wrap.appendChild(message);
       return;
     }
-
-    for (const style of textStyles) {
+    for (const style of quickStyles) {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "fonto-template-card" + (state.styleId === style.id ? " active" : "");
-      button.dataset.styleId = style.id;
+      button.className = "fonto-template-card" + (state.quickStyle?.id === style.id ? " active" : "");
+      button.dataset.quickStyleId = style.id;
       button.title = style.title;
-
       const preview = document.createElement("span");
-      preview.className = "fonto-template-preview";
+      preview.className = "fonto-template-preview fonto-quick-preview";
       const image = document.createElement("img");
       image.src = style.preview;
       image.alt = "پیش‌نمایش " + style.title;
@@ -293,23 +339,348 @@
       image.decoding = "async";
       image.addEventListener("error", () => preview.classList.add("is-missing"));
       preview.appendChild(image);
-
       const title = document.createElement("small");
       title.textContent = style.title;
       button.append(preview, title);
-      button.addEventListener("click", () => applyTextStyle(style));
+      button.addEventListener("click", () => chooseQuickStyle(style));
       wrap.appendChild(button);
     }
   }
 
+  function renderThemeCategories() {
+    const wrap = $("fontoThemeCategories");
+    if (!wrap) return;
+    const categories = ["all", ...new Set(textThemes.map((theme) => theme.category).filter(Boolean))];
+    wrap.replaceChildren();
+    for (const category of categories) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "fonto-category-chip" + (activeThemeCategory === category ? " active" : "");
+      button.textContent = THEME_CATEGORY_LABELS[category] || category;
+      button.addEventListener("click", () => {
+        activeThemeCategory = category;
+        renderThemeCategories();
+        renderTextThemes();
+      });
+      wrap.appendChild(button);
+    }
+  }
+
+  function visibleThemes() {
+    return activeThemeCategory === "all"
+      ? textThemes
+      : textThemes.filter((theme) => theme.category === activeThemeCategory);
+  }
+
+  function renderTextThemes() {
+    const wrap = $("fontoTextThemes");
+    const count = $("fontoTextThemeCount");
+    if (!wrap) return;
+    const visible = visibleThemes();
+    if (count) count.textContent = textThemes.length.toLocaleString("fa-IR") + " تم دوزبانه";
+    wrap.replaceChildren();
+    if (!visible.length) {
+      const message = document.createElement("span");
+      message.className = "fonto-library-message";
+      message.textContent = "در این دسته تمی وجود ندارد.";
+      wrap.appendChild(message);
+      return;
+    }
+    for (const theme of visible) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "fonto-template-card fonto-theme-card" + (state.themeId === theme.id ? " active" : "");
+      button.dataset.themeId = theme.id;
+      button.title = theme.title_fa + " / " + theme.title_en;
+      const preview = document.createElement("span");
+      preview.className = "fonto-template-preview fonto-theme-preview";
+      const canvas = document.createElement("canvas");
+      canvas.width = 300;
+      canvas.height = 190;
+      canvas.setAttribute("aria-label", "پیش‌نمایش فارسی و انگلیسی " + theme.title_fa);
+      preview.appendChild(canvas);
+      const title = document.createElement("small");
+      title.className = "fonto-theme-name";
+      title.textContent = theme.title_fa + " · " + theme.title_en;
+      button.append(preview, title);
+      button.addEventListener("click", () => applyTextTheme(theme));
+      wrap.appendChild(button);
+      renderThemePreview(canvas, theme);
+    }
+  }
+
+  async function chooseQuickStyle(style) {
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => {
+      state.quickStyle = style;
+      state.quickStyleImage = image;
+      if (!state.themeId && /^#[0-9a-f]{6}$/i.test(style.text_color || "")) {
+        state.color = style.text_color;
+        state.fillStops = [];
+        state.gradient = false;
+        if ($("fontoColor")) $("fontoColor").value = state.color;
+        if ($("fontoGradient")) $("fontoGradient").checked = false;
+      }
+      renderQuickStyles();
+      draw();
+    };
+    image.onerror = () => status("بارگذاری استایل سریع «" + style.title + "» ناموفق بود.", "bad");
+    image.src = style.asset;
+  }
+
+  function clearQuickStyle() {
+    state.quickStyle = null;
+    state.quickStyleImage = null;
+    renderQuickStyles();
+    draw();
+  }
+
+  async function populateQuickStyles() {
+    ensureQuickStylesPanel();
+    try {
+      quickStyles = await getQuickStyles();
+      renderQuickStyles();
+    } catch (error) {
+      console.error(error);
+      const wrap = $("fontoQuickStyles");
+      if (wrap) wrap.innerHTML = '<span class="fonto-library-message">استایل‌های سریع در دسترس نیستند.</span>';
+      if ($("fontoQuickStyleCount")) $("fontoQuickStyleCount").textContent = "خطا در دریافت";
+    }
+  }
+
+  async function populateTextThemes() {
+    ensureTextThemesPanel();
+    try {
+      textThemes = await getTextThemes();
+      activeThemeCategory = "all";
+      renderThemeCategories();
+      renderTextThemes();
+    } catch (error) {
+      console.error(error);
+      const wrap = $("fontoTextThemes");
+      if (wrap) wrap.innerHTML = '<span class="fonto-library-message">تم‌های متن در دسترس نیستند.</span>';
+      if ($("fontoTextThemeCount")) $("fontoTextThemeCount").textContent = "خطا در دریافت";
+    }
+  }
+
   function effectNumber(effects, key, fallback) {
-    const value = Number(effects[key]);
+    const value = Number(effects?.[key]);
     return Number.isFinite(value) ? value : fallback;
   }
 
   function effectColor(effects, key, fallback) {
-    const value = String(effects[key] || "");
+    const value = String(effects?.[key] || "");
     return /^#[0-9a-f]{6}$/i.test(value) ? value : fallback;
+  }
+
+  function normalizeStops(stops) {
+    if (!Array.isArray(stops)) return [];
+    return stops
+      .map((item) => ({
+        at: clamp(Number(item?.at), 0, 1),
+        color: /^#[0-9a-f]{6}$/i.test(String(item?.color || "")) ? item.color : null,
+      }))
+      .filter((item) => Number.isFinite(item.at) && item.color)
+      .sort((a, b) => a.at - b.at);
+  }
+
+  function normalizeOutlines(outlines) {
+    if (!Array.isArray(outlines)) return [];
+    return outlines
+      .map((item) => ({
+        color: /^#[0-9a-f]{6}$/i.test(String(item?.color || "")) ? item.color : null,
+        width: clamp(Number(item?.width), 0, 20),
+      }))
+      .filter((item) => item.color && Number.isFinite(item.width) && item.width > 0)
+      .sort((a, b) => b.width - a.width);
+  }
+
+  function normalizeShadows(shadows) {
+    if (!Array.isArray(shadows)) return [];
+    return shadows
+      .map((item) => ({
+        color: /^#[0-9a-f]{6}$/i.test(String(item?.color || "")) ? item.color : null,
+        blur: clamp(Number(item?.blur), 0, 40),
+        x: clamp(Number(item?.x || 0), -30, 30),
+        y: clamp(Number(item?.y || 0), -30, 30),
+      }))
+      .filter((item) => item.color && Number.isFinite(item.blur));
+  }
+
+  function themeStyleFromEffects(effects = {}) {
+    const fillStops = normalizeStops(effects.fill_stops);
+    const outlineLayers = normalizeOutlines(effects.outlines);
+    const shadowLayers = normalizeShadows(effects.shadows);
+    return {
+      fontWeight: clamp(effectNumber(effects, "font_weight", 900), 300, 900),
+      color: effectColor(effects, "color", fillStops[0]?.color || "#ffffff"),
+      fillStops,
+      gradient: fillStops.length >= 2,
+      gradientDirection: ["horizontal", "vertical", "diagonal"].includes(effects.gradient_direction)
+        ? effects.gradient_direction
+        : "horizontal",
+      stroke: outlineLayers[0]?.color || effectColor(effects, "stroke", "#000000"),
+      strokeWidth: outlineLayers[0]?.width || clamp(effectNumber(effects, "stroke_width", 0), 0, 20),
+      outlineLayers,
+      shadow: shadowLayers.length > 0 || effects.shadow === true,
+      shadowColor: shadowLayers[0]?.color || effectColor(effects, "shadow_color", "#000000"),
+      shadowBlur: shadowLayers[0]?.blur ?? clamp(effectNumber(effects, "shadow_blur", 0), 0, 40),
+      shadowOffsetX: shadowLayers[0]?.x ?? effectNumber(effects, "shadow_offset_x", 0),
+      shadowOffsetY: shadowLayers[0]?.y ?? effectNumber(effects, "shadow_offset_y", 5),
+      shadowLayers,
+      depth: clamp(effectNumber(effects, "depth", 0), 0, 14),
+      depthColor: effectColor(effects, "depth_color", "#111111"),
+      depthOffsetX: effectNumber(effects, "depth_offset_x", 0.55),
+      depthOffsetY: effectNumber(effects, "depth_offset_y", 1),
+      opacity: clamp(effectNumber(effects, "opacity", 1), 0.2, 1),
+    };
+  }
+
+  function currentTextStyle() {
+    return {
+      fontWeight: state.fontWeight,
+      color: state.color,
+      fillStops: state.fillStops,
+      gradient: state.gradient,
+      gradientA: state.gradientA,
+      gradientB: state.gradientB,
+      gradientDirection: state.gradientDirection,
+      stroke: state.stroke,
+      strokeWidth: state.strokeWidth,
+      outlineLayers: state.outlineLayers,
+      shadow: state.shadow,
+      shadowColor: state.shadowColor,
+      shadowBlur: state.shadowBlur,
+      shadowOffsetX: state.shadowOffsetX,
+      shadowOffsetY: state.shadowOffsetY,
+      shadowLayers: state.shadowLayers,
+      depth: state.depth,
+      depthColor: state.depthColor,
+      depthOffsetX: state.depthOffsetX,
+      depthOffsetY: state.depthOffsetY,
+      opacity: state.opacity,
+    };
+  }
+
+  function createTextFill(ctx, metrics, size, style) {
+    let stops = style.fillStops || [];
+    if (stops.length < 2 && style.gradient) {
+      stops = [
+        { at: 0, color: style.gradientA || "#ffffff" },
+        { at: 1, color: style.gradientB || "#18d96b" },
+      ];
+    }
+    if (stops.length < 2) return style.color || "#ffffff";
+    const width = Math.max(metrics.width, size * 2);
+    let gradient;
+    if (style.gradientDirection === "vertical") {
+      gradient = ctx.createLinearGradient(0, -size * 0.65, 0, size * 0.65);
+    } else if (style.gradientDirection === "diagonal") {
+      gradient = ctx.createLinearGradient(-width / 2, -size * 0.6, width / 2, size * 0.6);
+    } else {
+      gradient = ctx.createLinearGradient(-width / 2, 0, width / 2, 0);
+    }
+    for (const item of stops) gradient.addColorStop(item.at, item.color);
+    return gradient;
+  }
+
+  function fitFontSize(ctx, text, fontFamily, requestedSize, fontWeight, maxWidth) {
+    let size = requestedSize;
+    ctx.font = fontWeight + " " + size + "px " + fontFamily;
+    const width = ctx.measureText(text).width;
+    if (width > maxWidth && width > 0) {
+      size = Math.max(12, size * (maxWidth / width));
+      ctx.font = fontWeight + " " + size + "px " + fontFamily;
+    }
+    return size;
+  }
+
+  function paintStyledText(ctx, text, x, y, fontFamily, requestedSize, maxWidth, style) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    if ("direction" in ctx) ctx.direction = /[\u0600-\u06ff]/.test(text) ? "rtl" : "ltr";
+    const size = fitFontSize(ctx, text, fontFamily, requestedSize, style.fontWeight, maxWidth);
+    const metrics = ctx.measureText(text);
+    const fill = createTextFill(ctx, metrics, size, style);
+    const outlines = style.outlineLayers?.length
+      ? style.outlineLayers
+      : style.strokeWidth > 0
+        ? [{ color: style.stroke, width: style.strokeWidth }]
+        : [];
+    const widestOutline = outlines[0];
+    const depth = Math.round(style.depth || 0);
+    ctx.globalAlpha = style.opacity ?? 1;
+    if (depth > 0) {
+      ctx.save();
+      ctx.shadowColor = "transparent";
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = style.depthColor || "#111111";
+      if (widestOutline) {
+        ctx.strokeStyle = style.depthColor || widestOutline.color;
+        ctx.lineWidth = widestOutline.width;
+        ctx.lineJoin = "round";
+      }
+      for (let layer = depth; layer >= 1; layer -= 1) {
+        const offsetX = layer * (style.depthOffsetX ?? 0.55);
+        const offsetY = layer * (style.depthOffsetY ?? 1);
+        if (widestOutline) ctx.strokeText(text, offsetX, offsetY);
+        ctx.fillText(text, offsetX, offsetY);
+      }
+      ctx.restore();
+    }
+    const shadows = style.shadowLayers?.length
+      ? style.shadowLayers
+      : style.shadow
+        ? [{
+            color: style.shadowColor || "#000000",
+            blur: style.shadowBlur || 0,
+            x: style.shadowOffsetX || 0,
+            y: style.shadowOffsetY || 0,
+          }]
+        : [];
+    for (const layer of shadows) {
+      ctx.save();
+      ctx.shadowColor = layer.color;
+      ctx.shadowBlur = layer.blur;
+      ctx.shadowOffsetX = layer.x;
+      ctx.shadowOffsetY = layer.y;
+      ctx.fillStyle = fill;
+      ctx.fillText(text, 0, 0);
+      ctx.restore();
+    }
+    ctx.shadowColor = "transparent";
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.lineJoin = "round";
+    for (const layer of outlines) {
+      ctx.strokeStyle = layer.color;
+      ctx.lineWidth = layer.width;
+      ctx.strokeText(text, 0, 0);
+    }
+    ctx.fillStyle = fill;
+    ctx.fillText(text, 0, 0);
+    ctx.restore();
+  }
+
+  function renderThemePreview(canvas, theme) {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const effects = theme.effects_json || {};
+    const style = themeStyleFromEffects(effects);
+    const width = canvas.width;
+    const height = canvas.height;
+    const background = ctx.createLinearGradient(0, 0, width, height);
+    background.addColorStop(0, effectColor(effects, "preview_bg_a", "#0b1020"));
+    background.addColorStop(1, effectColor(effects, "preview_bg_b", "#27324b"));
+    ctx.fillStyle = background;
+    ctx.fillRect(0, 0, width, height);
+    const family = "Tahoma, Arial, sans-serif";
+    paintStyledText(ctx, theme.preview_text_fa || "نمونه فارسی", width / 2, 67, family, 38, width - 30, style);
+    paintStyledText(ctx, theme.preview_text_en || "English Style", width / 2, 132, family, 32, width - 30, style);
   }
 
   function syncEffectControls() {
@@ -323,188 +694,24 @@
     if ($("fontoGradientB")) $("fontoGradientB").value = state.gradientB;
   }
 
-  function applyTextStyle(style) {
-    const effects = style.effects || {};
-    Object.assign(state, {
-      styleId: style.id,
-      preset: effects.preset || "none",
-      fontWeight: effectNumber(effects, "font_weight", 800),
-      color: effectColor(effects, "color", "#ffffff"),
-      stroke: effectColor(effects, "stroke", "#000000"),
-      strokeWidth: clamp(effectNumber(effects, "stroke_width", 0), 0, 20),
-      shadow: effects.shadow === true,
-      shadowBlur: clamp(effectNumber(effects, "shadow_blur", 0), 0, 40),
-      shadowColor: effectColor(effects, "shadow_color", "#000000"),
-      shadowOffsetX: effectNumber(effects, "shadow_offset_x", 0),
-      shadowOffsetY: effectNumber(effects, "shadow_offset_y", 5),
-      gradient: effects.gradient === true,
-      gradientA: effectColor(effects, "gradient_a", "#ffffff"),
-      gradientB: effectColor(effects, "gradient_b", "#18d96b"),
-      depth: clamp(effectNumber(effects, "depth", 0), 0, 14),
-      depthColor: effectColor(effects, "depth_color", "#111111"),
-      opacity: clamp(effectNumber(effects, "opacity", 1), 0.2, 1),
+  function applyTextTheme(theme) {
+    const style = themeStyleFromEffects(theme.effects_json || {});
+    Object.assign(state, style, {
+      themeId: theme.id,
+      gradientA: style.fillStops[0]?.color || style.color,
+      gradientB: style.fillStops.at(-1)?.color || style.color,
     });
     syncEffectControls();
-    renderTextStyles();
+    renderTextThemes();
     draw();
   }
 
-  async function populateTextStyles() {
-    ensureTextStylesPanel();
-    try {
-      textStyles = await getTextStyles();
-      renderTextStyles();
-    } catch (error) {
-      console.error(error);
-      const wrap = $("fontoTextStyles");
-      if (wrap) {
-        wrap.innerHTML = '<span class="fonto-library-message">استایل‌های متن در دسترس نیستند.</span>';
-      }
-      const count = $("fontoTextStyleCount");
-      if (count) count.textContent = "خطا در دریافت";
-    }
-  }
-
-  function roundRect(ctx, x, y, width, height, radius) {
-    const r = Math.min(radius, width / 2, height / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + width, y, x + width, y + height, r);
-    ctx.arcTo(x + width, y + height, x, y + height, r);
-    ctx.arcTo(x, y + height, x, y, r);
-    ctx.arcTo(x, y, x + width, y, r);
-    ctx.closePath();
-  }
-
-  function drawPreset(ctx, kind, textWidth, size) {
-    if (kind === "none") return;
-    const paddingX = Math.max(28, size * 0.42);
-    const paddingY = Math.max(16, size * 0.22);
-    const width = Math.min(textWidth + paddingX * 2, 620);
-    const height = size + paddingY * 2;
-    const x = -width / 2;
-    const y = -height / 2;
-    const radius = Math.max(10, size * 0.18);
-
-    ctx.save();
-    ctx.shadowColor = "transparent";
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    roundRect(ctx, x, y, width, height, radius);
-
-    if (kind === "gradient-label") {
-      const gradient = ctx.createLinearGradient(x, 0, x + width, 0);
-      gradient.addColorStop(0, "#f725e9");
-      gradient.addColorStop(1, "#12cde8");
-      ctx.shadowColor = "rgba(0,0,0,.35)";
-      ctx.shadowBlur = 7;
-      ctx.shadowOffsetY = 6;
-      ctx.fillStyle = gradient;
-      ctx.fill();
-    } else if (kind === "gold-label") {
-      const gradient = ctx.createLinearGradient(x, y, x + width, y + height);
-      gradient.addColorStop(0, "#fff45c");
-      gradient.addColorStop(1, "#f2a900");
-      ctx.shadowColor = "rgba(0,0,0,.42)";
-      ctx.shadowBlur = 6;
-      ctx.shadowOffsetY = 7;
-      ctx.fillStyle = gradient;
-      ctx.fill();
-      ctx.strokeStyle = "#fff2a6";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    } else if (kind === "shadow-box") {
-      ctx.shadowColor = "#ff4338";
-      ctx.shadowBlur = 0;
-      ctx.shadowOffsetY = 8;
-      ctx.fillStyle = "#1d3485";
-      ctx.fill();
-    } else if (kind === "modern-box") {
-      ctx.shadowColor = "rgba(0,0,0,.45)";
-      ctx.shadowBlur = 7;
-      ctx.shadowOffsetX = -6;
-      ctx.shadowOffsetY = 7;
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-    } else if (kind === "rounded-box") {
-      ctx.shadowColor = "rgba(0,0,0,.42)";
-      ctx.shadowBlur = 4;
-      ctx.shadowOffsetY = 7;
-      ctx.fillStyle = "#ffe629";
-      ctx.fill();
-    } else if (kind === "quote-yellow") {
-      ctx.fillStyle = "#ffdf2c";
-      ctx.fill();
-      ctx.setLineDash([5, 4]);
-      ctx.strokeStyle = "#111111";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.font = "700 " + Math.max(26, size * 0.45) + "px Georgia";
-      ctx.fillStyle = "#111111";
-      ctx.fillText("”", x + 24, y + height - 8);
-    } else if (kind === "question-box") {
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-      ctx.strokeStyle = "#111111";
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(x + 24, y + height);
-      ctx.lineTo(x + 37, y + height + 13);
-      ctx.lineTo(x + 47, y + height);
-      ctx.closePath();
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-      ctx.stroke();
-    } else if (kind === "cover-label") {
-      ctx.fillStyle = "rgba(10, 14, 30, .58)";
-      ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,.38)";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    } else if (kind === "border") {
-      ctx.strokeStyle = "rgba(255,255,255,.92)";
-      ctx.lineWidth = Math.max(2, size * 0.035);
-      ctx.stroke();
-    } else if (kind === "glass") {
-      ctx.fillStyle = "rgba(255,255,255,.18)";
-      ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,.42)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    } else if (kind === "gradient") {
-      const gradient = ctx.createLinearGradient(x, 0, x + width, 0);
-      gradient.addColorStop(0, "#7c3aed");
-      gradient.addColorStop(1, "#06b6d4");
-      ctx.fillStyle = gradient;
-      ctx.fill();
-    } else if (kind === "quote") {
-      ctx.fillStyle = "rgba(10,12,22,.72)";
-      ctx.fill();
-    } else if (kind === "note") {
-      ctx.fillStyle = "#fff59d";
-      ctx.fill();
-      ctx.strokeStyle = "#efd94e";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    } else if (kind === "banner") {
-      ctx.fillStyle = "rgba(0,0,0,.68)";
-      ctx.fill();
-    } else if (kind === "neon") {
-      ctx.fillStyle = "#070b18";
-      ctx.fill();
-      ctx.strokeStyle = "#22d3ee";
-      ctx.lineWidth = 3;
-      ctx.shadowColor = "#22d3ee";
-      ctx.shadowBlur = 16;
-      ctx.stroke();
-    } else if (kind === "solid") {
-      ctx.fillStyle = "rgba(255,255,255,.2)";
-      ctx.fill();
-    }
-    ctx.restore();
+  function clearActiveThemeForManualEdit(kind) {
+    state.themeId = null;
+    if (kind === "fill") state.fillStops = [];
+    if (kind === "outline") state.outlineLayers = [];
+    if (kind === "shadow") state.shadowLayers = [];
+    renderTextThemes();
   }
 
   function resize() {
@@ -531,17 +738,6 @@
     document.documentElement.style.setProperty("--fonto-canvas-top", top + "px");
   }
 
-  function setMainTextFill(ctx, metrics) {
-    if (state.gradient) {
-      const gradient = ctx.createLinearGradient(-metrics.width / 2, 0, metrics.width / 2, 0);
-      gradient.addColorStop(0, state.gradientA);
-      gradient.addColorStop(1, state.gradientB);
-      ctx.fillStyle = gradient;
-    } else {
-      ctx.fillStyle = state.preset === "note" ? "#171717" : state.color;
-    }
-  }
-
   async function draw() {
     const canvas = state.canvas;
     const ctx = state.ctx;
@@ -549,63 +745,47 @@
     const width = Number(canvas.dataset.w) || 300;
     const height = Number(canvas.dataset.h) || 133;
     ctx.clearRect(0, 0, width, height);
-
     if (state.bgImage) {
       ctx.drawImage(state.bgImage, 0, 0, width, height);
     } else if (state.bg !== "transparent") {
       ctx.fillStyle = state.bg;
       ctx.fillRect(0, 0, width, height);
     }
-
+    if (state.quickStyleImage) {
+      const fit = Math.min(
+        (width * 0.96) / state.quickStyleImage.width,
+        (height * 0.92) / state.quickStyleImage.height,
+      );
+      const assetWidth = state.quickStyleImage.width * fit;
+      const assetHeight = state.quickStyleImage.height * fit;
+      ctx.drawImage(
+        state.quickStyleImage,
+        (width - assetWidth) / 2,
+        (height - assetHeight) / 2,
+        assetWidth,
+        assetHeight,
+      );
+    }
     let family = state.font;
     try {
       if (state.fontUrl) family = await loadFont(state.font, state.fontUrl);
     } catch (error) {
       console.warn(error);
     }
-
     ctx.save();
     ctx.translate(state.x * width, state.y * height);
     ctx.rotate((state.rotate * Math.PI) / 180);
     ctx.scale(state.scale, state.scale);
-    ctx.globalAlpha = state.opacity;
-    ctx.font = state.fontWeight + " " + state.size + 'px "' + family + '",Tahoma,Arial,sans-serif';
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    const metrics = ctx.measureText(state.text);
-    drawPreset(ctx, state.preset, metrics.width, state.size);
-
-    const depth = Math.round(state.depth);
-    if (depth > 0) {
-      ctx.save();
-      ctx.shadowColor = "transparent";
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = state.depthColor;
-      ctx.strokeStyle = state.depthColor;
-      ctx.lineWidth = Math.max(state.strokeWidth, 1);
-      for (let layer = depth; layer >= 1; layer -= 1) {
-        const offsetX = layer * 0.55;
-        const offsetY = layer;
-        if (state.strokeWidth) ctx.strokeText(state.text, offsetX, offsetY);
-        ctx.fillText(state.text, offsetX, offsetY);
-      }
-      ctx.restore();
-    }
-
-    if (state.shadow) {
-      ctx.shadowColor = state.shadowColor;
-      ctx.shadowBlur = state.shadowBlur;
-      ctx.shadowOffsetX = state.shadowOffsetX;
-      ctx.shadowOffsetY = state.shadowOffsetY;
-    }
-    if (state.strokeWidth) {
-      ctx.lineWidth = state.strokeWidth;
-      ctx.lineJoin = "round";
-      ctx.strokeStyle = state.stroke;
-      ctx.strokeText(state.text, 0, 0);
-    }
-    setMainTextFill(ctx, metrics);
-    ctx.fillText(state.text, 0, 0);
+    paintStyledText(
+      ctx,
+      state.text,
+      0,
+      0,
+      '"' + family + '", Tahoma, Arial, sans-serif',
+      state.size,
+      width * 0.92,
+      currentTextStyle(),
+    );
     ctx.restore();
   }
 
@@ -627,11 +807,8 @@
       } catch {}
       draw();
     });
-
     [
       ["fontoSize", "size"],
-      ["fontoStrokeWidth", "strokeWidth"],
-      ["fontoShadowBlur", "shadowBlur"],
       ["fontoRotate", "rotate"],
       ["fontoX", "x"],
       ["fontoY", "y"],
@@ -641,22 +818,50 @@
       draw();
     }));
 
-    [
-      ["fontoColor", "color"],
-      ["fontoStroke", "stroke"],
-      ["fontoGradientA", "gradientA"],
-      ["fontoGradientB", "gradientB"],
-    ].forEach(([id, key]) => bind(id, "input", (event) => {
-      state[key] = event.target.value;
+    bind("fontoColor", "input", (event) => {
+      state.color = event.target.value;
+      state.gradient = false;
+      if ($("fontoGradient")) $("fontoGradient").checked = false;
+      clearActiveThemeForManualEdit("fill");
       draw();
-    }));
-
+    });
+    bind("fontoStroke", "input", (event) => {
+      state.stroke = event.target.value;
+      clearActiveThemeForManualEdit("outline");
+      draw();
+    });
+    bind("fontoStrokeWidth", "input", (event) => {
+      state.strokeWidth = Number(event.target.value);
+      clearActiveThemeForManualEdit("outline");
+      draw();
+    });
     bind("fontoShadow", "change", (event) => {
       state.shadow = event.target.checked;
+      clearActiveThemeForManualEdit("shadow");
+      draw();
+    });
+    bind("fontoShadowBlur", "input", (event) => {
+      state.shadowBlur = Number(event.target.value);
+      clearActiveThemeForManualEdit("shadow");
       draw();
     });
     bind("fontoGradient", "change", (event) => {
       state.gradient = event.target.checked;
+      clearActiveThemeForManualEdit("fill");
+      draw();
+    });
+    bind("fontoGradientA", "input", (event) => {
+      state.gradientA = event.target.value;
+      state.gradient = true;
+      if ($("fontoGradient")) $("fontoGradient").checked = true;
+      clearActiveThemeForManualEdit("fill");
+      draw();
+    });
+    bind("fontoGradientB", "input", (event) => {
+      state.gradientB = event.target.value;
+      state.gradient = true;
+      if ($("fontoGradient")) $("fontoGradient").checked = true;
+      clearActiveThemeForManualEdit("fill");
       draw();
     });
 
@@ -667,7 +872,6 @@
         draw();
       });
     });
-
     bind("fontoBgColor", "input", (event) => {
       state.bg = event.target.value;
       state.bgImage = null;
@@ -684,7 +888,6 @@
       };
       image.src = URL.createObjectURL(file);
     });
-
     bind("fontoDownload", "click", async () => {
       await draw();
       const link = document.createElement("a");
@@ -692,44 +895,7 @@
       link.href = state.canvas.toDataURL("image/png");
       link.click();
     });
-
-    bind("fontoReset", "click", () => {
-      Object.assign(state, {
-        bg: "#1769e0",
-        bgImage: null,
-        styleId: null,
-        preset: "none",
-        text: "متن خود را بنویسید",
-        fontWeight: 800,
-        size: 44,
-        color: "#ffffff",
-        stroke: "#000000",
-        strokeWidth: 0,
-        shadow: true,
-        shadowBlur: 12,
-        shadowColor: "#000000",
-        shadowOffsetX: 0,
-        shadowOffsetY: 5,
-        gradient: false,
-        gradientA: "#ffffff",
-        gradientB: "#18d96b",
-        depth: 0,
-        depthColor: "#111111",
-        opacity: 1,
-        rotate: 0,
-        x: 0.5,
-        y: 0.5,
-        scale: 1,
-      });
-      if ($("fontoText")) $("fontoText").value = state.text;
-      if ($("fontoSize")) $("fontoSize").value = String(state.size);
-      if ($("fontoBgColor")) $("fontoBgColor").value = state.bg;
-      syncEffectControls();
-      renderTextStyles();
-      syncPositionControls();
-      draw();
-    });
-
+    bind("fontoReset", "click", resetEditor);
     bind("fontoLogout", "click", () => {
       sessionStorage.removeItem(SESSION_KEY);
       location.reload();
@@ -759,6 +925,51 @@
     }
   }
 
+  function resetEditor() {
+    Object.assign(state, {
+      bg: "#1769e0",
+      bgImage: null,
+      quickStyle: null,
+      quickStyleImage: null,
+      themeId: null,
+      text: "متن خود را بنویسید",
+      fontWeight: 800,
+      size: 44,
+      color: "#ffffff",
+      fillStops: [],
+      gradientDirection: "horizontal",
+      stroke: "#000000",
+      strokeWidth: 0,
+      outlineLayers: [],
+      shadow: true,
+      shadowBlur: 12,
+      shadowColor: "#000000",
+      shadowOffsetX: 0,
+      shadowOffsetY: 5,
+      shadowLayers: [],
+      gradient: false,
+      gradientA: "#ffffff",
+      gradientB: "#18d96b",
+      depth: 0,
+      depthColor: "#111111",
+      depthOffsetX: 0.55,
+      depthOffsetY: 1,
+      opacity: 1,
+      rotate: 0,
+      x: 0.5,
+      y: 0.5,
+      scale: 1,
+    });
+    if ($("fontoText")) $("fontoText").value = state.text;
+    if ($("fontoSize")) $("fontoSize").value = String(state.size);
+    if ($("fontoBgColor")) $("fontoBgColor").value = state.bg;
+    syncEffectControls();
+    renderQuickStyles();
+    renderTextThemes();
+    syncPositionControls();
+    draw();
+  }
+
   function syncPositionControls() {
     if ($("fontoX")) $("fontoX").value = String(state.x);
     if ($("fontoY")) $("fontoY").value = String(state.y);
@@ -771,9 +982,10 @@
     $("fontoEditor")?.classList.remove("hidden");
     state.canvas = $("fontoCanvas");
     state.ctx = state.canvas?.getContext("2d");
-    ensureTextStylesPanel();
-    status("در حال دریافت فونت‌ها و استایل‌های اصلی فونتو...", "checking");
-    await Promise.allSettled([populateFonts(), populateTextStyles()]);
+    ensureQuickStylesPanel();
+    ensureTextThemesPanel();
+    status("در حال دریافت فونت‌ها، استایل‌های سریع و تم‌های متن...", "checking");
+    await Promise.allSettled([populateFonts(), populateQuickStyles(), populateTextThemes()]);
     status("ابزار فونت آماده است.", "ok");
     syncStickyCanvasOffset();
     resize();
@@ -811,5 +1023,5 @@
     if (location.hash === "#fonto") activate();
   });
 
-window.initFonto = activate;
+  window.initFonto = activate;
 })();

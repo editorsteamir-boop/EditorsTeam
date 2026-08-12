@@ -1,6 +1,6 @@
 const CACHE_PREFIX="editors-team-";
-const STATIC_CACHE=`${CACHE_PREFIX}static-v21-fonto-text-styles`;
-const PAGE_CACHE=`${CACHE_PREFIX}pages-v21-fonto-text-styles`;
+const STATIC_CACHE=`${CACHE_PREFIX}static-v22-fonto-bilingual-themes`;
+const PAGE_CACHE=`${CACHE_PREFIX}pages-v22-fonto-bilingual-themes`;
 
 self.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil((async()=>{

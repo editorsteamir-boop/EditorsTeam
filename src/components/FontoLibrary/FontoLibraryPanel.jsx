@@ -2,7 +2,7 @@ import React from "react";
 import { useFontoAssets } from "./useFontoAssets";
 
 export default function FontoLibraryPanel({ onSelect }) {
-  const { styles } = useFontoAssets();
+  const { quickStyles, textThemes } = useFontoAssets();
 
   const cardStyle = {
     minWidth: "180px",
@@ -23,24 +23,36 @@ export default function FontoLibraryPanel({ onSelect }) {
     WebkitOverflowScrolling: "touch",
   };
 
-  const renderCard = (item) => (
-    <button key={item.id} onClick={() => onSelect?.(item)} style={cardStyle}>
+  const renderQuickStyle = (item) => (
+    <button key={item.id} onClick={() => onSelect?.({ type: "quick-style", ...item })} style={cardStyle}>
       {item.preview_url && (
         <img
           src={item.preview_url}
-          alt={item.effects_json?.label || item.name || "style"}
+          alt={item.title || "quick style"}
           style={{ width: "100%", height: "120px", objectFit: "contain" }}
         />
       )}
-      <div>{item.effects_json?.label || item.name}</div>
+      <div>{item.title}</div>
+    </button>
+  );
+
+  const renderTheme = (item) => (
+    <button key={item.id} onClick={() => onSelect?.({ type: "text-theme", ...item })} style={cardStyle}>
+      <div dir="rtl">{item.preview_text_fa}</div>
+      <div dir="ltr">{item.preview_text_en}</div>
+      <small>{item.title_fa} / {item.title_en}</small>
     </button>
   );
 
   return (
     <div className="fonto-library-panel">
-      <h3>Fonto Text Styles</h3>
+      <h3>استایل‌های سریع</h3>
       <div className="fonto-style-scroll" style={rowStyle}>
-        {styles.map((item) => renderCard(item))}
+        {quickStyles.map((item) => renderQuickStyle(item))}
+      </div>
+      <h3>تم‌های متن</h3>
+      <div className="fonto-theme-scroll" style={rowStyle}>
+        {textThemes.map((item) => renderTheme(item))}
       </div>
     </div>
   );

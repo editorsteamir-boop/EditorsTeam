@@ -282,6 +282,37 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.fonto-category-scroll {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 7px;
+  padding: 2px 1px 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scrollbar-color: rgba(24, 217, 107, .55) rgba(255, 255, 255, .06);
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fonto-category-chip {
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .05);
+  color: rgba(255, 255, 255, .8);
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+}
+
+.fonto-category-chip.active {
+  border-color: #18d96b;
+  background: rgba(24, 217, 107, .16);
+  color: #fff;
+}
+
 .fonto-template-grid {
   min-height: 142px;
   gap: 10px;
@@ -337,6 +368,39 @@
   object-fit: cover;
 }
 
+.fonto-quick-preview {
+  background: var(--fonto-blue);
+}
+
+.fonto-quick-preview img {
+  object-fit: contain;
+}
+
+.fonto-theme-grid {
+  min-height: 178px;
+}
+
+.fonto-theme-card {
+  flex-basis: 166px;
+  min-width: 166px;
+}
+
+.fonto-theme-preview {
+  height: 122px;
+  background: #0b1020;
+}
+
+.fonto-theme-preview canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.fonto-theme-card .fonto-theme-name {
+  direction: rtl;
+  font-size: 9px;
+}
+
 .fonto-template-preview.is-missing img { display: none; }
 
 .fonto-template-preview.is-missing::after {
@@ -363,13 +427,18 @@
   line-height: 1.8;
 }
 
+.fonto-clear-asset { width: 100%; }
+
+.fonto-category-scroll::-webkit-scrollbar,
 .fonto-template-grid::-webkit-scrollbar { height: 5px; }
 
+.fonto-category-scroll::-webkit-scrollbar-track,
 .fonto-template-grid::-webkit-scrollbar-track {
   border-radius: 999px;
   background: rgba(255, 255, 255, .05);
 }
 
+.fonto-category-scroll::-webkit-scrollbar-thumb,
 .fonto-template-grid::-webkit-scrollbar-thumb {
   border-radius: 999px;
   background: rgba(24, 217, 107, .55);
@@ -395,6 +464,13 @@
   }
 
   .fonto-template-preview { height: 96px; }
+
+  .fonto-theme-card {
+    flex-basis: 154px;
+    min-width: 154px;
+  }
+
+  .fonto-theme-preview { height: 116px; }
 
   #fontoCanvas {
     width: min(82vw, 300px);

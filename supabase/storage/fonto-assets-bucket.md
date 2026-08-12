@@ -16,6 +16,7 @@ Fonto APK style preview
 -> Extract
 -> Upload to Storage
 -> Save public URL
--> Insert effect settings into fonto_styles
+-> Insert quick PNG metadata into fonto_quick_styles
+-> Insert bilingual text effects into fonto_text_themes (no preview image required)
 
 Next step: connect FontoImportPage to Supabase Storage.
