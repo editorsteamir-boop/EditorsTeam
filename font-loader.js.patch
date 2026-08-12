@@ -1,0 +1,14 @@
+// Replace font registration logic with:
+
+const familyName = `FontoFont_${font.id}`;
+
+const face = new FontFace(
+  familyName,
+  `url(${url})`,
+  { display: "swap" }
+);
+
+await face.load();
+document.fonts.add(face);
+
+return familyName;

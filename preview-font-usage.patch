@@ -1,0 +1,14 @@
+// Replace:
+
+fontFamily: font.name
+
+// with:
+
+fontFamily: `FontoFont_${font.id}`
+
+
+// Optional duplicate-load protection:
+
+if (document.fonts.check(`16px FontoFont_${font.id}`)) {
+  return `FontoFont_${font.id}`;
+}
