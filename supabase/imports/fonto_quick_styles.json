@@ -298,5 +298,305 @@
     "text_color": "#ffffff",
     "is_active": true,
     "sort_order": 30
+  },
+  {
+    "slug": "special-01",
+    "title": "شفق — محو از چپ",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-01-aurora-fade-left.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-01-aurora-fade-left.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 31
+  },
+  {
+    "slug": "special-02",
+    "title": "شفق — محو از راست",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-02-aurora-fade-right.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-02-aurora-fade-right.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 32
+  },
+  {
+    "slug": "special-03",
+    "title": "شفق — محو دوطرفه",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-03-aurora-fade-both.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-03-aurora-fade-both.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 33
+  },
+  {
+    "slug": "special-04",
+    "title": "غروب — محو از چپ",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-04-sunset-fade-left.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-04-sunset-fade-left.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 34
+  },
+  {
+    "slug": "special-05",
+    "title": "غروب — محو از راست",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-05-sunset-fade-right.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-05-sunset-fade-right.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 35
+  },
+  {
+    "slug": "special-06",
+    "title": "غروب — محو دوطرفه",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-06-sunset-fade-both.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-06-sunset-fade-both.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 36
+  },
+  {
+    "slug": "special-07",
+    "title": "اقیانوس — محو از چپ",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-07-ocean-fade-left.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-07-ocean-fade-left.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 37
+  },
+  {
+    "slug": "special-08",
+    "title": "اقیانوس — محو از راست",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-08-ocean-fade-right.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-08-ocean-fade-right.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 38
+  },
+  {
+    "slug": "special-09",
+    "title": "اقیانوس — محو دوطرفه",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-09-ocean-fade-both.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-09-ocean-fade-both.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 39
+  },
+  {
+    "slug": "special-10",
+    "title": "زمرد — محو از چپ",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-10-emerald-fade-left.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-10-emerald-fade-left.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 40
+  },
+  {
+    "slug": "special-11",
+    "title": "زمرد — محو از راست",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-11-emerald-fade-right.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-11-emerald-fade-right.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 41
+  },
+  {
+    "slug": "special-12",
+    "title": "زمرد — محو دوطرفه",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-12-emerald-fade-both.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-12-emerald-fade-both.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 42
+  },
+  {
+    "slug": "special-13",
+    "title": "یاقوت — محو از چپ",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-13-ruby-fade-left.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-13-ruby-fade-left.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 43
+  },
+  {
+    "slug": "special-14",
+    "title": "یاقوت — محو از راست",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-14-ruby-fade-right.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-14-ruby-fade-right.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 44
+  },
+  {
+    "slug": "special-15",
+    "title": "یاقوت — محو دوطرفه",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-15-ruby-fade-both.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-15-ruby-fade-both.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 45
+  },
+  {
+    "slug": "special-16",
+    "title": "بنفش — محو از چپ",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-16-violet-fade-left.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-16-violet-fade-left.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 46
+  },
+  {
+    "slug": "special-17",
+    "title": "بنفش — محو از راست",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-17-violet-fade-right.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-17-violet-fade-right.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 47
+  },
+  {
+    "slug": "special-18",
+    "title": "بنفش — محو دوطرفه",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-18-violet-fade-both.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-18-violet-fade-both.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 48
+  },
+  {
+    "slug": "special-19",
+    "title": "مرکبات — محو از چپ",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-19-citrus-fade-left.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-19-citrus-fade-left.png",
+    "text_color": "#172100",
+    "is_active": true,
+    "sort_order": 49
+  },
+  {
+    "slug": "special-20",
+    "title": "مرکبات — محو از راست",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-20-citrus-fade-right.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-20-citrus-fade-right.png",
+    "text_color": "#172100",
+    "is_active": true,
+    "sort_order": 50
+  },
+  {
+    "slug": "special-21",
+    "title": "مرکبات — محو دوطرفه",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-21-citrus-fade-both.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-21-citrus-fade-both.png",
+    "text_color": "#172100",
+    "is_active": true,
+    "sort_order": 51
+  },
+  {
+    "slug": "special-22",
+    "title": "رز — محو از چپ",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-22-rose-fade-left.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-22-rose-fade-left.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 52
+  },
+  {
+    "slug": "special-23",
+    "title": "رز — محو از راست",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-23-rose-fade-right.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-23-rose-fade-right.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 53
+  },
+  {
+    "slug": "special-24",
+    "title": "رز — محو دوطرفه",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-24-rose-fade-both.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-24-rose-fade-both.png",
+    "text_color": "#ffffff",
+    "is_active": true,
+    "sort_order": 54
+  },
+  {
+    "slug": "special-25",
+    "title": "نقره‌ای — محو از چپ",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-25-silver-fade-left.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-25-silver-fade-left.png",
+    "text_color": "#111827",
+    "is_active": true,
+    "sort_order": 55
+  },
+  {
+    "slug": "special-26",
+    "title": "نقره‌ای — محو از راست",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-26-silver-fade-right.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-26-silver-fade-right.png",
+    "text_color": "#111827",
+    "is_active": true,
+    "sort_order": 56
+  },
+  {
+    "slug": "special-27",
+    "title": "نقره‌ای — محو دوطرفه",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-27-silver-fade-both.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-27-silver-fade-both.png",
+    "text_color": "#111827",
+    "is_active": true,
+    "sort_order": 57
+  },
+  {
+    "slug": "special-28",
+    "title": "طلایی — محو از چپ",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-28-gold-fade-left.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-28-gold-fade-left.png",
+    "text_color": "#241600",
+    "is_active": true,
+    "sort_order": 58
+  },
+  {
+    "slug": "special-29",
+    "title": "طلایی — محو از راست",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-29-gold-fade-right.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-29-gold-fade-right.png",
+    "text_color": "#241600",
+    "is_active": true,
+    "sort_order": 59
+  },
+  {
+    "slug": "special-30",
+    "title": "طلایی — محو دوطرفه",
+    "category": "special",
+    "asset_url": "library-v3-special-fade-9b7e21/special-30-gold-fade-both.png",
+    "preview_url": "library-v3-special-fade-9b7e21/special-30-gold-fade-both.png",
+    "text_color": "#241600",
+    "is_active": true,
+    "sort_order": 60
   }
 ]

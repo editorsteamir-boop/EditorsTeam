@@ -1,0 +1,2557 @@
+[
+  {
+    "id": "e74207e9-053b-4db9-bf3d-dd685fafd92e",
+    "name": "acidicTurkish",
+    "file_name": "acidicTurkish.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "bc642fe9-9a69-49fe-8ea4-2d975b071f07",
+    "name": "Adobe arabic shin",
+    "file_name": "Adobe arabic shin.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "a8c6a0fd-db68-4843-9c07-15f07e6cdcff",
+    "name": "Adobe shin stouts",
+    "file_name": "Adobe shin stouts.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "a01f3c1f-45dd-4e38-b225-decf12ca1c31",
+    "name": "afacad",
+    "file_name": "afacad.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "411bc047-64ff-4440-9b89-4c57e406b030",
+    "name": "alington",
+    "file_name": "alington.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "15d0b347-1edc-438f-a833-ac48c9b0e658",
+    "name": "AmirHafeziv2",
+    "file_name": "AmirHafeziv2.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "9834563b-63c4-4740-95e0-7fc250fd9990",
+    "name": "amiri-regular",
+    "file_name": "amiri-regular.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "337a1e8a-698b-44b9-ab8e-c8dc2748d132",
+    "name": "amiri-slanted",
+    "file_name": "amiri-slanted.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e23e31c7-0ed1-4a10-8d65-c4a324147e3b",
+    "name": "amsLekhan",
+    "file_name": "amsLekhan.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "ef4b2e68-e416-4651-b277-f44615619cd7",
+    "name": "amsMahaBharat",
+    "file_name": "amsMahaBharat.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "97f468f6-70a5-4b04-882b-e92078070cd0",
+    "name": "amsManoja",
+    "file_name": "amsManoja.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "f535e705-d5ad-49da-82cc-ce64d87b224a",
+    "name": "amsMinar",
+    "file_name": "amsMinar.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "1c3fc1df-ce52-478f-917f-324c849735ad",
+    "name": "amsModi",
+    "file_name": "amsModi.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "fd028283-9f41-4e44-b60a-5e664043ebac",
+    "name": "amsPiyush",
+    "file_name": "amsPiyush.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "90d9fbc5-f714-4d04-9225-faa130551892",
+    "name": "amsPremankur",
+    "file_name": "amsPremankur.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "45e06a44-731b-4ab9-8c10-76f9b9bbb1ec",
+    "name": "amsSamanya",
+    "file_name": "amsSamanya.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "681455f8-6282-436b-be29-f8fa6474ddca",
+    "name": "amsSindhu",
+    "file_name": "amsSindhu.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "9a536e70-ad1a-4573-a8d6-b5cfef2f84ba",
+    "name": "amsSwarup",
+    "file_name": "amsSwarup.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "ff143e34-9a89-47f7-a60b-31f8d322678d",
+    "name": "amsYogesh",
+    "file_name": "amsYogesh.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "3ef5ef2d-f5cb-4e87-be25-b605481cd003",
+    "name": "ANic",
+    "file_name": "ANic.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "61425d46-ca21-49fa-b5fb-55a589c28d6e",
+    "name": "ApkHu Fonts 257",
+    "file_name": "ApkHu Fonts 257.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "68e8bfae-7078-473c-a50c-504324326299",
+    "name": "ApkHu Fonts 258",
+    "file_name": "ApkHu Fonts 258.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "789ce701-29ea-44ba-a5ac-312d256dd081",
+    "name": "ApkHu Fonts 259",
+    "file_name": "ApkHu Fonts 259.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "39abd021-8255-4e57-81d6-fa8cee5e1741",
+    "name": "ApkHu Fonts 260",
+    "file_name": "ApkHu Fonts 260.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "785fb7b7-7c59-4b27-99da-6b498b7643f1",
+    "name": "ApkHu Fonts 261",
+    "file_name": "ApkHu Fonts 261.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "0ec9bddf-1976-4d3d-a86d-871da6d8cc5b",
+    "name": "ApkHu Fonts 262",
+    "file_name": "ApkHu Fonts 262.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "f04b68e5-030d-47fc-a78b-856be7ffc5b8",
+    "name": "ApkHu Fonts 263",
+    "file_name": "ApkHu Fonts 263.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c4089816-3d96-4a3d-9e8e-8050325ac116",
+    "name": "ApkHu Fonts 264",
+    "file_name": "ApkHu Fonts 264.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "4bfc3a38-6dd4-44a2-9826-cc05b9961710",
+    "name": "ApkHu Fonts 265",
+    "file_name": "ApkHu Fonts 265.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "903dd8a1-310a-447d-8abc-628032f1f158",
+    "name": "ApkHu Fonts 266",
+    "file_name": "ApkHu Fonts 266.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "0ae5a306-ff7c-4c90-b520-1a8a7a6eaae7",
+    "name": "ApkHu Fonts 267",
+    "file_name": "ApkHu Fonts 267.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "5a024a73-6d9a-4db4-9050-7a9eaf75c56c",
+    "name": "ApkHu Fonts 268",
+    "file_name": "ApkHu Fonts 268.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "4c6372c5-b2e5-42b5-8b60-278705808c67",
+    "name": "ApkHu Fonts 269",
+    "file_name": "ApkHu Fonts 269.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "651e72c2-dde5-4617-b82b-01929ceef1a3",
+    "name": "ApkHu Fonts 270",
+    "file_name": "ApkHu Fonts 270.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "18055c21-c7ba-4c25-91db-2b6594753ba8",
+    "name": "ApkHu Fonts 271",
+    "file_name": "ApkHu Fonts 271.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "d62f060d-ab12-4b4e-a5ff-775561d3d9b8",
+    "name": "ApkHu Fonts 272",
+    "file_name": "ApkHu Fonts 272.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "34753b0c-9c1f-4916-9ebb-097515ebf5b7",
+    "name": "ApkHu Fonts 273",
+    "file_name": "ApkHu Fonts 273.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "65435a39-6118-46b5-97a7-cd6928cb2be7",
+    "name": "ApkHu Fonts 274",
+    "file_name": "ApkHu Fonts 274.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c1a7e188-d6f6-43e0-8386-e18e2f48d524",
+    "name": "ApkHu Fonts 275",
+    "file_name": "ApkHu Fonts 275.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "0b2bb654-c8a0-4377-a2b9-9f5c20626b0f",
+    "name": "ApkHu Fonts 276",
+    "file_name": "ApkHu Fonts 276.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "1e5ceace-8565-4425-bf43-76fa05defd0a",
+    "name": "ApkHu Fonts 277",
+    "file_name": "ApkHu Fonts 277.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "823c20e2-2137-41cd-8ad2-00ebaeeafa25",
+    "name": "ApkHu Fonts 278",
+    "file_name": "ApkHu Fonts 278.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "fa5bbef2-3332-4a19-93e2-a5b075d20320",
+    "name": "ApkHu Fonts 279",
+    "file_name": "ApkHu Fonts 279.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "6e814494-3c11-4ce4-827e-9a55669e6ac7",
+    "name": "ApkHu Fonts 280",
+    "file_name": "ApkHu Fonts 280.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "0c4cd340-df15-4a86-a2ca-85b6d52e0033",
+    "name": "ApkHu Fonts 281",
+    "file_name": "ApkHu Fonts 281.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "5a81bd82-382c-46f0-949e-b577db214556",
+    "name": "ApkHu Fonts 282",
+    "file_name": "ApkHu Fonts 282.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "b3e26a8a-02f6-40c8-9383-1818534fea39",
+    "name": "ApkHu Fonts 283",
+    "file_name": "ApkHu Fonts 283.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "2fc93c2d-2198-4f88-bda5-b2890885aeee",
+    "name": "ApkHu Fonts 284.TTF",
+    "file_name": "ApkHu Fonts 284.TTF",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "dae113f9-9a8a-499c-8f9a-e2e6691501b3",
+    "name": "ApkHu Fonts 285",
+    "file_name": "ApkHu Fonts 285.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "982973dd-b44d-4109-932c-6f456570be02",
+    "name": "ApkHu Fonts 286",
+    "file_name": "ApkHu Fonts 286.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "1cc1292e-ce23-4ac5-a692-04fadface0da",
+    "name": "ApkHu Fonts 287",
+    "file_name": "ApkHu Fonts 287.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "3a8ef84c-6ea8-4551-adfa-3bc510c2a91d",
+    "name": "ApkHu Fonts 288",
+    "file_name": "ApkHu Fonts 288.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "d554a052-43a5-41c0-8192-cd99cba5c88a",
+    "name": "ApkHu Fonts 289",
+    "file_name": "ApkHu Fonts 289.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "75ca1256-0c73-4d23-b28a-cba84b78bffa",
+    "name": "ApkHu Fonts 290",
+    "file_name": "ApkHu Fonts 290.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "161aa4d7-0bb6-49ad-9187-0fa4b4eeb814",
+    "name": "ApkHu Fonts 291",
+    "file_name": "ApkHu Fonts 291.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c62b7f2f-5a20-425b-b70f-b8e632d5a8b7",
+    "name": "ApkHu Fonts 292",
+    "file_name": "ApkHu Fonts 292.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c025244d-3266-41cc-8b45-897664fcff11",
+    "name": "ApkHu Fonts 293",
+    "file_name": "ApkHu Fonts 293.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "559c3ff6-4560-4361-954b-960c14075634",
+    "name": "ApkHu Fonts 294",
+    "file_name": "ApkHu Fonts 294.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "bf75aabf-6fca-40d2-90b4-2cc7ca01aaae",
+    "name": "ApkHu Fonts 295.TTF",
+    "file_name": "ApkHu Fonts 295.TTF",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "914dc9ce-b7eb-459e-bae8-d8c65d151b6c",
+    "name": "ApkHu Fonts 296.TTF",
+    "file_name": "ApkHu Fonts 296.TTF",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "f4d90f10-3bbd-4b6a-84e5-aa87951d110a",
+    "name": "ApkHu Fonts 297",
+    "file_name": "ApkHu Fonts 297.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "19a98fae-cfe9-4b48-9410-a564ae23e23e",
+    "name": "ApkHu Fonts 298",
+    "file_name": "ApkHu Fonts 298.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "288607b1-c9ff-4015-b8ca-58e5b2d4b08f",
+    "name": "ApkHu Fonts 299",
+    "file_name": "ApkHu Fonts 299.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "b68148d7-1a79-4804-aad8-c99945101688",
+    "name": "ApkHu Fonts 300",
+    "file_name": "ApkHu Fonts 300.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c94d6c3c-2e6d-479f-a33a-6c9be5a87e97",
+    "name": "ApkHu Fonts 301",
+    "file_name": "ApkHu Fonts 301.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "d168b15d-80c2-42c0-a7da-a0072f455ace",
+    "name": "ApkHu Fonts 302",
+    "file_name": "ApkHu Fonts 302.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c89afb9a-2671-4ef0-81ae-f6cdf3075437",
+    "name": "ApkHu Fonts 303",
+    "file_name": "ApkHu Fonts 303.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "6b8ef2a3-a80d-4e27-9d00-8d1f572e49c7",
+    "name": "ar_arghavan",
+    "file_name": "ar_arghavan.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "6f9496e2-3c7b-4ca9-85fc-c77145dd4afe",
+    "name": "ar_arslanWessam",
+    "file_name": "ar_arslanWessam.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "db4b6525-1081-4915-97b0-87f60918a09b",
+    "name": "ar_ebhar",
+    "file_name": "ar_ebhar.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "1757e1e0-ecf8-4877-800d-ac86dd593870",
+    "name": "ar_fedra",
+    "file_name": "ar_fedra.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "b6c25424-bf94-411d-b974-db1e58a4f48d",
+    "name": "ar_hacenCasablancaHd",
+    "file_name": "ar_hacenCasablancaHd.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "42548a5c-92fe-4a2e-bd92-497e00ef9252",
+    "name": "ar_janna",
+    "file_name": "ar_janna.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "44a8f415-1543-49be-a7e4-5214d883249b",
+    "name": "ar_narenj",
+    "file_name": "ar_narenj.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "2e7bb1a5-15aa-4271-a369-4ccf5f34b2a9",
+    "name": "ar_rashed",
+    "file_name": "ar_rashed.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "ddbc0d50-7140-46ea-b1c3-d304ac3f30b8",
+    "name": "ar_titrBold",
+    "file_name": "ar_titrBold.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "1923df05-1abd-4d62-9b4b-e4d2efd3b3d0",
+    "name": "ar_urw",
+    "file_name": "ar_urw.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "9cd6f7f8-479a-470d-977a-d85c7338ac7f",
+    "name": "ar_vipVatan",
+    "file_name": "ar_vipVatan.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "cc2531f4-2e01-4875-bb09-421657ba39ed",
+    "name": "Aram",
+    "file_name": "Aram.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "ec4f2cca-2068-46c2-94da-26f846515675",
+    "name": "Aram (1)",
+    "file_name": "Aram (1).ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "5d9b3ca3-ba33-4934-9e0f-ca228953cad3",
+    "name": "ArslanWessam",
+    "file_name": "ArslanWessam.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "38c9f7b1-63f8-40ec-ba2b-9b5f559c82e7",
+    "name": "Asmae",
+    "file_name": "Asmae.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "ca12b286-38f3-4e1f-999a-72954535aaf2",
+    "name": "Astrobia",
+    "file_name": "Astrobia.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "5f4355d5-4331-44aa-9b75-fecb2a8d2a3f",
+    "name": "Astrobia",
+    "file_name": "Astrobia.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "bfc172ce-e088-422d-96ff-30015baf56dc",
+    "name": "Aviny2",
+    "file_name": "Aviny2.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "c15d5bc2-2b9d-4fc7-91c3-919365afba9c",
+    "name": "Bahman1",
+    "file_name": "Bahman1.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e4744716-9520-4e2d-b5ac-40fe1ffe1b1a",
+    "name": "Bahman2",
+    "file_name": "Bahman2.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "8a588c51-e9e7-4664-a45a-5b5a54638c30",
+    "name": "Bahman2 (1)",
+    "file_name": "Bahman2 (1).ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "8b95fa70-9d6e-4b09-b460-81c57d071470",
+    "name": "balvardi",
+    "file_name": "balvardi.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "3e56623e-a7ea-4776-b9fa-50397a690d79",
+    "name": "Bite Chocolate Personal Use",
+    "file_name": "Bite Chocolate Personal Use.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "723b2b2f-49d5-4065-8cdb-b53a0b694590",
+    "name": "BIZUDPGothicRegular",
+    "file_name": "BIZUDPGothicRegular.ttf",
+    "category": "japanese",
+    "preview_text": "フォント見本"
+  },
+  {
+    "id": "0496a455-7bd5-4d74-bd07-9b0fdc295849",
+    "name": "BLACK Personal Use",
+    "file_name": "BLACK Personal Use.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "faeeee98-c4e5-4452-9810-09ddbfdb69fe",
+    "name": "BLINDSH",
+    "file_name": "BLINDSH.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "65c70ca3-997a-492b-88b8-d9e4439cbe01",
+    "name": "Candy Shop Black Personal Use",
+    "file_name": "Candy Shop Black Personal Use.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c93ff481-290a-4fce-9b71-a78673da9f25",
+    "name": "Candy Shop Personal Use",
+    "file_name": "Candy Shop Personal Use.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "e7bcc35c-e677-4152-a45b-56164b0cb0a0",
+    "name": "chamran",
+    "file_name": "chamran.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "dd297ca2-d9a4-45fc-b65c-fa4f1edb2b0b",
+    "name": "colak",
+    "file_name": "colak.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "fca5ee48-25e5-48f8-9bd0-bd3a191075ab",
+    "name": "copperplateclassicsanspdf",
+    "file_name": "copperplateclassicsanspdf.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "a47f7639-f698-4afe-a637-5966b49dbbcf",
+    "name": "crunch_chips",
+    "file_name": "crunch_chips.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "6b104c1d-e101-40e9-a26b-20fd27605ddb",
+    "name": "Dana-Bold",
+    "file_name": "Dana-Bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "a0ddc326-9c8b-46f6-afe4-4b7a0f01ce9b",
+    "name": "Dana-Bold (1)",
+    "file_name": "Dana-Bold (1).ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e32745f8-2df5-46e1-a1ce-45dd13d92d2f",
+    "name": "Death Star",
+    "file_name": "Death Star.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "07c9fa89-fe52-4fa1-bc01-bd2eb24175cd",
+    "name": "DecoType Naskh Extensions",
+    "file_name": "DecoType Naskh Extensions.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "0a752dbf-d13c-479e-9627-cb8ce7ce1852",
+    "name": "DecoType Naskh Extensions (1)",
+    "file_name": "DecoType Naskh Extensions (1).ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "1aaff892-06c6-48ab-955a-42d9340fb374",
+    "name": "DecoType Naskh Swashes",
+    "file_name": "DecoType Naskh Swashes.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "04b8f3e8-790d-4396-9823-036bb1ef65d2",
+    "name": "delaGothicOneRegular",
+    "file_name": "delaGothicOneRegular.ttf",
+    "category": "japanese",
+    "preview_text": "フォント見本"
+  },
+  {
+    "id": "859f06e0-888a-4ff7-a742-dce701452672",
+    "name": "Deutschlander",
+    "file_name": "Deutschlander.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "cd147135-129a-45c1-a040-9b0f4a4297fc",
+    "name": "Digi Hamishe Bold",
+    "file_name": "Digi Hamishe Bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "675b4d16-ec21-4291-8d4a-2b825fab2215",
+    "name": "Digi Hamishe Bold",
+    "file_name": "Digi Hamishe Bold.otf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "368338a5-2657-483c-a056-bd9f34dff427",
+    "name": "Digi Hamishe Regular",
+    "file_name": "Digi Hamishe Regular.otf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "7e9230fb-b7f8-403c-96d0-63b022e45879",
+    "name": "Digi Hamishe Regular",
+    "file_name": "Digi Hamishe Regular.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "339cc186-9f27-443e-9efb-c9fa2bee13d0",
+    "name": "Digi Hamishe Regular (1)",
+    "file_name": "Digi Hamishe Regular (1).otf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "abc0ceda-1c91-4e80-8139-17102162e2f2",
+    "name": "Digi Hamishe Regular (1)",
+    "file_name": "Digi Hamishe Regular (1).ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "d61880db-1931-4920-a309-266974628fad",
+    "name": "Digi Nozha2 Bold",
+    "file_name": "Digi Nozha2 Bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "a4f2bc07-9edf-421f-946d-72b486e4d62d",
+    "name": "Digi Nozha2 Bold",
+    "file_name": "Digi Nozha2 Bold.otf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "eced52c4-661c-4bdd-9570-fc3bd4a512d3",
+    "name": "Digi Nozha2 Bold (1)",
+    "file_name": "Digi Nozha2 Bold (1).ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e11b5327-cbd8-4c06-9865-b7a1cc218f84",
+    "name": "Digi Nozha2 Bold (1)",
+    "file_name": "Digi Nozha2 Bold (1).otf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "f1ede18f-8901-465f-aef1-f673ad347b19",
+    "name": "Digi Titr Circle Bold",
+    "file_name": "Digi Titr Circle Bold.otf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "12b81b3a-6e64-451e-8c98-257f05f68a33",
+    "name": "Digi Titr Circle Bold",
+    "file_name": "Digi Titr Circle Bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "d5b28920-5c05-4510-ae9c-67bee9908e52",
+    "name": "Digi Titr Line Bold",
+    "file_name": "Digi Titr Line Bold.otf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "11ab5ceb-2c66-404e-a2b5-4fa5fba5f46d",
+    "name": "Digi Titr Line Bold",
+    "file_name": "Digi Titr Line Bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "97106bdd-bcdd-4a3c-b35c-4af28209fc01",
+    "name": "Digi Titr Plus Bold",
+    "file_name": "Digi Titr Plus Bold.otf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e7a333b6-a8e7-45a7-8bf3-511868e70b3a",
+    "name": "Digi Titr Plus Bold",
+    "file_name": "Digi Titr Plus Bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "f23ad9c6-baa6-4281-bfd6-c682e4ce3d2b",
+    "name": "Digi Titr Plus Bold (1)",
+    "file_name": "Digi Titr Plus Bold (1).ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e63a16db-da27-4dc4-acf8-551da78e3b74",
+    "name": "Digitalt",
+    "file_name": "Digitalt.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "f1b0d579-8a60-4f24-9e2f-8b46ae60f5f0",
+    "name": "Digitalt",
+    "file_name": "Digitalt.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "5ba0609d-8b4b-4919-8891-380af8998f4e",
+    "name": "DimaBanoo",
+    "file_name": "DimaBanoo.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "66180b2c-882c-4ec9-99e5-a692fa04b0a7",
+    "name": "DiodrumArabic-Bold",
+    "file_name": "DiodrumArabic-Bold.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "bd42c4c5-ffa3-4bbd-980e-0c6e15edcc8a",
+    "name": "DiodrumArabic-Extralight",
+    "file_name": "DiodrumArabic-Extralight.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "0bc531c6-50b1-43a2-bcf3-26b3c94fa852",
+    "name": "DiodrumArabic-Light",
+    "file_name": "DiodrumArabic-Light.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "b5872224-f56e-412e-be18-553d50040244",
+    "name": "DiodrumArabic-Medium",
+    "file_name": "DiodrumArabic-Medium.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "923f4836-8f93-4134-a584-867cbf05b9d1",
+    "name": "DiodrumArabic-Regular",
+    "file_name": "DiodrumArabic-Regular.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "8f43f4ee-d2ae-48f8-afa0-7d463cc011ce",
+    "name": "DiodrumArabic-Semibold",
+    "file_name": "DiodrumArabic-Semibold.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "f139239f-40ad-4261-a564-a3e849d2a7e2",
+    "name": "Dream Her - TTF",
+    "file_name": "Dream Her - TTF.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c53ec337-9212-470d-8f5e-b750b832e2df",
+    "name": "Dublon-Bold(1)",
+    "file_name": "Dublon-Bold(1).ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "71030a68-c2ae-46ad-bb52-28466b09b6cc",
+    "name": "Ebtekar",
+    "file_name": "Ebtekar.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "73240f01-ff8b-43b8-9ad5-0107c30d3d52",
+    "name": "EMPEROR OF JAPAN-Hollow",
+    "file_name": "EMPEROR OF JAPAN-Hollow.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "ae44c900-e3f0-499b-98e3-4834c2c50634",
+    "name": "EMPEROR OF JAPAN-Light",
+    "file_name": "EMPEROR OF JAPAN-Light.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "5e94dc4a-4318-4b1f-a490-3cb64b60c8e3",
+    "name": "en_babyDoll",
+    "file_name": "en_babyDoll.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "6e427cee-98da-4f38-8f91-0d4a2bedc3bf",
+    "name": "en_Balinesia",
+    "file_name": "en_Balinesia.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "67ece960-b850-4f75-99dd-d8e812a8d079",
+    "name": "en_CocogoosePro",
+    "file_name": "en_CocogoosePro.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "b20d14f4-b593-4df7-9ca0-49e60438d735",
+    "name": "en_HeyComic",
+    "file_name": "en_HeyComic.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "b754830a-3b31-4294-af46-474aa25f2cb6",
+    "name": "en_kgReadHand",
+    "file_name": "en_kgReadHand.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "1d90962d-6431-4b58-9e16-b2d0767cb13d",
+    "name": "en_LettersForLearners",
+    "file_name": "en_LettersForLearners.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "933cdefa-d3dc-4b44-8979-7b34302562ad",
+    "name": "enAutography",
+    "file_name": "enAutography.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "cba75744-8b99-4ff4-b26e-e76def90ac84",
+    "name": "enBebasNeueRegular",
+    "file_name": "enBebasNeueRegular.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "49217d28-31b3-4bcb-b351-48bf91a05009",
+    "name": "enCheri",
+    "file_name": "enCheri.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "582ff94d-885a-4f75-a625-cbb1d2c48336",
+    "name": "enCoogoose",
+    "file_name": "enCoogoose.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "98fb3dde-3bea-4baa-84f4-e09b5fa0093d",
+    "name": "encoolvetica",
+    "file_name": "encoolvetica.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "8f042480-ee13-47a6-8b8f-bcf0b100565f",
+    "name": "enDemielaFreeVersion",
+    "file_name": "enDemielaFreeVersion.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "caa2698e-23a6-47d2-a5b7-8ad8928fff3a",
+    "name": "enHello",
+    "file_name": "enHello.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "6625fb5f-5d1c-46ba-a013-a34564c532de",
+    "name": "enHugMeTight",
+    "file_name": "enHugMeTight.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "22042c66-f89f-4517-b5f6-eed3580821b8",
+    "name": "enKidsco",
+    "file_name": "enKidsco.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "3edc0393-665a-4d70-a9e1-0a97eb5d2712",
+    "name": "enLemonMilkBold",
+    "file_name": "enLemonMilkBold.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "546641a4-23e5-432a-9156-5efb03496675",
+    "name": "enMorningRainbow",
+    "file_name": "enMorningRainbow.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "0e48598f-57f0-49b6-99e9-77dc9047c256",
+    "name": "enOpenSans",
+    "file_name": "enOpenSans.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "9134f788-ce9d-4b39-a85b-6e1402f7d295",
+    "name": "enProductSans",
+    "file_name": "enProductSans.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "ea7132ca-7304-4b10-bc28-90ba2d7b8be5",
+    "name": "Estedad",
+    "file_name": "Estedad.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "1ddadef7-8f49-4124-a048-cc85402205a1",
+    "name": "exo2",
+    "file_name": "exo2.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "621eacca-43dc-4bf1-b3cb-4894e4ab591e",
+    "name": "fa_a_nasr",
+    "file_name": "fa_a_nasr.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "f48a9c56-a444-45c9-9df2-e8ecfe8b8ae2",
+    "name": "fa_aban",
+    "file_name": "fa_aban.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "6be918a8-98fe-4309-81b1-966b8ddca7ee",
+    "name": "fa_ain",
+    "file_name": "fa_ain.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "3bb906ed-3077-40f5-8bb4-2c3b74e9c4cd",
+    "name": "fa_AisaBold",
+    "file_name": "fa_AisaBold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "f82f444f-e315-4664-b6a8-23ebeab1d233",
+    "name": "fa_AlmasBold",
+    "file_name": "fa_AlmasBold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "b5d5b0d8-c6d7-44d9-bfb6-1f5b489e1949",
+    "name": "fa_amin",
+    "file_name": "fa_amin.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e8e7d085-0ab9-42b2-8998-c35a7b7db80b",
+    "name": "fa_AnBold",
+    "file_name": "fa_AnBold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "04158f0a-15d7-4817-9117-4e4623d0c0d4",
+    "name": "fa_arahel",
+    "file_name": "fa_arahel.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e31d04c6-3590-45b4-a6f9-2677aa6c09a1",
+    "name": "fa_bYekan",
+    "file_name": "fa_bYekan.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "8f50e7b5-383e-4725-a7aa-e2d07842f808",
+    "name": "fa_cinema",
+    "file_name": "fa_cinema.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "da6ba828-daac-4dc7-a609-b49ddd827719",
+    "name": "fa_darya",
+    "file_name": "fa_darya.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "d4f7c55d-3c50-4d1e-9c84-89034740faf5",
+    "name": "fa_dastnevis",
+    "file_name": "fa_dastnevis.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "7af1f5db-1501-46b7-9101-5156182aa44c",
+    "name": "fa_delbar3",
+    "file_name": "fa_delbar3.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "2a095586-ea8f-4bd9-a002-142a4976ce4c",
+    "name": "fa_digi_seronaz",
+    "file_name": "fa_digi_seronaz.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e2f4ee1e-bc40-45c2-b969-0f9e44af5fdf",
+    "name": "fa_digi_titr_bold",
+    "file_name": "fa_digi_titr_bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "39828ab7-2cce-4751-b6be-7247668f872d",
+    "name": "fa_digiMaryamRegular",
+    "file_name": "fa_digiMaryamRegular.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "bf1b69f4-3085-44d1-ab89-7d280b2353f7",
+    "name": "fa_dima_tahriri",
+    "file_name": "fa_dima_tahriri.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "1d5a2fc6-ecf7-41c6-8575-5e27b32c276e",
+    "name": "fa_doran",
+    "file_name": "fa_doran.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "33d068cc-7123-4b4e-b57c-f5e87b3c7f7a",
+    "name": "fa_dordaneh",
+    "file_name": "fa_dordaneh.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "4f860fad-d95a-4981-b291-e755d4c64214",
+    "name": "fa_fanavari",
+    "file_name": "fa_fanavari.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "9123b14a-96cc-4af4-abee-e0c61abbac2a",
+    "name": "fa_far_rozname",
+    "file_name": "fa_far_rozname.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "483be352-3a8b-4077-9299-99bf425e18db",
+    "name": "fa_farkhonde",
+    "file_name": "fa_farkhonde.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "023e4513-db28-427d-ab3d-ac9a889a41f5",
+    "name": "fa_fedra",
+    "file_name": "fa_fedra.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "faaca2c2-3b8d-4513-9a40-6d30dd0b3961",
+    "name": "fa_ghaf",
+    "file_name": "fa_ghaf.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "434fd795-e743-4fc0-90de-f136ea28f54b",
+    "name": "fa_gramoph",
+    "file_name": "fa_gramoph.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "50be3f87-2b04-432d-b09e-2e91d98baa64",
+    "name": "fa_granPaye",
+    "file_name": "fa_granPaye.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e2557185-c9ab-4271-b290-54dad3fb0e34",
+    "name": "fa_hadye",
+    "file_name": "fa_hadye.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "b759bfef-415b-4dc0-a16e-14291fd020e3",
+    "name": "fa_hamon",
+    "file_name": "fa_hamon.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "dcb943c6-3266-4ccb-9ed5-c569f5772db0",
+    "name": "fa_heritage",
+    "file_name": "fa_heritage.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "85ef6958-b0be-4a7e-b22a-5934821a10f6",
+    "name": "fa_iranSiah",
+    "file_name": "fa_iranSiah.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "5337db07-d85b-41fc-8620-5fcce3e23a9f",
+    "name": "fa_jameel",
+    "file_name": "fa_jameel.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "0bd3e148-a083-4634-a410-948417323be2",
+    "name": "fa_javan",
+    "file_name": "fa_javan.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "30dfd051-19f3-48ec-a47e-464df8927d95",
+    "name": "fa_kalameh",
+    "file_name": "fa_kalameh.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "79e2fd6f-7e9f-4997-aabd-0e81ceccdeb0",
+    "name": "fa_katibeh",
+    "file_name": "fa_katibeh.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "f266c67f-d6d1-4814-aedc-b9ff314701e0",
+    "name": "fa_ketab3",
+    "file_name": "fa_ketab3.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "38d312fd-1cea-4633-b802-255d799969ed",
+    "name": "fa_khodkar",
+    "file_name": "fa_khodkar.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "5ce81b0e-4f79-4ceb-a89f-89f026474ec8",
+    "name": "fa_lalezar",
+    "file_name": "fa_lalezar.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "4fc23cc2-7b37-4b37-a88d-287596a6af3c",
+    "name": "fa_MadasiBold",
+    "file_name": "fa_MadasiBold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "8fa4705c-afe2-4b59-ba1c-f62d6a7d6494",
+    "name": "fa_maha",
+    "file_name": "fa_maha.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "b3ee1665-c44d-48fb-a82b-dc2788c71eae",
+    "name": "fa_miremad",
+    "file_name": "fa_miremad.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "7cf83dba-5c84-4cb7-b6a9-963d43eaba21",
+    "name": "fa_mirza_bold",
+    "file_name": "fa_mirza_bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "7d208e99-411a-402b-89ff-a90176a9a81d",
+    "name": "fa_modern",
+    "file_name": "fa_modern.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "d3808829-4273-406d-8398-08953b93faf8",
+    "name": "fa_molsaq",
+    "file_name": "fa_molsaq.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "5a2eba4d-867d-4676-97f6-1fcd977f228c",
+    "name": "fa_moraba_bold",
+    "file_name": "fa_moraba_bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "839753a5-88ab-4f3e-93ee-0b13fad37a58",
+    "name": "fa_nastaliq",
+    "file_name": "fa_nastaliq.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e618673f-5b0a-4468-8692-10e4c458f9c5",
+    "name": "fa_NegareBold",
+    "file_name": "fa_NegareBold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "657ad5b9-c6f6-4273-b274-bcbe71a60af3",
+    "name": "fa_NofarBold",
+    "file_name": "fa_NofarBold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "f9205f27-1c4d-4465-ba52-218d5dd9b1cd",
+    "name": "fa_nozha",
+    "file_name": "fa_nozha.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "df9048c6-8e2d-453a-a325-9d1a502aea5a",
+    "name": "fa_Nozha2Bold",
+    "file_name": "fa_Nozha2Bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "59473cf3-0f56-4ad8-be84-6a87477c2227",
+    "name": "fa_paeez",
+    "file_name": "fa_paeez.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e67ba098-5494-4114-9da3-f480e710a9c9",
+    "name": "fa_PaeezProfesional",
+    "file_name": "fa_PaeezProfesional.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "6c3b9497-fec8-4476-babf-89a15225d1f6",
+    "name": "fa_peyda_bold",
+    "file_name": "fa_peyda_bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "d495557c-2373-42ba-961d-a534f3a1993f",
+    "name": "fa_pinar_ds4_bold",
+    "file_name": "fa_pinar_ds4_bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "42b80265-1e99-4f85-b9ef-cd466a6d5d4e",
+    "name": "fa_portada",
+    "file_name": "fa_portada.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "3a1252af-bab4-4d22-b0f2-468aabfde6d7",
+    "name": "fa_potk",
+    "file_name": "fa_potk.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "4afd46b6-b025-450e-a560-5c934bb51751",
+    "name": "fa_pouran",
+    "file_name": "fa_pouran.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "1a8da9aa-168b-4897-96bd-b9bd49acc892",
+    "name": "fa_qatar",
+    "file_name": "fa_qatar.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e8e25765-18b8-488e-99ee-062499b82cab",
+    "name": "fa_radin",
+    "file_name": "fa_radin.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "36d6edcb-9396-439f-ba3d-7c1da253fb24",
+    "name": "fa_ray_medium",
+    "file_name": "fa_ray_medium.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "2bd6a88f-09ae-4f97-9693-9f5fde341063",
+    "name": "fa_san_francisco_bold",
+    "file_name": "fa_san_francisco_bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "4394451b-b123-498b-b404-bcf8fab58a87",
+    "name": "fa_sarvenaz",
+    "file_name": "fa_sarvenaz.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "610fe056-4711-4826-8460-d0de329f6b79",
+    "name": "fa_sensSiah",
+    "file_name": "fa_sensSiah.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "ed2a7ec2-e3ee-435b-846e-2451848bfdd8",
+    "name": "fa_shakeri",
+    "file_name": "fa_shakeri.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "30a4f197-eea6-4d39-a2f1-019c9ed6b0f0",
+    "name": "fa_shams",
+    "file_name": "fa_shams.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "2782e3c8-12f4-430b-979b-e7935621a855",
+    "name": "fa_shokoh",
+    "file_name": "fa_shokoh.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "dec92f6f-60f8-4276-83c3-4d1cdd7896b2",
+    "name": "fa_snapp",
+    "file_name": "fa_snapp.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "ddd6e7d6-4ade-438a-afb3-dfdf0ff9b5a8",
+    "name": "fa_sofi",
+    "file_name": "fa_sofi.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "309e61fc-f4bf-4a17-955a-b9f4bfe29800",
+    "name": "fa_soroush",
+    "file_name": "fa_soroush.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "dd06befa-7eb0-4e6c-acab-f07471becd35",
+    "name": "fa_terashin",
+    "file_name": "fa_terashin.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "a1c12255-1a38-4947-a3cf-a98cbcd788b1",
+    "name": "fa_tiam",
+    "file_name": "fa_tiam.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "6c7bc1c1-9837-425e-baf5-107fd85d0460",
+    "name": "fa_titraj",
+    "file_name": "fa_titraj.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e9011a09-278f-4b7e-8538-293e0d605a00",
+    "name": "fa_titrPlus",
+    "file_name": "fa_titrPlus.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "8ee24f51-cc87-41f3-b492-560003ce9a01",
+    "name": "fa_yalda",
+    "file_name": "fa_yalda.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "296b2556-8ad2-4996-b21f-50b9fc5fcb0d",
+    "name": "fa_yekan_boom",
+    "file_name": "fa_yekan_boom.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "940d844e-67c7-4404-9ed6-ec830e6093fc",
+    "name": "fa_zahra",
+    "file_name": "fa_zahra.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "24f2f2a3-a2a6-4e92-9694-e789aa8afd8e",
+    "name": "fa_zahra_rosta",
+    "file_name": "fa_zahra_rosta.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e289f66d-2c74-4589-8e94-1da52f7946cb",
+    "name": "Far_Naskh",
+    "file_name": "Far_Naskh.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "2251c05d-b2d6-4ae7-b0fa-8e18549cb3c4",
+    "name": "farhang_sharp_bold",
+    "file_name": "farhang_sharp_bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "ea20c333-0041-4ef4-b4bd-9d045b3f305b",
+    "name": "Feathergraphy_Clean",
+    "file_name": "Feathergraphy_Clean.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c09d4e1a-90fe-4899-88fd-6b9a0eeb6c2d",
+    "name": "Feathergraphy_Clean(1)",
+    "file_name": "Feathergraphy_Clean(1).ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "32d37301-b6b4-4006-9806-51f4690ad8c0",
+    "name": "FontMessage",
+    "file_name": "FontMessage.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "bbdcfc28-c93d-4e31-9291-37049d1e1a37",
+    "name": "FontNegative",
+    "file_name": "FontNegative.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "36050140-021e-4241-b995-fd11aa9c47c4",
+    "name": "FontPositive",
+    "file_name": "FontPositive.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "dbe24878-625f-4882-bb7a-30932477e8f9",
+    "name": "FontTitle",
+    "file_name": "FontTitle.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "a3c3f88a-33f8-4c46-94ff-4eb7c8cd56bb",
+    "name": "FontTitle (1)",
+    "file_name": "FontTitle (1).ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "9fe4d570-8c19-46ec-b9ae-73bab7278140",
+    "name": "FTY DELIRIUM NCV",
+    "file_name": "FTY DELIRIUM NCV.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c164ba80-fe55-4120-8f40-0ddbdbeb355a",
+    "name": "Game Played",
+    "file_name": "Game Played.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "84fedfd6-86d3-4568-8646-f654ae17be27",
+    "name": "Game Played Outline",
+    "file_name": "Game Played Outline.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "953a4f19-6c2e-41b9-a2c7-08db72abee34",
+    "name": "Gandom",
+    "file_name": "Gandom.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "dea34ba3-1651-4ac7-9693-8e0cdbb46dc9",
+    "name": "Gladifilthefte",
+    "file_name": "Gladifilthefte.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "50b9d582-9c6f-4432-8d56-97fb092e69e9",
+    "name": "Graphik Arabic",
+    "file_name": "Graphik Arabic.otf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "d637898a-5943-442f-9fab-5436b070ccbc",
+    "name": "Graphik Arabic Black",
+    "file_name": "Graphik Arabic Black.otf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "44217ef2-4b8a-4fa0-8f0f-ada407b7bd62",
+    "name": "Graphik Arabic Bold",
+    "file_name": "Graphik Arabic Bold.otf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "0ce17659-bfd3-400e-abf0-7b05c24c91bd",
+    "name": "Graphik Arabic ExtraLight",
+    "file_name": "Graphik Arabic ExtraLight.otf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "29403069-d86f-459e-97d7-5eea1073699e",
+    "name": "Graphik Arabic Light",
+    "file_name": "Graphik Arabic Light.otf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "2481b2e4-04aa-43bf-b993-8bb412122777",
+    "name": "Graphik Arabic Medium",
+    "file_name": "Graphik Arabic Medium.otf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "bdba4ddc-163f-4e77-8d55-66b8cfe933d7",
+    "name": "Graphik Arabic SemiBold",
+    "file_name": "Graphik Arabic SemiBold.otf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "d2a7c736-3e32-4715-934d-ae0b5e1b7946",
+    "name": "Graphik Arabic Super",
+    "file_name": "Graphik Arabic Super.otf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "98f5d827-6749-4ef1-b1fa-e3b57f5e0760",
+    "name": "Graphik Arabic Thin",
+    "file_name": "Graphik Arabic Thin.otf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "9da0aaf4-bf43-4c9a-bb98-8af32b5976a8",
+    "name": "Halimun",
+    "file_name": "Halimun.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "69ef7653-52b3-4a31-9333-b52b3e0b494d",
+    "name": "Hamideh",
+    "file_name": "Hamideh.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "f6566e49-74fd-42b3-a093-9becadf37fd5",
+    "name": "hanachi",
+    "file_name": "hanachi.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "87166735-4876-4b23-b7c8-8cf81fe0daa4",
+    "name": "HaniehOutline",
+    "file_name": "HaniehOutline.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "dc62243b-c256-4b61-a2b0-f904eede02f0",
+    "name": "Heathergreen",
+    "file_name": "Heathergreen.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "543534d5-514c-42c1-9485-4fdd6838aa24",
+    "name": "Hemera II DEMO",
+    "file_name": "Hemera II DEMO.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "9ce93bb0-f7ef-407c-a402-86ef3341113f",
+    "name": "hi_lekhan",
+    "file_name": "hi_lekhan.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "b5f1e692-fbd3-439d-b087-02d1d9fc373f",
+    "name": "hi_maha_bharat",
+    "file_name": "hi_maha_bharat.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "f14810b7-8d0b-4a1f-8263-00c03e70cd98",
+    "name": "hi_manoja",
+    "file_name": "hi_manoja.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "e1164ee8-b952-43ad-8f5f-d88ba03cf478",
+    "name": "hi_minar",
+    "file_name": "hi_minar.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "20490f2e-b013-4025-a480-a5b9fe01566f",
+    "name": "hi_modi",
+    "file_name": "hi_modi.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "6b2f91b1-e361-4871-9698-577a4c884351",
+    "name": "hi_piyush",
+    "file_name": "hi_piyush.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "6160f010-0872-4f1e-b402-8ee7f0eae90c",
+    "name": "hi_premankur",
+    "file_name": "hi_premankur.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "e1855b6f-a35c-42c8-aff3-71893ebdf21f",
+    "name": "hi_yogesh",
+    "file_name": "hi_yogesh.ttf",
+    "category": "hindi",
+    "preview_text": "फ़ॉन्ट नमूना"
+  },
+  {
+    "id": "3ec9c5a7-4d64-4fbf-b8c4-d22a1dc1fe76",
+    "name": "Hilda",
+    "file_name": "Hilda.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "905ccfed-ecb6-4c51-a0ed-91de5833e33e",
+    "name": "I_Rounded",
+    "file_name": "I_Rounded.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "0fca216d-6407-40d7-b396-cb2f42230de0",
+    "name": "ID Font.TTF",
+    "file_name": "ID Font.TTF",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "13180490-0034-489a-a13e-1555f66c63b7",
+    "name": "IMarker",
+    "file_name": "IMarker.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "91f3e0ca-0219-4259-8f0e-c5cfb1c4aebd",
+    "name": "InsulaTurkish",
+    "file_name": "InsulaTurkish.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "a561ff68-f7c6-4a7a-a9f7-78a6b9ea7a5c",
+    "name": "Ios 15.5 Androiland",
+    "file_name": "Ios 15.5 Androiland.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "7319e3ee-865f-4295-b862-c55c41af7a33",
+    "name": "ios_15",
+    "file_name": "ios_15.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "1a911802-521c-4a44-8bd7-c234897f379e",
+    "name": "ios_fonto",
+    "file_name": "ios_fonto.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "1ac4cb38-77f8-4cb2-8e8b-051fb2a83fae",
+    "name": "Ios15font(@macanism_96)",
+    "file_name": "Ios15font(@macanism_96).ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "25ee7cb2-1533-403d-94a8-c9caaedbfd6e",
+    "name": "iranBlack",
+    "file_name": "iranBlack.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "23c85a07-bb26-4261-80aa-ca911289f35f",
+    "name": "IRANMarker",
+    "file_name": "IRANMarker.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "64ece15f-f2d7-4f27-8e42-b759eb22370d",
+    "name": "IRANSansBold",
+    "file_name": "IRANSansBold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e3ca50a6-cf27-4a19-87c8-26e4c8ee4f59",
+    "name": "IRANSansX-200",
+    "file_name": "IRANSansX-200.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "cd87e5bc-3ba1-41df-8803-545ea1ce54c2",
+    "name": "IRANSansX-500",
+    "file_name": "IRANSansX-500.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "20b38163-4bc6-4269-beb8-eda976a08122",
+    "name": "IRANSansX-700",
+    "file_name": "IRANSansX-700.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "c30f4980-6014-4de3-bbfe-d842e71f69bc",
+    "name": "IRANSansX-900",
+    "file_name": "IRANSansX-900.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "96ae77bd-48f4-4dbe-bb4a-f7afe17dba13",
+    "name": "IYekanBlack",
+    "file_name": "IYekanBlack.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "f050cb4c-10d9-4d1d-bfa0-ac6c6c462115",
+    "name": "JaneDoe-PersonalUse",
+    "file_name": "JaneDoe-PersonalUse.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "771e0839-82d6-4fc2-a2f7-dc231fb05b32",
+    "name": "Jellyka Delicious Cake",
+    "file_name": "Jellyka Delicious Cake.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "867383a1-1a7c-42b1-8ff7-b70f71ebc213",
+    "name": "joghd",
+    "file_name": "joghd.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "d26d3630-2739-41b5-b1a9-92d7441ae00c",
+    "name": "JUSTICE LEAGUE",
+    "file_name": "JUSTICE LEAGUE.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "8a51e0e7-3bda-4fb9-985d-d5ca1f685b21",
+    "name": "Kalameh_Black",
+    "file_name": "Kalameh_Black.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "d43a43a2-c46a-44bc-8adc-a4378c9aefe5",
+    "name": "Kalpazan-PersonalUse",
+    "file_name": "Kalpazan-PersonalUse.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "15f149d8-d10c-4454-ac40-d374b3130b3b",
+    "name": "Kalpazan-PersonalUse(1)",
+    "file_name": "Kalpazan-PersonalUse(1).otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "594ef0df-835d-40de-b8cb-3c4daffc999b",
+    "name": "KanitLight",
+    "file_name": "KanitLight.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "d1128d66-3e2b-4f27-8581-a662119c054c",
+    "name": "khash",
+    "file_name": "khash.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "c9414690-721a-4710-a898-97a76ead9c45",
+    "name": "khaton",
+    "file_name": "khaton.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "905bb685-e045-414c-848d-a10cf9ba4a7f",
+    "name": "koloche",
+    "file_name": "koloche.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "85861ab0-6e72-4b24-ac59-fe18823d7112",
+    "name": "kosugiMaruRegular",
+    "file_name": "kosugiMaruRegular.ttf",
+    "category": "japanese",
+    "preview_text": "フォント見本"
+  },
+  {
+    "id": "9fd6408e-bca3-487c-9b4f-21eac576f129",
+    "name": "Lalezar-Regular",
+    "file_name": "Lalezar-Regular.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "97caf907-43f8-4c75-8c17-7382ed627468",
+    "name": "Library 3 am",
+    "file_name": "Library 3 am.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "0adad723-0709-4030-af57-05cbc7161d3d",
+    "name": "Library 3 am soft",
+    "file_name": "Library 3 am soft.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "4dc98b69-de00-4c01-82b3-ff11936bda05",
+    "name": "Madeleine",
+    "file_name": "Madeleine.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "14638e3e-0b2c-46c1-8a56-319951849add",
+    "name": "Madeleine Bold",
+    "file_name": "Madeleine Bold.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c28f4026-6fab-4fb3-b3f4-151d7602492d",
+    "name": "Maneli",
+    "file_name": "Maneli.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "dd0068fd-ff51-4073-ab4e-71d119c53b6a",
+    "name": "Mikhak-vf",
+    "file_name": "Mikhak-vf.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "fa0096d2-41ca-4c12-85b7-12c854ff85a8",
+    "name": "Mj_Sayeh-1_0.TTF",
+    "file_name": "Mj_Sayeh-1_0.TTF",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "e49fe539-63ca-4ad9-ad8e-95ce8b37e8c3",
+    "name": "Mj_Sayeh-2_0.TTF",
+    "file_name": "Mj_Sayeh-2_0.TTF",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "f098f866-e9a4-451c-a626-8ccfaef3cb37",
+    "name": "MolsaqArabic-ExtraBold",
+    "file_name": "MolsaqArabic-ExtraBold.ttf",
+    "category": "arabic",
+    "preview_text": "الخط العربي"
+  },
+  {
+    "id": "15e9f5d4-df4d-4536-a48d-47a9fa3076ab",
+    "name": "monomaniacOne",
+    "file_name": "monomaniacOne.ttf",
+    "category": "japanese",
+    "preview_text": "フォント見本"
+  },
+  {
+    "id": "755d1e60-7d44-4b7f-9774-3f43961aa181",
+    "name": "mRounded1c-Light",
+    "file_name": "mRounded1c-Light.ttf",
+    "category": "japanese",
+    "preview_text": "フォント見本"
+  },
+  {
+    "id": "a8c537ef-a759-4ba4-85f2-b37c8fafa435",
+    "name": "namecat",
+    "file_name": "namecat.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "0025021b-1040-4694-a773-832b29f60755",
+    "name": "NaskhAziz",
+    "file_name": "NaskhAziz.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "4d625c18-2279-457a-b78d-2b004da53657",
+    "name": "notoSans",
+    "file_name": "notoSans.ttf",
+    "category": "japanese",
+    "preview_text": "フォント見本"
+  },
+  {
+    "id": "5a636d6e-e743-4481-8005-ba147c78e105",
+    "name": "notoSerifJP",
+    "file_name": "notoSerifJP.otf",
+    "category": "japanese",
+    "preview_text": "フォント見本"
+  },
+  {
+    "id": "f7074fa9-736c-418a-8cbe-c6ad5fd8e298",
+    "name": "NOVASOLID ___",
+    "file_name": "NOVASOLID ___.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "3833d382-1ef3-4549-9d93-a56bb34c1b95",
+    "name": "Oliver-Regular",
+    "file_name": "Oliver-Regular.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "3130ecb4-e5cf-4623-9783-fbfe78dc73c2",
+    "name": "openSans",
+    "file_name": "openSans.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "363cad82-93b8-4554-986f-65e676b11f0d",
+    "name": "OrangeRoyaleOpen-Regular(1)",
+    "file_name": "OrangeRoyaleOpen-Regular(1).ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "8565ca6a-10cd-43cf-8840-2c37c9f9c310",
+    "name": "pacifico",
+    "file_name": "pacifico.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "c2fe5f2a-7f18-431e-a10d-660f387bf211",
+    "name": "Pasajero",
+    "file_name": "Pasajero.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "598d776d-acf3-4a17-aeec-3fcf7f36e3b2",
+    "name": "PRIMETIME-PERSONAL USE ONLY",
+    "file_name": "PRIMETIME-PERSONAL USE ONLY.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "f7d41069-bbfa-42de-8111-a57c5906d547",
+    "name": "Red Seven",
+    "file_name": "Red Seven.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "e770c2ff-be21-4c2f-ad85-366675c52cf6",
+    "name": "rethinkSans",
+    "file_name": "rethinkSans.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "9cf06334-ee09-4591-b6ab-fe91b8925673",
+    "name": "road_racer_demo",
+    "file_name": "road_racer_demo.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "285b6bd7-132f-4451-baa4-72ebc3eba14d",
+    "name": "RobotoLight",
+    "file_name": "RobotoLight.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "e498f4df-1067-4561-8743-5bd01a479ad6",
+    "name": "rubikBubbles",
+    "file_name": "rubikBubbles.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "01b428e9-fcc3-465c-85e5-176e34a8d0fd",
+    "name": "Shabnam-Bold",
+    "file_name": "Shabnam-Bold.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "f386a42d-08b0-43a3-a33c-ce85646128e9",
+    "name": "shizuruRegular",
+    "file_name": "shizuruRegular.ttf",
+    "category": "japanese",
+    "preview_text": "フォント見本"
+  },
+  {
+    "id": "e3b6f4d8-dfe7-4101-86fe-35c9bd78c999",
+    "name": "shrieky",
+    "file_name": "shrieky.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "4e9b40cf-1186-4f34-9a03-91edc6c1c754",
+    "name": "Signatra",
+    "file_name": "Signatra.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "272d2d42-3abf-4fbd-9ace-459d4401019d",
+    "name": "Slim Play",
+    "file_name": "Slim Play.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "d4f9d021-cbf3-475a-a422-c80a2a621f33",
+    "name": "SNES Italic",
+    "file_name": "SNES Italic.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "8367430f-9c07-4ced-9530-df191d9ea56e",
+    "name": "snowman",
+    "file_name": "snowman.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "f0a91337-0fae-47a5-8a3a-aad0e94c36c6",
+    "name": "sobiscuit",
+    "file_name": "sobiscuit.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "d0ebd059-98b3-4f53-a16f-5ebc02d1b5ad",
+    "name": "Social Type Pro",
+    "file_name": "Social Type Pro.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "518bc300-a01c-4e13-9713-78e2ad9c107f",
+    "name": "Spantaran (demo)",
+    "file_name": "Spantaran (demo).ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "68feb297-8813-4c0a-8457-da5f5c244c62",
+    "name": "steinemTurkish",
+    "file_name": "steinemTurkish.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "bd9f2a1b-866f-4ddb-957b-ebb371d67c78",
+    "name": "Summer-Light",
+    "file_name": "Summer-Light.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "61af48da-d96a-4da8-8baf-bacf390dd237",
+    "name": "Tamira-PersonalUse",
+    "file_name": "Tamira-PersonalUse.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "94dae628-0fed-4bb8-b104-15444451839b",
+    "name": "Tempo",
+    "file_name": "Tempo.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "8090ff24-5200-4d52-995a-81f603d34404",
+    "name": "tr_arcelik",
+    "file_name": "tr_arcelik.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "8c2b8757-486c-48e4-8106-ac3e184a47e7",
+    "name": "tr_balloon",
+    "file_name": "tr_balloon.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "3ed93f72-d55d-45f2-a886-68e514c9f2ec",
+    "name": "tr_medium",
+    "file_name": "tr_medium.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "7295fea4-75d1-4f7b-9a28-b65f0824fe7c",
+    "name": "tr_microgram",
+    "file_name": "tr_microgram.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "d9aa84a5-b8e4-4801-9e5d-ed56161197f4",
+    "name": "tr_participants",
+    "file_name": "tr_participants.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "a7e60939-b9d5-4bd2-82b5-114ebd4bd200",
+    "name": "tr_smaching_the_quakish",
+    "file_name": "tr_smaching_the_quakish.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "07837b25-8b95-4e5e-a9ae-8c87f24d1fee",
+    "name": "tr_tommaso",
+    "file_name": "tr_tommaso.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "3131ad83-1882-4b52-b689-939edc24c27c",
+    "name": "trench100free",
+    "file_name": "trench100free.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "1937989b-e659-4198-99a2-9ca60831ea4b",
+    "name": "trench100free",
+    "file_name": "trench100free.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "6ec14b11-efbf-4763-a95d-5052a03f8ddd",
+    "name": "Tribalcase",
+    "file_name": "Tribalcase.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "119b3035-7f23-4285-9c8f-057ca7a3cc3d",
+    "name": "turkishAnotherTypewriter",
+    "file_name": "turkishAnotherTypewriter.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "07418ada-7f90-4580-8436-15131f98501a",
+    "name": "turkishCourier",
+    "file_name": "turkishCourier.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "b36cc08b-eb4c-4b1e-8b49-1fa5466e3d3f",
+    "name": "TurkishParticipants",
+    "file_name": "TurkishParticipants.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "e752905e-bdb9-4caa-b3fc-2af75c89f48d",
+    "name": "turkishTmsRoman",
+    "file_name": "turkishTmsRoman.ttf",
+    "category": "turkish",
+    "preview_text": "Türkçe Yazı"
+  },
+  {
+    "id": "66d39fdc-d17a-4d33-a729-f5284e85af10",
+    "name": "Vonique 92 Regular",
+    "file_name": "Vonique 92 Regular.otf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "d02cde5d-fe10-41db-a324-1b3116a686e1",
+    "name": "Yahoo",
+    "file_name": "Yahoo.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "fac3336b-d6f3-4276-a078-45e4d02eba2b",
+    "name": "Yekan Boom",
+    "file_name": "Yekan Boom.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "3fa2d099-b4fa-4d92-aaa3-837bf7e72f88",
+    "name": "YEKAN PLUS.TTF",
+    "file_name": "YEKAN PLUS.TTF",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "85d0c10f-bbcd-4530-8ee4-cec134e98389",
+    "name": "yekan_bakh",
+    "file_name": "yekan_bakh.ttf",
+    "category": "persian",
+    "preview_text": "ایران زیبا"
+  },
+  {
+    "id": "9ea8861d-f56c-48d1-8a57-d413d523d050",
+    "name": "zenAntique",
+    "file_name": "zenAntique.ttf",
+    "category": "japanese",
+    "preview_text": "フォント見本"
+  },
+  {
+    "id": "533ddb56-56d1-4be2-be41-7639b04870e2",
+    "name": "Zilap Orion Personal Use",
+    "file_name": "Zilap Orion Personal Use.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  },
+  {
+    "id": "0bc63ced-8f6b-4089-9e60-e9a3ebbbb3b0",
+    "name": "Zilap Orion Urban Personal Use",
+    "file_name": "Zilap Orion Urban Personal Use.ttf",
+    "category": "english",
+    "preview_text": "Font Preview"
+  }
+]

@@ -1,8 +1,9 @@
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const specialConfig = JSON.parse(await readFile(path.join(root, "scripts/fonto-special-styles.json"), "utf8"));
 
 const palettes = [
   { key: "sunset", title: "غروب", text: "#ffffff" },
@@ -32,6 +33,25 @@ for (const palette of palettes) {
       category: kind.category,
       asset_url: `library-v2-e8c1d4f7/quick/trend-${String(order).padStart(2, "0")}-${palette.key}-${kind.key}.png`,
       preview_url: `library-v2-e8c1d4f7/quick/trend-${String(order).padStart(2, "0")}-${palette.key}-${kind.key}.png`,
+      text_color: palette.text,
+      is_active: true,
+      sort_order: order,
+    });
+  }
+}
+
+let specialIndex = 0;
+for (const palette of specialConfig.palettes) {
+  for (const variant of specialConfig.variants) {
+    specialIndex += 1;
+    const order = quickOrder++;
+    const file = `special-${String(specialIndex).padStart(2, "0")}-${palette.key}-${variant.key}.png`;
+    quickStyles.push({
+      slug: `special-${String(specialIndex).padStart(2, "0")}`,
+      title: `${palette.title} — ${variant.title}`,
+      category: "special",
+      asset_url: `${specialConfig.asset_folder}/${file}`,
+      preview_url: `${specialConfig.asset_folder}/${file}`,
       text_color: palette.text,
       is_active: true,
       sort_order: order,
@@ -259,7 +279,7 @@ textThemes.push(
   makeTheme("luxury-emerald", "زمرد لوکس", "Luxury Emerald", "cinematic", ["#04130e", "#123b2b"], { fill_stops: [stop(0, "#d8fff0"), stop(.3, "#68e6b4"), stop(.58, "#d6b65b"), stop(1, "#1b8a65")], gradient_direction: "diagonal", outlines: [outline("#052d20", 4), outline("#e9cf7a", 1)], shadows: [shadow("#000000", 9, 1, 7)] }),
 );
 
-if (quickStyles.length !== 30 || textThemes.length !== 50) {
+if (quickStyles.length !== 60 || textThemes.length !== 50) {
   throw new Error(`Unexpected catalog size: quick=${quickStyles.length}, themes=${textThemes.length}`);
 }
 

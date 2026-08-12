@@ -20,6 +20,9 @@
     quickStyleImage: null,
     themeId: null,
     text: "متن خود را بنویسید",
+    textAlign: "center",
+    textDirection: "rtl",
+    lineHeight: 1.18,
     font: "Tahoma",
     fontUrl: "",
     fontWeight: 800,
@@ -60,9 +63,40 @@
     cinematic: "سینمایی",
   };
 
+  const QUICK_CATEGORY_LABELS = {
+    all: "همه",
+    instagram: "ترند",
+    glass: "شیشه‌ای",
+    neon: "نئون",
+    special: "ویژه‌ها",
+  };
+
+  const FONT_CATEGORY_LABELS = {
+    all: "همه",
+    persian: "فارسی",
+    arabic: "العربية",
+    english: "English",
+    hindi: "हिन्दी",
+    japanese: "日本語",
+    turkish: "Türkçe",
+  };
+
+  const FONT_PREVIEW_TEXTS = {
+    persian: "ایران زیبا",
+    arabic: "الخط العربي",
+    english: "Font Preview",
+    hindi: "फ़ॉन्ट नमूना",
+    japanese: "フォント見本",
+    turkish: "Türkçe Yazı",
+  };
+
+  let fontAssets = [];
   let quickStyles = [];
   let textThemes = [];
+  let activeFontCategory = "all";
+  let activeQuickCategory = "all";
   let activeThemeCategory = "all";
+  let fontPreviewObserver = null;
 
   function status(message, type = "neutral") {
     const element = $("fontoStatus");
@@ -167,8 +201,11 @@
       .map((item) => {
         const file = item.file_url || item.file_name;
         return {
+          id: item.id || file,
           name: item.name || item.family || file?.replace(/\.(ttf|otf|woff2?)$/i, ""),
           url: publicUrl("fonto-fonts", file),
+          category: item.category || "persian",
+          previewText: item.preview_text || FONT_PREVIEW_TEXTS[item.category] || "Font Preview",
         };
       })
       .filter((item) => item.name && item.url)
@@ -234,28 +271,186 @@
     const select = $("fontoFont");
     if (!select) return;
     try {
-      const fonts = await getFonts();
+      fontAssets = await getFonts();
       select.replaceChildren();
-      for (const font of fonts) {
+      for (const font of fontAssets) {
         const option = document.createElement("option");
-        option.value = font.name;
+        option.value = String(font.id);
         option.textContent = font.name;
+        option.dataset.name = font.name;
         option.dataset.url = font.url;
+        option.dataset.category = font.category;
         select.appendChild(option);
       }
-      if (!fonts.length) throw new Error("No active fonts");
-      state.font = select.options[0].value;
+      if (!fontAssets.length) throw new Error("No active fonts");
+      state.font = select.options[0].dataset.name || select.options[0].textContent;
       state.fontUrl = select.options[0].dataset.url || "";
+      activeFontCategory = "all";
+      renderFontCategories();
+      renderFontPreviews();
     } catch (error) {
       console.error(error);
       select.innerHTML = '<option value="Tahoma">Tahoma</option><option value="Arial">Arial</option>';
       state.font = "Tahoma";
       state.fontUrl = "";
+      const wrap = $("fontoFontPreviews");
+      if (wrap) wrap.innerHTML = '<span class="fonto-library-message">پیش‌نمایش فونت‌ها در دسترس نیست.</span>';
+      if ($("fontoFontPreviewCount")) $("fontoFontPreviewCount").textContent = "خطا در دریافت";
     }
   }
 
   function scrollLibrary(id, amount) {
     $(id)?.scrollBy({ left: amount, behavior: "smooth" });
+  }
+
+  function ensureFontLibraryPanel() {
+    let panel = $("fontoFontLibraryPanel");
+    if (panel) return panel;
+    const controls = document.querySelector(".fonto-controls");
+    if (!controls) return null;
+    panel = document.createElement("section");
+    panel.id = "fontoFontLibraryPanel";
+    panel.className = "fonto-panel fonto-library-panel fonto-font-library-panel";
+    panel.innerHTML =
+      '<div class="fonto-library-heading"><div><h3>پیش‌نمایش فونت‌ها</h3>' +
+      '<small id="fontoFontPreviewCount">در حال دریافت...</small></div>' +
+      '<div class="fonto-library-nav" aria-label="پیمایش پیش‌نمایش فونت‌ها">' +
+      '<button id="fontoFontPrev" type="button" aria-label="قبلی">‹</button>' +
+      '<button id="fontoFontNext" type="button" aria-label="بعدی">›</button></div></div>' +
+      '<div id="fontoFontCategories" class="fonto-category-scroll" aria-label="دسته‌بندی فونت‌ها"></div>' +
+      '<div id="fontoFontPreviews" class="fonto-template-grid fonto-font-preview-grid" aria-live="polite">' +
+      '<span class="fonto-library-message">در حال ساخت پیش‌نمایش همهٔ فونت‌ها...</span></div>' +
+      '<p class="fonto-library-help">برای دیدن فونت‌های بیشتر افقی بکشید؛ خود فونت‌ها هنگام دیده‌شدن بارگذاری می‌شوند.</p>';
+    const fontPanel = controls.querySelector(".fonto-font-panel");
+    if (fontPanel) fontPanel.after(panel);
+    else controls.prepend(panel);
+    $("fontoFontPrev")?.addEventListener("click", () => scrollLibrary("fontoFontPreviews", 300));
+    $("fontoFontNext")?.addEventListener("click", () => scrollLibrary("fontoFontPreviews", -300));
+    return panel;
+  }
+
+  function renderFontCategories() {
+    const wrap = $("fontoFontCategories");
+    if (!wrap) return;
+    const available = new Set(fontAssets.map((font) => font.category).filter(Boolean));
+    const categories = [
+      "all",
+      ...["persian", "arabic", "english", "hindi", "japanese", "turkish"].filter((category) => available.has(category)),
+      ...[...available].filter((category) => !(category in FONT_CATEGORY_LABELS)),
+    ];
+    wrap.replaceChildren();
+    for (const category of categories) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "fonto-category-chip" + (activeFontCategory === category ? " active" : "");
+      button.textContent = FONT_CATEGORY_LABELS[category] || category;
+      button.addEventListener("click", () => {
+        activeFontCategory = category;
+        renderFontCategories();
+        renderFontPreviews();
+      });
+      wrap.appendChild(button);
+    }
+  }
+
+  function visibleFonts() {
+    return activeFontCategory === "all"
+      ? fontAssets
+      : fontAssets.filter((font) => font.category === activeFontCategory);
+  }
+
+  async function applyFontPreview(card, font) {
+    if (!card?.isConnected || card.dataset.loaded === "true") return;
+    card.dataset.loaded = "loading";
+    try {
+      const family = await loadFont(font.name, font.url);
+      if (!card.isConnected) return;
+      const sample = card.querySelector(".fonto-font-sample");
+      if (sample) sample.style.fontFamily = '"' + family + '", Tahoma, Arial, sans-serif';
+      card.dataset.loaded = "true";
+    } catch (error) {
+      console.warn("Font preview failed", font.name, error);
+      card.dataset.loaded = "failed";
+    }
+  }
+
+  function observeFontPreviews(wrap) {
+    fontPreviewObserver?.disconnect();
+    fontPreviewObserver = null;
+    if (!("IntersectionObserver" in window)) {
+      wrap.querySelectorAll(".fonto-font-card").forEach((card, index) => {
+        if (index < 12) applyFontPreview(card, card._fontAsset);
+      });
+      return;
+    }
+    fontPreviewObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        fontPreviewObserver?.unobserve(entry.target);
+        applyFontPreview(entry.target, entry.target._fontAsset);
+      }
+    }, { root: wrap, rootMargin: "0px 260px" });
+    wrap.querySelectorAll(".fonto-font-card").forEach((card) => fontPreviewObserver.observe(card));
+  }
+
+  function syncSelectedFontCards() {
+    document.querySelectorAll(".fonto-font-card").forEach((card) => {
+      const active = card.dataset.fontUrl === state.fontUrl;
+      card.classList.toggle("active", active);
+      card.setAttribute("aria-pressed", String(active));
+    });
+  }
+
+  async function chooseFont(font) {
+    state.font = font.name;
+    state.fontUrl = font.url;
+    const select = $("fontoFont");
+    const option = Array.from(select?.options || []).find((item) => item.dataset.url === font.url);
+    if (option && select) select.value = option.value;
+    syncSelectedFontCards();
+    try {
+      await loadFont(font.name, font.url);
+    } catch {}
+    draw();
+  }
+
+  function renderFontPreviews() {
+    const wrap = $("fontoFontPreviews");
+    const count = $("fontoFontPreviewCount");
+    if (!wrap) return;
+    const visible = visibleFonts();
+    if (count) count.textContent = fontAssets.length.toLocaleString("fa-IR") + " فونت با پیش‌نمایش";
+    wrap.replaceChildren();
+    if (!visible.length) {
+      const message = document.createElement("span");
+      message.className = "fonto-library-message";
+      message.textContent = "در این دسته فونتی وجود ندارد.";
+      wrap.appendChild(message);
+      return;
+    }
+    for (const font of visible) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "fonto-template-card fonto-font-card" + (state.fontUrl === font.url ? " active" : "");
+      button.dataset.fontUrl = font.url;
+      button.dataset.fontCategory = font.category;
+      button.setAttribute("aria-pressed", String(state.fontUrl === font.url));
+      button.title = font.name;
+      button._fontAsset = font;
+      const preview = document.createElement("span");
+      preview.className = "fonto-template-preview fonto-font-preview";
+      preview.dir = ["persian", "arabic"].includes(font.category) ? "rtl" : "ltr";
+      const sample = document.createElement("span");
+      sample.className = "fonto-font-sample";
+      sample.textContent = font.previewText || FONT_PREVIEW_TEXTS[font.category] || "Font Preview";
+      preview.appendChild(sample);
+      const title = document.createElement("small");
+      title.textContent = font.name;
+      button.append(preview, title);
+      button.addEventListener("click", () => chooseFont(font));
+      wrap.appendChild(button);
+    }
+    observeFontPreviews(wrap);
   }
 
   function ensureQuickStylesPanel() {
@@ -272,17 +467,43 @@
       '<div class="fonto-library-nav" aria-label="پیمایش استایل‌های سریع">' +
       '<button id="fontoQuickPrev" type="button" aria-label="قبلی">‹</button>' +
       '<button id="fontoQuickNext" type="button" aria-label="بعدی">›</button></div></div>' +
+      '<div id="fontoQuickCategories" class="fonto-category-scroll" aria-label="دسته‌بندی استایل‌های سریع"></div>' +
       '<div id="fontoQuickStyles" class="fonto-template-grid" aria-live="polite">' +
       '<span class="fonto-library-message">در حال دریافت استایل‌های سریع...</span></div>' +
       '<p class="fonto-library-help">استایل PNG دلخواه را انتخاب کنید؛ می‌توانید آن را با یک تم متن ترکیب کنید.</p>' +
       '<button id="fontoClearQuickStyle" type="button" class="fonto-action fonto-clear-asset">حذف استایل سریع انتخاب‌شده</button>';
-    const fontPanel = controls.querySelector(".fonto-font-panel");
-    if (fontPanel) fontPanel.after(panel);
+    const fontLibraryPanel = ensureFontLibraryPanel();
+    if (fontLibraryPanel) fontLibraryPanel.after(panel);
     else controls.prepend(panel);
     $("fontoQuickPrev")?.addEventListener("click", () => scrollLibrary("fontoQuickStyles", 300));
     $("fontoQuickNext")?.addEventListener("click", () => scrollLibrary("fontoQuickStyles", -300));
     $("fontoClearQuickStyle")?.addEventListener("click", clearQuickStyle);
     return panel;
+  }
+
+  function renderQuickCategories() {
+    const wrap = $("fontoQuickCategories");
+    if (!wrap) return;
+    const categories = ["all", ...new Set(quickStyles.map((style) => style.category).filter(Boolean))];
+    wrap.replaceChildren();
+    for (const category of categories) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "fonto-category-chip" + (activeQuickCategory === category ? " active" : "");
+      button.textContent = QUICK_CATEGORY_LABELS[category] || category;
+      button.addEventListener("click", () => {
+        activeQuickCategory = category;
+        renderQuickCategories();
+        renderQuickStyles();
+      });
+      wrap.appendChild(button);
+    }
+  }
+
+  function visibleQuickStyles() {
+    return activeQuickCategory === "all"
+      ? quickStyles
+      : quickStyles.filter((style) => style.category === activeQuickCategory);
   }
 
   function ensureTextThemesPanel() {
@@ -315,6 +536,7 @@
     const wrap = $("fontoQuickStyles");
     const count = $("fontoQuickStyleCount");
     if (!wrap) return;
+    const visible = visibleQuickStyles();
     if (count) count.textContent = quickStyles.length.toLocaleString("fa-IR") + " استایل";
     wrap.replaceChildren();
     if (!quickStyles.length) {
@@ -324,7 +546,7 @@
       wrap.appendChild(message);
       return;
     }
-    for (const style of quickStyles) {
+    for (const style of visible) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "fonto-template-card" + (state.quickStyle?.id === style.id ? " active" : "");
@@ -440,6 +662,8 @@
     ensureQuickStylesPanel();
     try {
       quickStyles = await getQuickStyles();
+      activeQuickCategory = "all";
+      renderQuickCategories();
       renderQuickStyles();
     } catch (error) {
       console.error(error);
@@ -560,6 +784,9 @@
       depthOffsetX: state.depthOffsetX,
       depthOffsetY: state.depthOffsetY,
       opacity: state.opacity,
+      textAlign: state.textAlign,
+      textDirection: state.textDirection,
+      lineHeight: state.lineHeight,
     };
   }
 
@@ -585,26 +812,114 @@
     return gradient;
   }
 
-  function fitFontSize(ctx, text, fontFamily, requestedSize, fontWeight, maxWidth) {
-    let size = requestedSize;
-    ctx.font = fontWeight + " " + size + "px " + fontFamily;
-    const width = ctx.measureText(text).width;
-    if (width > maxWidth && width > 0) {
-      size = Math.max(12, size * (maxWidth / width));
-      ctx.font = fontWeight + " " + size + "px " + fontFamily;
+  const MIN_RENDER_TEXT_SIZE = 1;
+
+  function splitLongToken(ctx, token, maxWidth) {
+    const parts = [];
+    let current = "";
+    for (const character of Array.from(token)) {
+      const candidate = current + character;
+      if (current && ctx.measureText(candidate).width > maxWidth) {
+        parts.push(current);
+        current = character;
+      } else {
+        current = candidate;
+      }
     }
-    return size;
+    if (current || !parts.length) parts.push(current);
+    return parts;
   }
 
-  function paintStyledText(ctx, text, x, y, fontFamily, requestedSize, maxWidth, style) {
+  function wrapParagraph(ctx, paragraph, maxWidth) {
+    if (!paragraph) return [""];
+    const words = paragraph.trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return [""];
+    const lines = [];
+    let current = "";
+    for (const word of words) {
+      const pieces = ctx.measureText(word).width > maxWidth
+        ? splitLongToken(ctx, word, maxWidth)
+        : [word];
+      for (const piece of pieces) {
+        const candidate = current ? current + " " + piece : piece;
+        if (current && ctx.measureText(candidate).width > maxWidth) {
+          lines.push(current);
+          current = piece;
+        } else {
+          current = candidate;
+        }
+      }
+    }
+    if (current || !lines.length) lines.push(current);
+    return lines;
+  }
+
+  function measureTextLayout(ctx, text, fontFamily, size, fontWeight, maxWidth, lineHeightRatio) {
+    ctx.font = fontWeight + " " + size + "px " + fontFamily;
+    const paragraphs = String(text ?? "").replace(/\r\n?/g, "\n").split("\n");
+    const lines = paragraphs.flatMap((paragraph) => wrapParagraph(ctx, paragraph, maxWidth));
+    const widths = lines.map((line) => ctx.measureText(line).width);
+    const lineHeight = size * lineHeightRatio;
+    return {
+      size,
+      lines,
+      widths,
+      width: Math.max(0, ...widths),
+      lineHeight,
+      height: Math.max(lineHeight, lines.length * lineHeight),
+    };
+  }
+
+  function fitTextLayout(ctx, text, fontFamily, requestedSize, fontWeight, maxWidth, maxHeight, lineHeightRatio) {
+    const requested = Math.max(MIN_RENDER_TEXT_SIZE, Number(requestedSize) || 1);
+    let layout = measureTextLayout(ctx, text, fontFamily, requested, fontWeight, maxWidth, lineHeightRatio);
+    const fits = (candidate) => candidate.width <= maxWidth + 0.5 && candidate.height <= maxHeight + 0.5;
+    if (fits(layout)) return layout;
+    let low = MIN_RENDER_TEXT_SIZE;
+    let high = requested;
+    let best = measureTextLayout(ctx, text, fontFamily, low, fontWeight, maxWidth, lineHeightRatio);
+    for (let iteration = 0; iteration < 14; iteration += 1) {
+      const middle = (low + high) / 2;
+      const candidate = measureTextLayout(ctx, text, fontFamily, middle, fontWeight, maxWidth, lineHeightRatio);
+      if (fits(candidate)) {
+        best = candidate;
+        low = middle;
+      } else {
+        high = middle;
+      }
+    }
+    return best;
+  }
+
+  function paintStyledText(ctx, text, x, y, fontFamily, requestedSize, maxWidth, style, maxHeight = Infinity) {
     ctx.save();
     ctx.translate(x, y);
-    ctx.textAlign = "center";
+    const textAlign = ["right", "center", "left"].includes(style.textAlign) ? style.textAlign : "center";
+    const textDirection = ["rtl", "ltr"].includes(style.textDirection)
+      ? style.textDirection
+      : /[\u0600-\u06ff]/.test(text) ? "rtl" : "ltr";
+    ctx.textAlign = textAlign;
     ctx.textBaseline = "middle";
-    if ("direction" in ctx) ctx.direction = /[\u0600-\u06ff]/.test(text) ? "rtl" : "ltr";
-    const size = fitFontSize(ctx, text, fontFamily, requestedSize, style.fontWeight, maxWidth);
-    const metrics = ctx.measureText(text);
-    const fill = createTextFill(ctx, metrics, size, style);
+    if ("direction" in ctx) ctx.direction = textDirection;
+    const layout = fitTextLayout(
+      ctx,
+      text,
+      fontFamily,
+      requestedSize,
+      style.fontWeight,
+      maxWidth,
+      maxHeight,
+      clamp(Number(style.lineHeight) || 1.18, 1, 2),
+    );
+    const size = layout.size;
+    const fill = createTextFill(ctx, { width: layout.width }, size, style);
+    const lineX = textAlign === "right" ? maxWidth / 2 : textAlign === "left" ? -maxWidth / 2 : 0;
+    const firstLineY = -((layout.lines.length - 1) * layout.lineHeight) / 2;
+    const drawLines = (method, offsetX = 0, offsetY = 0) => {
+      layout.lines.forEach((line, index) => {
+        ctx[method](line, lineX + offsetX, firstLineY + index * layout.lineHeight + offsetY);
+      });
+    };
     const outlines = style.outlineLayers?.length
       ? style.outlineLayers
       : style.strokeWidth > 0
@@ -626,8 +941,8 @@
       for (let layer = depth; layer >= 1; layer -= 1) {
         const offsetX = layer * (style.depthOffsetX ?? 0.55);
         const offsetY = layer * (style.depthOffsetY ?? 1);
-        if (widestOutline) ctx.strokeText(text, offsetX, offsetY);
-        ctx.fillText(text, offsetX, offsetY);
+        if (widestOutline) drawLines("strokeText", offsetX, offsetY);
+        drawLines("fillText", offsetX, offsetY);
       }
       ctx.restore();
     }
@@ -648,7 +963,7 @@
       ctx.shadowOffsetX = layer.x;
       ctx.shadowOffsetY = layer.y;
       ctx.fillStyle = fill;
-      ctx.fillText(text, 0, 0);
+      drawLines("fillText");
       ctx.restore();
     }
     ctx.shadowColor = "transparent";
@@ -659,10 +974,10 @@
     for (const layer of outlines) {
       ctx.strokeStyle = layer.color;
       ctx.lineWidth = layer.width;
-      ctx.strokeText(text, 0, 0);
+      drawLines("strokeText");
     }
     ctx.fillStyle = fill;
-    ctx.fillText(text, 0, 0);
+    drawLines("fillText");
     ctx.restore();
   }
 
@@ -783,14 +1098,34 @@
       0,
       '"' + family + '", Tahoma, Arial, sans-serif',
       state.size,
-      width * 0.92,
+      (width * 0.92) / Math.max(0.5, state.scale),
       currentTextStyle(),
+      (height * 0.84) / Math.max(0.5, state.scale),
     );
     ctx.restore();
   }
 
   function bind(id, event, handler) {
     $(id)?.addEventListener(event, handler);
+  }
+
+  function syncSizeOutput() {
+    const output = $("fontoSizeValue");
+    if (output) output.textContent = Math.round(state.size).toLocaleString("fa-IR");
+  }
+
+  function syncTextLayoutControls() {
+    document.querySelectorAll("[data-fonto-align]").forEach((button) => {
+      const active = button.dataset.fontoAlign === state.textAlign;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    document.querySelectorAll("[data-fonto-direction]").forEach((button) => {
+      const active = button.dataset.fontoDirection === state.textDirection;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    if ($("fontoText")) $("fontoText").dir = state.textDirection;
   }
 
   function bindControls() {
@@ -800,15 +1135,20 @@
     });
     bind("fontoFont", "change", async (event) => {
       const option = event.target.selectedOptions[0];
-      state.font = option.value;
+      state.font = option.dataset.name || option.textContent || option.value;
       state.fontUrl = option.dataset.url || "";
+      syncSelectedFontCards();
       try {
         await loadFont(state.font, state.fontUrl);
       } catch {}
       draw();
     });
+    bind("fontoSize", "input", (event) => {
+      state.size = Number(event.target.value);
+      syncSizeOutput();
+      draw();
+    });
     [
-      ["fontoSize", "size"],
       ["fontoRotate", "rotate"],
       ["fontoX", "x"],
       ["fontoY", "y"],
@@ -817,6 +1157,21 @@
       state[key] = Number(event.target.value);
       draw();
     }));
+
+    document.querySelectorAll("[data-fonto-align]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.textAlign = button.dataset.fontoAlign;
+        syncTextLayoutControls();
+        draw();
+      });
+    });
+    document.querySelectorAll("[data-fonto-direction]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.textDirection = button.dataset.fontoDirection;
+        syncTextLayoutControls();
+        draw();
+      });
+    });
 
     bind("fontoColor", "input", (event) => {
       state.color = event.target.value;
@@ -933,6 +1288,9 @@
       quickStyleImage: null,
       themeId: null,
       text: "متن خود را بنویسید",
+      textAlign: "center",
+      textDirection: "rtl",
+      lineHeight: 1.18,
       fontWeight: 800,
       size: 44,
       color: "#ffffff",
@@ -963,6 +1321,8 @@
     if ($("fontoText")) $("fontoText").value = state.text;
     if ($("fontoSize")) $("fontoSize").value = String(state.size);
     if ($("fontoBgColor")) $("fontoBgColor").value = state.bg;
+    syncSizeOutput();
+    syncTextLayoutControls();
     syncEffectControls();
     renderQuickStyles();
     renderTextThemes();
@@ -982,11 +1342,14 @@
     $("fontoEditor")?.classList.remove("hidden");
     state.canvas = $("fontoCanvas");
     state.ctx = state.canvas?.getContext("2d");
+    ensureFontLibraryPanel();
     ensureQuickStylesPanel();
     ensureTextThemesPanel();
-    status("در حال دریافت فونت‌ها، استایل‌های سریع و تم‌های متن...", "checking");
+    status("در حال دریافت پیش‌نمایش فونت‌ها، استایل‌های سریع و تم‌های متن...", "checking");
     await Promise.allSettled([populateFonts(), populateQuickStyles(), populateTextThemes()]);
     status("ابزار فونت آماده است.", "ok");
+    syncSizeOutput();
+    syncTextLayoutControls();
     syncStickyCanvasOffset();
     resize();
   }

@@ -105,7 +105,37 @@ values
   ('quick-27', 'آسمانی — شیشه‌ای نرم', 'glass', 'library-v2-e8c1d4f7/quick/trend-27-sky-glass.png', 'library-v2-e8c1d4f7/quick/trend-27-sky-glass.png', '#ffffff', true, 27),
   ('quick-28', 'آسمانی — قاب نئون', 'neon', 'library-v2-e8c1d4f7/quick/trend-28-sky-neon.png', 'library-v2-e8c1d4f7/quick/trend-28-sky-neon.png', '#ffffff', true, 28),
   ('quick-29', 'آسمانی — حباب مدرن', 'instagram', 'library-v2-e8c1d4f7/quick/trend-29-sky-bubble.png', 'library-v2-e8c1d4f7/quick/trend-29-sky-bubble.png', '#ffffff', true, 29),
-  ('quick-30', 'آسمانی — لایه‌ای سه‌بعدی', 'instagram', 'library-v2-e8c1d4f7/quick/trend-30-sky-layered.png', 'library-v2-e8c1d4f7/quick/trend-30-sky-layered.png', '#ffffff', true, 30)
+  ('quick-30', 'آسمانی — لایه‌ای سه‌بعدی', 'instagram', 'library-v2-e8c1d4f7/quick/trend-30-sky-layered.png', 'library-v2-e8c1d4f7/quick/trend-30-sky-layered.png', '#ffffff', true, 30),
+  ('special-01', 'شفق — محو از چپ', 'special', 'library-v3-special-fade-9b7e21/special-01-aurora-fade-left.png', 'library-v3-special-fade-9b7e21/special-01-aurora-fade-left.png', '#ffffff', true, 31),
+  ('special-02', 'شفق — محو از راست', 'special', 'library-v3-special-fade-9b7e21/special-02-aurora-fade-right.png', 'library-v3-special-fade-9b7e21/special-02-aurora-fade-right.png', '#ffffff', true, 32),
+  ('special-03', 'شفق — محو دوطرفه', 'special', 'library-v3-special-fade-9b7e21/special-03-aurora-fade-both.png', 'library-v3-special-fade-9b7e21/special-03-aurora-fade-both.png', '#ffffff', true, 33),
+  ('special-04', 'غروب — محو از چپ', 'special', 'library-v3-special-fade-9b7e21/special-04-sunset-fade-left.png', 'library-v3-special-fade-9b7e21/special-04-sunset-fade-left.png', '#ffffff', true, 34),
+  ('special-05', 'غروب — محو از راست', 'special', 'library-v3-special-fade-9b7e21/special-05-sunset-fade-right.png', 'library-v3-special-fade-9b7e21/special-05-sunset-fade-right.png', '#ffffff', true, 35),
+  ('special-06', 'غروب — محو دوطرفه', 'special', 'library-v3-special-fade-9b7e21/special-06-sunset-fade-both.png', 'library-v3-special-fade-9b7e21/special-06-sunset-fade-both.png', '#ffffff', true, 36),
+  ('special-07', 'اقیانوس — محو از چپ', 'special', 'library-v3-special-fade-9b7e21/special-07-ocean-fade-left.png', 'library-v3-special-fade-9b7e21/special-07-ocean-fade-left.png', '#ffffff', true, 37),
+  ('special-08', 'اقیانوس — محو از راست', 'special', 'library-v3-special-fade-9b7e21/special-08-ocean-fade-right.png', 'library-v3-special-fade-9b7e21/special-08-ocean-fade-right.png', '#ffffff', true, 38),
+  ('special-09', 'اقیانوس — محو دوطرفه', 'special', 'library-v3-special-fade-9b7e21/special-09-ocean-fade-both.png', 'library-v3-special-fade-9b7e21/special-09-ocean-fade-both.png', '#ffffff', true, 39),
+  ('special-10', 'زمرد — محو از چپ', 'special', 'library-v3-special-fade-9b7e21/special-10-emerald-fade-left.png', 'library-v3-special-fade-9b7e21/special-10-emerald-fade-left.png', '#ffffff', true, 40),
+  ('special-11', 'زمرد — محو از راست', 'special', 'library-v3-special-fade-9b7e21/special-11-emerald-fade-right.png', 'library-v3-special-fade-9b7e21/special-11-emerald-fade-right.png', '#ffffff', true, 41),
+  ('special-12', 'زمرد — محو دوطرفه', 'special', 'library-v3-special-fade-9b7e21/special-12-emerald-fade-both.png', 'library-v3-special-fade-9b7e21/special-12-emerald-fade-both.png', '#ffffff', true, 42),
+  ('special-13', 'یاقوت — محو از چپ', 'special', 'library-v3-special-fade-9b7e21/special-13-ruby-fade-left.png', 'library-v3-special-fade-9b7e21/special-13-ruby-fade-left.png', '#ffffff', true, 43),
+  ('special-14', 'یاقوت — محو از راست', 'special', 'library-v3-special-fade-9b7e21/special-14-ruby-fade-right.png', 'library-v3-special-fade-9b7e21/special-14-ruby-fade-right.png', '#ffffff', true, 44),
+  ('special-15', 'یاقوت — محو دوطرفه', 'special', 'library-v3-special-fade-9b7e21/special-15-ruby-fade-both.png', 'library-v3-special-fade-9b7e21/special-15-ruby-fade-both.png', '#ffffff', true, 45),
+  ('special-16', 'بنفش — محو از چپ', 'special', 'library-v3-special-fade-9b7e21/special-16-violet-fade-left.png', 'library-v3-special-fade-9b7e21/special-16-violet-fade-left.png', '#ffffff', true, 46),
+  ('special-17', 'بنفش — محو از راست', 'special', 'library-v3-special-fade-9b7e21/special-17-violet-fade-right.png', 'library-v3-special-fade-9b7e21/special-17-violet-fade-right.png', '#ffffff', true, 47),
+  ('special-18', 'بنفش — محو دوطرفه', 'special', 'library-v3-special-fade-9b7e21/special-18-violet-fade-both.png', 'library-v3-special-fade-9b7e21/special-18-violet-fade-both.png', '#ffffff', true, 48),
+  ('special-19', 'مرکبات — محو از چپ', 'special', 'library-v3-special-fade-9b7e21/special-19-citrus-fade-left.png', 'library-v3-special-fade-9b7e21/special-19-citrus-fade-left.png', '#172100', true, 49),
+  ('special-20', 'مرکبات — محو از راست', 'special', 'library-v3-special-fade-9b7e21/special-20-citrus-fade-right.png', 'library-v3-special-fade-9b7e21/special-20-citrus-fade-right.png', '#172100', true, 50),
+  ('special-21', 'مرکبات — محو دوطرفه', 'special', 'library-v3-special-fade-9b7e21/special-21-citrus-fade-both.png', 'library-v3-special-fade-9b7e21/special-21-citrus-fade-both.png', '#172100', true, 51),
+  ('special-22', 'رز — محو از چپ', 'special', 'library-v3-special-fade-9b7e21/special-22-rose-fade-left.png', 'library-v3-special-fade-9b7e21/special-22-rose-fade-left.png', '#ffffff', true, 52),
+  ('special-23', 'رز — محو از راست', 'special', 'library-v3-special-fade-9b7e21/special-23-rose-fade-right.png', 'library-v3-special-fade-9b7e21/special-23-rose-fade-right.png', '#ffffff', true, 53),
+  ('special-24', 'رز — محو دوطرفه', 'special', 'library-v3-special-fade-9b7e21/special-24-rose-fade-both.png', 'library-v3-special-fade-9b7e21/special-24-rose-fade-both.png', '#ffffff', true, 54),
+  ('special-25', 'نقره‌ای — محو از چپ', 'special', 'library-v3-special-fade-9b7e21/special-25-silver-fade-left.png', 'library-v3-special-fade-9b7e21/special-25-silver-fade-left.png', '#111827', true, 55),
+  ('special-26', 'نقره‌ای — محو از راست', 'special', 'library-v3-special-fade-9b7e21/special-26-silver-fade-right.png', 'library-v3-special-fade-9b7e21/special-26-silver-fade-right.png', '#111827', true, 56),
+  ('special-27', 'نقره‌ای — محو دوطرفه', 'special', 'library-v3-special-fade-9b7e21/special-27-silver-fade-both.png', 'library-v3-special-fade-9b7e21/special-27-silver-fade-both.png', '#111827', true, 57),
+  ('special-28', 'طلایی — محو از چپ', 'special', 'library-v3-special-fade-9b7e21/special-28-gold-fade-left.png', 'library-v3-special-fade-9b7e21/special-28-gold-fade-left.png', '#241600', true, 58),
+  ('special-29', 'طلایی — محو از راست', 'special', 'library-v3-special-fade-9b7e21/special-29-gold-fade-right.png', 'library-v3-special-fade-9b7e21/special-29-gold-fade-right.png', '#241600', true, 59),
+  ('special-30', 'طلایی — محو دوطرفه', 'special', 'library-v3-special-fade-9b7e21/special-30-gold-fade-both.png', 'library-v3-special-fade-9b7e21/special-30-gold-fade-both.png', '#241600', true, 60)
 on conflict (slug) do update
 set title = excluded.title,
     category = excluded.category,
@@ -116,7 +146,7 @@ set title = excluded.title,
     sort_order = excluded.sort_order;
 
 delete from public.fonto_quick_styles
-where slug not in ('quick-01', 'quick-02', 'quick-03', 'quick-04', 'quick-05', 'quick-06', 'quick-07', 'quick-08', 'quick-09', 'quick-10', 'quick-11', 'quick-12', 'quick-13', 'quick-14', 'quick-15', 'quick-16', 'quick-17', 'quick-18', 'quick-19', 'quick-20', 'quick-21', 'quick-22', 'quick-23', 'quick-24', 'quick-25', 'quick-26', 'quick-27', 'quick-28', 'quick-29', 'quick-30');
+where slug not in ('quick-01', 'quick-02', 'quick-03', 'quick-04', 'quick-05', 'quick-06', 'quick-07', 'quick-08', 'quick-09', 'quick-10', 'quick-11', 'quick-12', 'quick-13', 'quick-14', 'quick-15', 'quick-16', 'quick-17', 'quick-18', 'quick-19', 'quick-20', 'quick-21', 'quick-22', 'quick-23', 'quick-24', 'quick-25', 'quick-26', 'quick-27', 'quick-28', 'quick-29', 'quick-30', 'special-01', 'special-02', 'special-03', 'special-04', 'special-05', 'special-06', 'special-07', 'special-08', 'special-09', 'special-10', 'special-11', 'special-12', 'special-13', 'special-14', 'special-15', 'special-16', 'special-17', 'special-18', 'special-19', 'special-20', 'special-21', 'special-22', 'special-23', 'special-24', 'special-25', 'special-26', 'special-27', 'special-28', 'special-29', 'special-30');
 
 insert into public.fonto_text_themes
   (slug, title_fa, title_en, category, preview_text_fa, preview_text_en, effects_json,

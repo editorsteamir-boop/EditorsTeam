@@ -122,14 +122,61 @@
 }
 
 .fonto-text-composer .fonto-field {
-  margin-bottom: 0;
+  margin-bottom: 10px;
 }
 
-.fonto-text-composer input {
-  min-height: 48px;
+.fonto-text-composer textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 82px;
+  padding: 12px;
+  border: 1px solid rgba(23, 105, 224, .35);
+  border-radius: 12px;
+  outline: none;
   background: #fff !important;
   color: #111827 !important;
   font-size: 16px;
+  line-height: 1.75;
+  resize: vertical;
+}
+
+.fonto-text-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.fonto-segmented {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, .18);
+}
+
+.fonto-segmented button {
+  min-height: 34px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: rgba(255, 255, 255, .72);
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+}
+
+.fonto-segmented button.active {
+  border-color: rgba(24, 217, 107, .65);
+  background: rgba(24, 217, 107, .17);
+  color: #fff;
+}
+
+.fonto-direction-switch {
+  grid-template-columns: repeat(2, minmax(44px, 1fr));
+  direction: ltr;
 }
 
 .fonto-panel {
@@ -160,6 +207,7 @@
 .fonto-field input[type="text"],
 .fonto-field input:not([type]),
 .fonto-field input[type="number"],
+.fonto-field textarea,
 .fonto-field select {
   box-sizing: border-box;
   width: 100%;
@@ -401,6 +449,48 @@
   font-size: 9px;
 }
 
+.fonto-font-preview-grid {
+  min-height: 148px;
+}
+
+.fonto-font-card {
+  flex-basis: 158px;
+  min-width: 158px;
+}
+
+.fonto-font-preview {
+  position: relative;
+  height: 104px;
+  padding: 8px;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(83, 145, 255, .24), transparent 38%),
+    linear-gradient(145deg, #111a36, #090d1e);
+}
+
+.fonto-font-sample {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.fonto-font-card[data-loaded="loading"] .fonto-font-sample { opacity: .72; }
+
+.fonto-font-card[data-loaded="failed"] .fonto-font-preview::after {
+  position: absolute;
+  inset: auto 8px 7px;
+  color: rgba(255, 255, 255, .55);
+  content: "پیش‌نمایش جایگزین";
+  font-size: 8px;
+  text-align: center;
+}
+
 .fonto-template-preview.is-missing img { display: none; }
 
 .fonto-template-preview.is-missing::after {
@@ -458,6 +548,10 @@
   .fonto-gate { padding-inline: 8px; }
   .fonto-library-nav { display: none; }
 
+  .fonto-text-layout { grid-template-columns: 1fr; }
+
+  .fonto-direction-switch { width: min(160px, 100%); }
+
   .fonto-template-card {
     flex-basis: 132px;
     min-width: 132px;
@@ -471,6 +565,11 @@
   }
 
   .fonto-theme-preview { height: 116px; }
+
+  .fonto-font-card {
+    flex-basis: 148px;
+    min-width: 148px;
+  }
 
   #fontoCanvas {
     width: min(82vw, 300px);

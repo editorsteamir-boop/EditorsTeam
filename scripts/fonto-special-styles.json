@@ -1,0 +1,20 @@
+{
+  "asset_folder": "library-v3-special-fade-9b7e21",
+  "palettes": [
+    { "key": "aurora", "title": "شفق", "colors": ["#28d7ff", "#7b5cff", "#f037d3"], "text": "#ffffff" },
+    { "key": "sunset", "title": "غروب", "colors": ["#ffb21c", "#ff6b35", "#ef277f"], "text": "#ffffff" },
+    { "key": "ocean", "title": "اقیانوس", "colors": ["#0066ff", "#00b8d9", "#52f2d0"], "text": "#ffffff" },
+    { "key": "emerald", "title": "زمرد", "colors": ["#075c4b", "#00a878", "#63e6a5"], "text": "#ffffff" },
+    { "key": "ruby", "title": "یاقوت", "colors": ["#7c122a", "#d72655", "#ff6685"], "text": "#ffffff" },
+    { "key": "violet", "title": "بنفش", "colors": ["#35107b", "#7651e6", "#bb6cf4"], "text": "#ffffff" },
+    { "key": "citrus", "title": "مرکبات", "colors": ["#b5d800", "#e7ec27", "#ffb000"], "text": "#172100" },
+    { "key": "rose", "title": "رز", "colors": ["#a81374", "#ee4fa7", "#ff9ccc"], "text": "#ffffff" },
+    { "key": "silver", "title": "نقره‌ای", "colors": ["#39434d", "#f7fbff", "#8794a0", "#ffffff", "#4b5661"], "text": "#111827" },
+    { "key": "gold", "title": "طلایی", "colors": ["#744b00", "#f4c95d", "#fff0a0", "#b77a0b"], "text": "#241600" }
+  ],
+  "variants": [
+    { "key": "fade-left", "title": "محو از چپ", "fade": "left", "shape": "capsule" },
+    { "key": "fade-right", "title": "محو از راست", "fade": "right", "shape": "ribbon" },
+    { "key": "fade-both", "title": "محو دوطرفه", "fade": "both", "shape": "glass" }
+  ]
+}
