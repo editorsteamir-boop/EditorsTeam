@@ -790,7 +790,7 @@
     };
   }
 
-  function createTextFill(ctx, metrics, size, style) {
+  function createTextFill(ctx, metrics, size, style, centerX = 0) {
     let stops = style.fillStops || [];
     if (stops.length < 2 && style.gradient) {
       stops = [
@@ -802,11 +802,11 @@
     const width = Math.max(metrics.width, size * 2);
     let gradient;
     if (style.gradientDirection === "vertical") {
-      gradient = ctx.createLinearGradient(0, -size * 0.65, 0, size * 0.65);
+      gradient = ctx.createLinearGradient(centerX, -size * 0.65, centerX, size * 0.65);
     } else if (style.gradientDirection === "diagonal") {
-      gradient = ctx.createLinearGradient(-width / 2, -size * 0.6, width / 2, size * 0.6);
+      gradient = ctx.createLinearGradient(centerX - width / 2, -size * 0.6, centerX + width / 2, size * 0.6);
     } else {
-      gradient = ctx.createLinearGradient(-width / 2, 0, width / 2, 0);
+      gradient = ctx.createLinearGradient(centerX - width / 2, 0, centerX + width / 2, 0);
     }
     for (const item of stops) gradient.addColorStop(item.at, item.color);
     return gradient;
@@ -912,8 +912,13 @@
       clamp(Number(style.lineHeight) || 1.18, 1, 2),
     );
     const size = layout.size;
-    const fill = createTextFill(ctx, { width: layout.width }, size, style);
     const lineX = textAlign === "right" ? maxWidth / 2 : textAlign === "left" ? -maxWidth / 2 : 0;
+    const fillCenterX = textAlign === "right"
+      ? lineX - layout.width / 2
+      : textAlign === "left"
+        ? lineX + layout.width / 2
+        : 0;
+    const fill = createTextFill(ctx, { width: layout.width }, size, style, fillCenterX);
     const firstLineY = -((layout.lines.length - 1) * layout.lineHeight) / 2;
     const drawLines = (method, offsetX = 0, offsetY = 0) => {
       layout.lines.forEach((line, index) => {
