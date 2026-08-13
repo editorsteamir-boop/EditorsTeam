@@ -236,6 +236,50 @@
   gap: 8px;
 }
 
+.fonto-bg-color-row { grid-template-columns: 1fr; }
+
+.fonto-size-field { gap: 9px; }
+
+.fonto-size-slider {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: 30px;
+}
+
+.fonto-size-slider input[type="range"] {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  margin: 0;
+  accent-color: #1688ff;
+}
+
+.fonto-size-midpoint {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #ff334f;
+  box-shadow: 0 0 0 3px rgba(255, 51, 79, .2);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.fonto-size-scale {
+  display: flex;
+  justify-content: space-between;
+  direction: rtl;
+  color: rgba(255, 255, 255, .62);
+  font-size: 9px;
+}
+
+.fonto-size-scale span:nth-child(2) { color: #ff7387; }
+
 .fonto-check {
   display: flex;
   align-items: center;
@@ -450,18 +494,20 @@
 }
 
 .fonto-font-preview-grid {
+  gap: 6px;
   min-height: 148px;
 }
 
 .fonto-font-card {
-  flex-basis: 158px;
-  min-width: 158px;
+  flex-basis: calc((100% - 18px) / 4);
+  min-width: calc((100% - 18px) / 4);
+  padding: 4px;
 }
 
 .fonto-font-preview {
   position: relative;
-  height: 104px;
-  padding: 8px;
+  height: 76px;
+  padding: 5px 3px;
   background:
     radial-gradient(circle at 20% 15%, rgba(83, 145, 255, .24), transparent 38%),
     linear-gradient(145deg, #111a36, #090d1e);
@@ -471,13 +517,20 @@
   display: -webkit-box;
   overflow: hidden;
   color: #fff;
-  font-size: 22px;
+  font-size: clamp(9px, 2.5vw, 16px);
   font-weight: 700;
   line-height: 1.35;
   text-align: center;
   text-overflow: ellipsis;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+
+.fonto-font-card > small {
+  overflow: hidden;
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .fonto-font-card[data-loaded="loading"] .fonto-font-sample { opacity: .72; }
@@ -567,8 +620,8 @@
   .fonto-theme-preview { height: 116px; }
 
   .fonto-font-card {
-    flex-basis: 148px;
-    min-width: 148px;
+    flex-basis: calc((100% - 18px) / 4);
+    min-width: calc((100% - 18px) / 4);
   }
 
   #fontoCanvas {

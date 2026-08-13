@@ -81,14 +81,10 @@
     turkish: "Türkçe",
   };
 
-  const FONT_PREVIEW_TEXTS = {
-    persian: "ایران زیبا",
-    arabic: "الخط العربي",
-    english: "Font Preview",
-    hindi: "फ़ॉन्ट नमूना",
-    japanese: "フォント見本",
-    turkish: "Türkçe Yazı",
-  };
+  const FONT_PREVIEW_TEXT = "ادیتورز تیم";
+  const NORMAL_TEXT_SIZE = 44;
+  const MIN_TEXT_SIZE = 2;
+  const MAX_TEXT_SIZE = 180;
 
   let fontAssets = [];
   let quickStyles = [];
@@ -205,7 +201,7 @@
           name: item.name || item.family || file?.replace(/\.(ttf|otf|woff2?)$/i, ""),
           url: publicUrl("fonto-fonts", file),
           category: item.category || "persian",
-          previewText: item.preview_text || FONT_PREVIEW_TEXTS[item.category] || "Font Preview",
+          previewText: FONT_PREVIEW_TEXT,
         };
       })
       .filter((item) => item.name && item.url)
@@ -268,29 +264,16 @@
   }
 
   async function populateFonts() {
-    const select = $("fontoFont");
-    if (!select) return;
     try {
       fontAssets = await getFonts();
-      select.replaceChildren();
-      for (const font of fontAssets) {
-        const option = document.createElement("option");
-        option.value = String(font.id);
-        option.textContent = font.name;
-        option.dataset.name = font.name;
-        option.dataset.url = font.url;
-        option.dataset.category = font.category;
-        select.appendChild(option);
-      }
       if (!fontAssets.length) throw new Error("No active fonts");
-      state.font = select.options[0].dataset.name || select.options[0].textContent;
-      state.fontUrl = select.options[0].dataset.url || "";
+      state.font = fontAssets[0].name;
+      state.fontUrl = fontAssets[0].url;
       activeFontCategory = "all";
       renderFontCategories();
       renderFontPreviews();
     } catch (error) {
       console.error(error);
-      select.innerHTML = '<option value="Tahoma">Tahoma</option><option value="Arial">Arial</option>';
       state.font = "Tahoma";
       state.fontUrl = "";
       const wrap = $("fontoFontPreviews");
@@ -379,7 +362,7 @@
     fontPreviewObserver = null;
     if (!("IntersectionObserver" in window)) {
       wrap.querySelectorAll(".fonto-font-card").forEach((card, index) => {
-        if (index < 12) applyFontPreview(card, card._fontAsset);
+        if (index < 4) applyFontPreview(card, card._fontAsset);
       });
       return;
     }
@@ -389,7 +372,7 @@
         fontPreviewObserver?.unobserve(entry.target);
         applyFontPreview(entry.target, entry.target._fontAsset);
       }
-    }, { root: wrap, rootMargin: "0px 260px" });
+    }, { root: wrap, rootMargin: "0px 36px" });
     wrap.querySelectorAll(".fonto-font-card").forEach((card) => fontPreviewObserver.observe(card));
   }
 
@@ -404,9 +387,6 @@
   async function chooseFont(font) {
     state.font = font.name;
     state.fontUrl = font.url;
-    const select = $("fontoFont");
-    const option = Array.from(select?.options || []).find((item) => item.dataset.url === font.url);
-    if (option && select) select.value = option.value;
     syncSelectedFontCards();
     try {
       await loadFont(font.name, font.url);
@@ -439,10 +419,10 @@
       button._fontAsset = font;
       const preview = document.createElement("span");
       preview.className = "fonto-template-preview fonto-font-preview";
-      preview.dir = ["persian", "arabic"].includes(font.category) ? "rtl" : "ltr";
+      preview.dir = "rtl";
       const sample = document.createElement("span");
       sample.className = "fonto-font-sample";
-      sample.textContent = font.previewText || FONT_PREVIEW_TEXTS[font.category] || "Font Preview";
+      sample.textContent = FONT_PREVIEW_TEXT;
       preview.appendChild(sample);
       const title = document.createElement("small");
       title.textContent = font.name;
@@ -1058,18 +1038,15 @@
     document.documentElement.style.setProperty("--fonto-canvas-top", top + "px");
   }
 
-  async function draw() {
-    const canvas = state.canvas;
-    const ctx = state.ctx;
-    if (!canvas || !ctx) return;
-    const width = Number(canvas.dataset.w) || 300;
-    const height = Number(canvas.dataset.h) || 133;
+  async function renderComposition(ctx, width, height, includePreviewBackground) {
     ctx.clearRect(0, 0, width, height);
-    if (state.bgImage) {
-      ctx.drawImage(state.bgImage, 0, 0, width, height);
-    } else if (state.bg !== "transparent") {
-      ctx.fillStyle = state.bg;
-      ctx.fillRect(0, 0, width, height);
+    if (includePreviewBackground) {
+      if (state.bgImage) {
+        ctx.drawImage(state.bgImage, 0, 0, width, height);
+      } else if (state.bg !== "transparent") {
+        ctx.fillStyle = state.bg;
+        ctx.fillRect(0, 0, width, height);
+      }
     }
     if (state.quickStyleImage) {
       const fit = Math.min(
@@ -1110,13 +1087,53 @@
     ctx.restore();
   }
 
+  async function draw() {
+    const canvas = state.canvas;
+    const ctx = state.ctx;
+    if (!canvas || !ctx) return;
+    const width = Number(canvas.dataset.w) || 300;
+    const height = Number(canvas.dataset.h) || 133;
+    await renderComposition(ctx, width, height, true);
+  }
+
+  async function createTransparentExportCanvas() {
+    const source = state.canvas;
+    if (!source) return null;
+    const width = Number(source.dataset.w) || 300;
+    const height = Number(source.dataset.h) || 133;
+    const density = source.width / width || 1;
+    const output = document.createElement("canvas");
+    output.width = source.width;
+    output.height = source.height;
+    const ctx = output.getContext("2d");
+    if (!ctx) return null;
+    ctx.setTransform(density, 0, 0, density, 0, 0);
+    await renderComposition(ctx, width, height, false);
+    return output;
+  }
+
   function bind(id, event, handler) {
     $(id)?.addEventListener(event, handler);
   }
 
+  function sizeFromOffset(offset) {
+    const value = clamp(Number(offset) || 0, -100, 100);
+    if (value < 0) return NORMAL_TEXT_SIZE + (NORMAL_TEXT_SIZE - MIN_TEXT_SIZE) * (value / 100);
+    return NORMAL_TEXT_SIZE + (MAX_TEXT_SIZE - NORMAL_TEXT_SIZE) * (value / 100);
+  }
+
+  function offsetFromSize(size) {
+    const value = clamp(Number(size) || NORMAL_TEXT_SIZE, MIN_TEXT_SIZE, MAX_TEXT_SIZE);
+    if (value < NORMAL_TEXT_SIZE) return ((value - NORMAL_TEXT_SIZE) / (NORMAL_TEXT_SIZE - MIN_TEXT_SIZE)) * 100;
+    return ((value - NORMAL_TEXT_SIZE) / (MAX_TEXT_SIZE - NORMAL_TEXT_SIZE)) * 100;
+  }
+
   function syncSizeOutput() {
     const output = $("fontoSizeValue");
-    if (output) output.textContent = Math.round(state.size).toLocaleString("fa-IR");
+    if (!output) return;
+    const offset = Math.round(offsetFromSize(state.size));
+    const mode = offset === 0 ? "نرمال" : offset > 0 ? "+" + offset.toLocaleString("fa-IR") + "٪" : offset.toLocaleString("fa-IR") + "٪";
+    output.textContent = mode + " · " + Math.round(state.size).toLocaleString("fa-IR");
   }
 
   function syncTextLayoutControls() {
@@ -1138,18 +1155,8 @@
       state.text = event.target.value;
       draw();
     });
-    bind("fontoFont", "change", async (event) => {
-      const option = event.target.selectedOptions[0];
-      state.font = option.dataset.name || option.textContent || option.value;
-      state.fontUrl = option.dataset.url || "";
-      syncSelectedFontCards();
-      try {
-        await loadFont(state.font, state.fontUrl);
-      } catch {}
-      draw();
-    });
     bind("fontoSize", "input", (event) => {
-      state.size = Number(event.target.value);
+      state.size = sizeFromOffset(event.target.value);
       syncSizeOutput();
       draw();
     });
@@ -1237,22 +1244,12 @@
       state.bgImage = null;
       draw();
     });
-    bind("fontoBgImage", "change", (event) => {
-      const file = event.target.files?.[0];
-      if (!file) return;
-      const image = new Image();
-      image.onload = () => {
-        state.bgImage = image;
-        state.bg = "image";
-        draw();
-      };
-      image.src = URL.createObjectURL(file);
-    });
     bind("fontoDownload", "click", async () => {
-      await draw();
+      const output = await createTransparentExportCanvas();
+      if (!output) return;
       const link = document.createElement("a");
       link.download = "fonto-" + Date.now() + ".png";
-      link.href = state.canvas.toDataURL("image/png");
+      link.href = output.toDataURL("image/png");
       link.click();
     });
     bind("fontoReset", "click", resetEditor);
@@ -1324,7 +1321,7 @@
       scale: 1,
     });
     if ($("fontoText")) $("fontoText").value = state.text;
-    if ($("fontoSize")) $("fontoSize").value = String(state.size);
+    if ($("fontoSize")) $("fontoSize").value = String(offsetFromSize(state.size));
     if ($("fontoBgColor")) $("fontoBgColor").value = state.bg;
     syncSizeOutput();
     syncTextLayoutControls();

@@ -1,6 +1,6 @@
 const CACHE_PREFIX="editors-team-";
-const STATIC_CACHE=`${CACHE_PREFIX}static-v24-fonto-alignment`;
-const PAGE_CACHE=`${CACHE_PREFIX}pages-v24-fonto-alignment`;
+const STATIC_CACHE=`${CACHE_PREFIX}static-v25-fonto-transparent-export`;
+const PAGE_CACHE=`${CACHE_PREFIX}pages-v25-fonto-transparent-export`;
 
 self.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil((async()=>{
