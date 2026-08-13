@@ -125,7 +125,9 @@
   }
 
   async function rpc(name, body, token = SUPABASE_KEY, options = {}) {
-    const attempts = options.retryTransient ? 2 : 1;
+    const attempts = options.retryTransient
+      ? Math.max(2, Number(options.retryTransient) || 2)
+      : 1;
     for (let attempt = 0; attempt < attempts; attempt += 1) {
       try {
         const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
@@ -143,7 +145,8 @@
         if (!response.ok) {
           const transient = [502, 503, 504].includes(response.status);
           if (transient && attempt + 1 < attempts) {
-            await new Promise((resolve) => setTimeout(resolve, 450));
+            options.onRetry?.(attempt + 1);
+            await new Promise((resolve) => setTimeout(resolve, 450 * (attempt + 1)));
             continue;
           }
           throw new Error(data?.message || "ارتباط با سرور برقرار نشد");
@@ -151,7 +154,8 @@
         return data;
       } catch (error) {
         if (!(error instanceof TypeError) || attempt + 1 >= attempts) throw error;
-        await new Promise((resolve) => setTimeout(resolve, 450));
+        options.onRetry?.(attempt + 1);
+        await new Promise((resolve) => setTimeout(resolve, 450 * (attempt + 1)));
       }
     }
     throw new Error("ارتباط با سرور برقرار نشد");
@@ -239,7 +243,12 @@
         input_full_name: name,
         input_phone: phone,
         input_city: city,
-      }, SUPABASE_KEY, { retryTransient: true });
+      }, SUPABASE_KEY, {
+        retryTransient: 3,
+        onRetry: () => {
+          status("ارتباط لحظه‌ای قطع شد؛ ثبت درخواست خودکار دوباره انجام می‌شود…", "checking");
+        },
+      });
       $("fontoRegisterForm")?.reset();
       status(result?.message || "درخواست شما ثبت شد؛ رمز عبور برای شما پیامک خواهد شد.", "ok");
     } catch (error) {
