@@ -472,7 +472,7 @@
       const sample = document.createElement("canvas");
       sample.className = "fonto-font-sample";
       sample.width = 240;
-      sample.height = 120;
+      sample.height = 240;
       sample.setAttribute("aria-label", "پیش‌نمایش ادیتورز تیم با فونت " + font.name);
       preview.appendChild(sample);
       const title = document.createElement("small");

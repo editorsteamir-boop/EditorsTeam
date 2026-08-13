@@ -536,20 +536,24 @@
 
 .fonto-font-preview-grid {
   gap: 6px;
-  min-height: 148px;
+  min-height: 0;
+  align-items: flex-start;
 }
 
 .fonto-font-card {
   flex-basis: calc((100% - 18px) / 4);
   min-width: calc((100% - 18px) / 4);
+  align-self: flex-start;
   padding: 4px;
 }
 
-.fonto-font-preview {
+.fonto-font-card .fonto-font-preview {
   position: relative;
   display: grid;
-  height: 76px;
-  padding: 5px 3px;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  padding: 4px;
   place-items: center;
   background:
     radial-gradient(circle at 20% 15%, rgba(83, 145, 255, .24), transparent 38%),
