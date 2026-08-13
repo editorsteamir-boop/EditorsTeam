@@ -238,21 +238,62 @@
 
 .fonto-bg-color-row { grid-template-columns: 1fr; }
 
-.fonto-size-field { gap: 9px; }
+.fonto-size-field {
+  width: 100%;
+  gap: 9px;
+}
 
 .fonto-size-slider {
   position: relative;
   display: grid;
   align-items: center;
   min-height: 30px;
+  width: 100%;
 }
 
 .fonto-size-slider input[type="range"] {
+  appearance: none;
   position: relative;
   z-index: 2;
   width: 100%;
+  height: 30px;
   margin: 0;
+  background: transparent;
   accent-color: #1688ff;
+}
+
+.fonto-size-slider input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #18d96b, rgba(255,255,255,.35) 50%, #1688ff);
+}
+
+.fonto-size-slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #1688ff;
+  box-shadow: 0 3px 12px rgba(0,0,0,.35);
+}
+
+.fonto-size-slider input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #18d96b, rgba(255,255,255,.35) 50%, #1688ff);
+}
+
+.fonto-size-slider input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #1688ff;
+  box-shadow: 0 3px 12px rgba(0,0,0,.35);
 }
 
 .fonto-size-midpoint {
@@ -506,24 +547,19 @@
 
 .fonto-font-preview {
   position: relative;
+  display: grid;
   height: 76px;
   padding: 5px 3px;
+  place-items: center;
   background:
     radial-gradient(circle at 20% 15%, rgba(83, 145, 255, .24), transparent 38%),
     linear-gradient(145deg, #111a36, #090d1e);
 }
 
 .fonto-font-sample {
-  display: -webkit-box;
-  overflow: hidden;
-  color: #fff;
-  font-size: clamp(9px, 2.5vw, 16px);
-  font-weight: 700;
-  line-height: 1.35;
-  text-align: center;
-  text-overflow: ellipsis;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .fonto-font-card > small {
@@ -534,6 +570,12 @@
 }
 
 .fonto-font-card[data-loaded="loading"] .fonto-font-sample { opacity: .72; }
+
+.fonto-font-sentinel {
+  flex: 0 0 14px;
+  min-width: 14px;
+  min-height: 120px;
+}
 
 .fonto-font-card[data-loaded="failed"] .fonto-font-preview::after {
   position: absolute;

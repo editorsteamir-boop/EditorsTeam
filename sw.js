@@ -1,6 +1,6 @@
 const CACHE_PREFIX="editors-team-";
-const STATIC_CACHE=`${CACHE_PREFIX}static-v25-fonto-transparent-export`;
-const PAGE_CACHE=`${CACHE_PREFIX}pages-v25-fonto-transparent-export`;
+const STATIC_CACHE=`${CACHE_PREFIX}static-v26-fonto-lazy-canvas-previews`;
+const PAGE_CACHE=`${CACHE_PREFIX}pages-v26-fonto-lazy-canvas-previews`;
 
 self.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil((async()=>{
@@ -31,7 +31,9 @@ self.addEventListener("fetch",e=>{
   const u=new URL(r.url);if(u.origin!==location.origin)return;
   const nav=r.mode==="navigate";
   const data=u.pathname.includes("/data/")&&u.pathname.endsWith(".json");
+  const fontoCritical=u.pathname.endsWith("/assets/js/fonto.js")||u.pathname.endsWith("/assets/css/fonto.css");
   if(nav){e.respondWith(networkFirst(r,PAGE_CACHE,true));return;}
   if(data){e.respondWith(swr(r,PAGE_CACHE,true));return;}
+  if(fontoCritical){e.respondWith(networkFirst(r,STATIC_CACHE,false));return;}
   if(["style","script","image","font"].includes(r.destination)){e.respondWith(swr(r,STATIC_CACHE,false));}
 });

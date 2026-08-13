@@ -93,6 +93,10 @@
   let activeQuickCategory = "all";
   let activeThemeCategory = "all";
   let fontPreviewObserver = null;
+  let fontBatchObserver = null;
+  let renderedFontCount = 0;
+  let currentVisibleFonts = [];
+  const FONT_BATCH_SIZE = 8;
 
   function status(message, type = "neutral") {
     const element = $("fontoStatus");
@@ -256,7 +260,10 @@
     const blob = await response.blob();
     const objectUrl = URL.createObjectURL(blob);
     const family = "Fonto_" + hash(url);
-    const face = new FontFace(family, "url(" + objectUrl + ")");
+    const face = new FontFace(family, "url(" + objectUrl + ")", {
+      style: "normal",
+      weight: "normal",
+    });
     await face.load();
     document.fonts.add(face);
     loadedFonts.set(url, family);
@@ -348,8 +355,8 @@
     try {
       const family = await loadFont(font.name, font.url);
       if (!card.isConnected) return;
-      const sample = card.querySelector(".fonto-font-sample");
-      if (sample) sample.style.fontFamily = '"' + family + '", Tahoma, Arial, sans-serif';
+      const sample = card.querySelector("canvas.fonto-font-sample");
+      if (sample) renderFontSample(sample, family);
       card.dataset.loaded = "true";
     } catch (error) {
       console.warn("Font preview failed", font.name, error);
@@ -357,13 +364,29 @@
     }
   }
 
-  function observeFontPreviews(wrap) {
+  function renderFontSample(canvas, family) {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const width = canvas.width;
+    const height = canvas.height;
+    ctx.clearRect(0, 0, width, height);
+    ctx.direction = "rtl";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#ffffff";
+    let size = 34;
+    do {
+      ctx.font = size + 'px "' + family + '"';
+      size -= 1;
+    } while (size > 13 && ctx.measureText(FONT_PREVIEW_TEXT).width > width - 18);
+    ctx.fillText(FONT_PREVIEW_TEXT, width / 2, height / 2 + 2);
+    canvas.dataset.fontFamily = family;
+  }
+
+  function createFontPreviewObserver(wrap) {
     fontPreviewObserver?.disconnect();
     fontPreviewObserver = null;
     if (!("IntersectionObserver" in window)) {
-      wrap.querySelectorAll(".fonto-font-card").forEach((card, index) => {
-        if (index < 4) applyFontPreview(card, card._fontAsset);
-      });
       return;
     }
     fontPreviewObserver = new IntersectionObserver((entries) => {
@@ -372,8 +395,15 @@
         fontPreviewObserver?.unobserve(entry.target);
         applyFontPreview(entry.target, entry.target._fontAsset);
       }
-    }, { root: wrap, rootMargin: "0px 36px" });
-    wrap.querySelectorAll(".fonto-font-card").forEach((card) => fontPreviewObserver.observe(card));
+    }, { root: wrap, rootMargin: "0px" });
+  }
+
+  function observeFontCards(cards) {
+    if (fontPreviewObserver) {
+      cards.forEach((card) => fontPreviewObserver.observe(card));
+      return;
+    }
+    cards.slice(0, 4).forEach((card) => applyFontPreview(card, card._fontAsset));
   }
 
   function syncSelectedFontCards() {
@@ -394,21 +424,7 @@
     draw();
   }
 
-  function renderFontPreviews() {
-    const wrap = $("fontoFontPreviews");
-    const count = $("fontoFontPreviewCount");
-    if (!wrap) return;
-    const visible = visibleFonts();
-    if (count) count.textContent = fontAssets.length.toLocaleString("fa-IR") + " فونت با پیش‌نمایش";
-    wrap.replaceChildren();
-    if (!visible.length) {
-      const message = document.createElement("span");
-      message.className = "fonto-library-message";
-      message.textContent = "در این دسته فونتی وجود ندارد.";
-      wrap.appendChild(message);
-      return;
-    }
-    for (const font of visible) {
+  function createFontCard(font) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "fonto-template-card fonto-font-card" + (state.fontUrl === font.url ? " active" : "");
@@ -420,17 +436,61 @@
       const preview = document.createElement("span");
       preview.className = "fonto-template-preview fonto-font-preview";
       preview.dir = "rtl";
-      const sample = document.createElement("span");
+      const sample = document.createElement("canvas");
       sample.className = "fonto-font-sample";
-      sample.textContent = FONT_PREVIEW_TEXT;
+      sample.width = 240;
+      sample.height = 120;
+      sample.setAttribute("aria-label", "پیش‌نمایش ادیتورز تیم با فونت " + font.name);
       preview.appendChild(sample);
       const title = document.createElement("small");
       title.textContent = font.name;
       button.append(preview, title);
       button.addEventListener("click", () => chooseFont(font));
-      wrap.appendChild(button);
+      return button;
+  }
+
+  function appendFontBatch(wrap) {
+    wrap.querySelector(".fonto-font-sentinel")?.remove();
+    fontBatchObserver?.disconnect();
+    fontBatchObserver = null;
+    const batch = currentVisibleFonts.slice(renderedFontCount, renderedFontCount + FONT_BATCH_SIZE);
+    const cards = batch.map(createFontCard);
+    cards.forEach((card) => wrap.appendChild(card));
+    renderedFontCount += cards.length;
+    observeFontCards(cards);
+    if (renderedFontCount >= currentVisibleFonts.length) return;
+    const sentinel = document.createElement("span");
+    sentinel.className = "fonto-font-sentinel";
+    sentinel.setAttribute("aria-hidden", "true");
+    wrap.appendChild(sentinel);
+    if (!("IntersectionObserver" in window)) return;
+    fontBatchObserver = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      fontBatchObserver?.disconnect();
+      appendFontBatch(wrap);
+    }, { root: wrap, rootMargin: "0px 24px" });
+    fontBatchObserver.observe(sentinel);
+  }
+
+  function renderFontPreviews() {
+    const wrap = $("fontoFontPreviews");
+    const count = $("fontoFontPreviewCount");
+    if (!wrap) return;
+    currentVisibleFonts = visibleFonts();
+    if (count) count.textContent = fontAssets.length.toLocaleString("fa-IR") + " فونت · بارگذاری مرحله‌ای";
+    wrap.replaceChildren();
+    renderedFontCount = 0;
+    fontBatchObserver?.disconnect();
+    fontBatchObserver = null;
+    createFontPreviewObserver(wrap);
+    if (!currentVisibleFonts.length) {
+      const message = document.createElement("span");
+      message.className = "fonto-library-message";
+      message.textContent = "در این دسته فونتی وجود ندارد.";
+      wrap.appendChild(message);
+      return;
     }
-    observeFontPreviews(wrap);
+    appendFontBatch(wrap);
   }
 
   function ensureQuickStylesPanel() {
@@ -1038,16 +1098,16 @@
     document.documentElement.style.setProperty("--fonto-canvas-top", top + "px");
   }
 
-  async function renderComposition(ctx, width, height, includePreviewBackground) {
+  function syncPreviewBackground() {
+    const wrap = state.canvas?.parentElement;
+    if (!wrap) return;
+    wrap.style.background = state.bg === "transparent"
+      ? "repeating-conic-gradient(#d9dce3 0 25%, #f3f4f7 0 50%) 50% / 18px 18px"
+      : state.bg;
+  }
+
+  async function renderComposition(ctx, width, height) {
     ctx.clearRect(0, 0, width, height);
-    if (includePreviewBackground) {
-      if (state.bgImage) {
-        ctx.drawImage(state.bgImage, 0, 0, width, height);
-      } else if (state.bg !== "transparent") {
-        ctx.fillStyle = state.bg;
-        ctx.fillRect(0, 0, width, height);
-      }
-    }
     if (state.quickStyleImage) {
       const fit = Math.min(
         (width * 0.96) / state.quickStyleImage.width,
@@ -1093,7 +1153,8 @@
     if (!canvas || !ctx) return;
     const width = Number(canvas.dataset.w) || 300;
     const height = Number(canvas.dataset.h) || 133;
-    await renderComposition(ctx, width, height, true);
+    syncPreviewBackground();
+    await renderComposition(ctx, width, height);
   }
 
   async function createTransparentExportCanvas() {
@@ -1108,8 +1169,12 @@
     const ctx = output.getContext("2d");
     if (!ctx) return null;
     ctx.setTransform(density, 0, 0, density, 0, 0);
-    await renderComposition(ctx, width, height, false);
+    await renderComposition(ctx, width, height);
     return output;
+  }
+
+  function canvasToPngBlob(canvas) {
+    return new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
   }
 
   function bind(id, event, handler) {
@@ -1247,10 +1312,17 @@
     bind("fontoDownload", "click", async () => {
       const output = await createTransparentExportCanvas();
       if (!output) return;
+      const blob = await canvasToPngBlob(output);
+      if (!blob) {
+        status("ساخت فایل PNG ناموفق بود.", "bad");
+        return;
+      }
+      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.download = "fonto-" + Date.now() + ".png";
-      link.href = output.toDataURL("image/png");
+      link.href = url;
       link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
     });
     bind("fontoReset", "click", resetEditor);
     bind("fontoLogout", "click", () => {
