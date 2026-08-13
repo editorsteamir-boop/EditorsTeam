@@ -763,6 +763,21 @@
     padding: 8px;
   }
 
+  .fonto-editor.fonto-keyboard-visible .fonto-canvas-wrap {
+    position: fixed;
+    top: calc(var(--fonto-viewport-offset, 0px) + 8px);
+    left: 50%;
+    right: auto;
+    width: min(88vw, 320px);
+    margin: 0;
+    transform: translateX(-50%);
+    z-index: 1002;
+  }
+
+  .fonto-editor.fonto-keyboard-visible .fonto-controls {
+    padding-top: calc(var(--fonto-mobile-canvas-height, 150px) + 10px);
+  }
+
   .fonto-controls {
     margin-top: 10px;
   }

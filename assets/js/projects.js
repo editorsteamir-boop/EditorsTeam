@@ -5,6 +5,15 @@
   const esc=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
   let projects=[];
 
+  function activateDeferredImages(root){
+    const images=[...root.querySelectorAll("img[data-deferred-src]")];
+    if(!images.length)return;
+    const load=image=>{if(!image.dataset.deferredSrc)return;image.src=image.dataset.deferredSrc;delete image.dataset.deferredSrc;};
+    if(!("IntersectionObserver" in window)){images.forEach(load);return;}
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(!entry.isIntersecting)return;load(entry.target);observer.unobserve(entry.target);}),{rootMargin:"320px 0px"});
+    images.forEach(image=>observer.observe(image));
+  }
+
   function clean(v){return (Array.isArray(v)?v:[]).filter(p=>p&&p.active!==false).sort((a,b)=>(a.order||0)-(b.order||0));}
   function backup(){try{return clean(JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]"))}catch{return[]}}
   function renderHome(){
@@ -32,7 +41,8 @@
     if(t)t.textContent=`${p.description||`نمونه پروژه‌های ${p.title}`} (جهت بزرگنمایی کلیک کنید)`;
     if(ic)ic.textContent=p.icon||"🎨";
     if(g){
-      g.innerHTML=(p.images||[]).map((im,i)=>`<article class="sellable-card"><img class="gallery-img" src="${esc(im.src)}" alt="${esc(im.alt||`${p.title} ${i+1}`)}" data-gallery-image loading="${i===0?'eager':'lazy'}" decoding="async" ${i===0?'fetchpriority="high"':''}>${saleBox(p,im,i)}</article>`).join("")||'<div class="home-note">هنوز تصویری برای این پروژه ثبت نشده است.</div>';
+      g.innerHTML=(p.images||[]).map((im,i)=>`<article class="sellable-card"><img class="gallery-img" ${i===0?`src="${esc(im.src)}"`:`data-deferred-src="${esc(im.src)}"`} alt="${esc(im.alt||`${p.title} ${i+1}`)}" data-gallery-image loading="${i===0?'eager':'lazy'}" decoding="async" ${i===0?'fetchpriority="high"':'fetchpriority="low"'}>${saleBox(p,im,i)}</article>`).join("")||'<div class="home-note">هنوز تصویری برای این پروژه ثبت نشده است.</div>';
+      activateDeferredImages(g);
       refreshSales(g);
       // Sales are intentionally fetched after images are already painted.
       setTimeout(()=>window.SalesStore?.load().then(()=>refreshSales(g)).catch(()=>{}),0);

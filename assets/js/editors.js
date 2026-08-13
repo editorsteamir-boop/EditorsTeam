@@ -3,6 +3,24 @@
   const STORAGE_KEY = "editorsTeam.editors.v1";
   const DEFAULT_AVATAR = "./assets/images/default-avatar.svg";
   let editorsData = [];
+  let avatarObserver = null;
+
+  function observeAvatars(root) {
+    const images = [...root.querySelectorAll("img[data-avatar-src]")];
+    const load = image => {
+      if (!image.dataset.avatarSrc) return;
+      image.src = image.dataset.avatarSrc;
+      delete image.dataset.avatarSrc;
+    };
+    if (!("IntersectionObserver" in window)) return images.forEach(load);
+    avatarObserver?.disconnect();
+    avatarObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      load(entry.target);
+      avatarObserver.unobserve(entry.target);
+    }), { rootMargin: "280px 0px" });
+    images.forEach(image => avatarObserver.observe(image));
+  }
 
   function escapeText(value) {
     return String(value ?? "").replace(/[&<>'"]/g, char => ({
@@ -83,7 +101,7 @@
       return `<article class="editor-card">
         <div class="editor-header">
           <div class="editor-avatar-wrap">
-            <img class="editor-avatar" loading="lazy" decoding="async" src="${escapeText(editor.image)}" alt="تصویر ${escapeText(editor.fullName)}" loading="${editorIndex<2?'eager':'lazy'}" decoding="async" ${editorIndex<2?'fetchpriority="high"':''} onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
+            <img class="editor-avatar" src="${DEFAULT_AVATAR}" data-avatar-src="${escapeText(editor.image)}" alt="تصویر ${escapeText(editor.fullName)}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
             <span class="editor-status ${editor.online ? "online" : "offline"}" title="${editor.online ? "آنلاین" : "آفلاین"}"></span>
           </div>
           <div class="editor-heading">
@@ -102,6 +120,7 @@
         <div class="editor-action">${portfolio}</div>
       </article>`;
     }).join("");
+    observeAvatars(list);
   }
 
 

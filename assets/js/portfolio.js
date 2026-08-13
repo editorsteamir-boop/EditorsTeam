@@ -2,6 +2,12 @@
   "use strict";
   const $=id=>document.getElementById(id), DEFAULT_AVATAR="./assets/images/default-avatar.svg";
   let currentEditor=null,currentMedia=[];
+  function activateDeferredImages(root){
+    const images=[...root.querySelectorAll("img[data-deferred-src]")],load=image=>{if(!image.dataset.deferredSrc)return;image.src=image.dataset.deferredSrc;delete image.dataset.deferredSrc;};
+    if(!("IntersectionObserver" in window)){images.forEach(load);return;}
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(!entry.isIntersecting)return;load(entry.target);observer.unobserve(entry.target);}),{rootMargin:"320px 0px"});
+    images.forEach(image=>observer.observe(image));
+  }
   const esc=value=>String(value??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
   function inferType(src,explicit){if(explicit==="video"||explicit==="image")return explicit;return /\.(mp4|webm|mov|m4v|ogg)(\?|$)/i.test(String(src||""))?"video":"image";}
   function normalizeMedia(editor){if(Array.isArray(editor.portfolioMedia)&&editor.portfolioMedia.length)return editor.portfolioMedia.filter(Boolean).map((item,index)=>typeof item==="string"?{src:item,type:inferType(item),title:`پروژه ${index+1}`}:{src:String(item.src||""),type:inferType(item.src,item.type),title:String(item.title||`پروژه ${index+1}`)}).filter(x=>x.src);return (editor.portfolioImages||[]).filter(Boolean).map((src,index)=>({src:String(src),type:inferType(src),title:`پروژه ${index+1}`}));}
@@ -9,10 +15,11 @@
     const gallery=$("portfolioGallery");if(!currentMedia.length){gallery.innerHTML='<div class="portfolio-empty">هنوز نمونه‌کاری برای این ادیتور ثبت نشده است.</div>';return;}
     gallery.innerHTML=currentMedia.map((item,index)=>{
       const eager=index===0;
-      const preview=item.type==="video"?`<div class="portfolio-media-preview video-preview" data-open-media="${index}"><video src="${esc(item.src)}#t=0.1" muted playsinline preload="${eager?'metadata':'none'}"></video><span class="video-badge">▶</span></div>`:`<div class="portfolio-media-preview" data-open-media="${index}"><img class="gallery-img" src="${esc(item.src)}" alt="${esc(item.title)}" loading="${eager?'eager':'lazy'}" decoding="async" ${eager?'fetchpriority="high"':''}></div>`;
+      const preview=item.type==="video"?`<div class="portfolio-media-preview video-preview" data-open-media="${index}"><video src="${esc(item.src)}#t=0.1" muted playsinline preload="${eager?'metadata':'none'}"></video><span class="video-badge">▶</span></div>`:`<div class="portfolio-media-preview" data-open-media="${index}"><img class="gallery-img" ${eager?`src="${esc(item.src)}"`:`data-deferred-src="${esc(item.src)}"`} alt="${esc(item.title)}" loading="${eager?'eager':'lazy'}" decoding="async" ${eager?'fetchpriority="high"':'fetchpriority="low"'}></div>`;
       const saleId=window.SalesStore?.saleId("editor",currentEditor.id,item.src)||"";const sale=window.SalesStore?.get(saleId);const hasPrice=!!(sale?.price_toman>0);const price=hasPrice?window.SalesStore.formatPrice(sale.price_toman):"قیمت ثبت نشده";
       return `<article class="portfolio-item sellable-card">${preview}<div class="sale-row" data-sale-row="${esc(saleId)}"><div class="sale-price ${hasPrice?'':'no-price'}" data-sale-price>${esc(price)}${hasPrice?' <span>تومان</span>':''}</div><button class="sale-cart" type="button" data-sale-id="${esc(saleId)}" ${!hasPrice||sale?.active===false?'disabled':''} aria-label="خرید ${esc(item.title)}"><svg class="cart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 7H7"/><circle cx="10" cy="19" r="1.5"/><circle cx="18" cy="19" r="1.5"/></svg></button></div></article>`;
     }).join("");
+    activateDeferredImages(gallery);
   }
   function refreshSaleControls(){
     if(!window.SalesStore)return;

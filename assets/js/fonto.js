@@ -124,21 +124,37 @@
     }
   }
 
-  async function rpc(name, body, token = SUPABASE_KEY) {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
-      method: "POST",
-      cache: "no-store",
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(body || {}),
-    });
-    const data = await response.json().catch(() => null);
-    if (!response.ok) throw new Error(data?.message || "ارتباط با سرور برقرار نشد");
-    return data;
+  async function rpc(name, body, token = SUPABASE_KEY, options = {}) {
+    const attempts = options.retryTransient ? 2 : 1;
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
+          method: "POST",
+          cache: "no-store",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(body || {}),
+        });
+        const data = await response.json().catch(() => null);
+        if (!response.ok) {
+          const transient = [502, 503, 504].includes(response.status);
+          if (transient && attempt + 1 < attempts) {
+            await new Promise((resolve) => setTimeout(resolve, 450));
+            continue;
+          }
+          throw new Error(data?.message || "ارتباط با سرور برقرار نشد");
+        }
+        return data;
+      } catch (error) {
+        if (!(error instanceof TypeError) || attempt + 1 >= attempts) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 450));
+      }
+    }
+    throw new Error("ارتباط با سرور برقرار نشد");
   }
 
   function encodeStoragePath(path) {
@@ -223,7 +239,7 @@
         input_full_name: name,
         input_phone: phone,
         input_city: city,
-      });
+      }, SUPABASE_KEY, { retryTransient: true });
       $("fontoRegisterForm")?.reset();
       status(result?.message || "درخواست شما ثبت شد؛ رمز عبور برای شما پیامک خواهد شد.", "ok");
     } catch (error) {
@@ -241,6 +257,24 @@
     $("fontoRegisterForm")?.classList.toggle("hidden", targetId !== "fontoRegisterForm");
     $("fontoLoginForm")?.classList.toggle("hidden", targetId !== "fontoLoginForm");
     if (targetId) $(targetId)?.querySelector("input")?.focus();
+  }
+
+  function setupMobileKeyboardCanvas() {
+    const textarea = $("fontoText");
+    const editor = $("fontoEditor");
+    const wrap = editor?.querySelector(".fonto-canvas-wrap");
+    if (!textarea || !editor || !wrap || !window.visualViewport) return;
+    const viewport = window.visualViewport;
+    const update = () => {
+      const keyboardVisible = document.activeElement === textarea && viewport.height < window.innerHeight * 0.82;
+      editor.classList.toggle("fonto-keyboard-visible", keyboardVisible);
+      editor.style.setProperty("--fonto-viewport-offset", `${Math.max(0, viewport.offsetTop)}px`);
+      editor.style.setProperty("--fonto-mobile-canvas-height", `${Math.ceil(wrap.getBoundingClientRect().height)}px`);
+    };
+    textarea.addEventListener("focus", () => requestAnimationFrame(update));
+    textarea.addEventListener("blur", () => setTimeout(update, 80));
+    viewport.addEventListener("resize", update);
+    viewport.addEventListener("scroll", update);
   }
 
   async function updateDailyLoginCount() {
@@ -1575,6 +1609,7 @@
       verify();
     });
     bindControls();
+    setupMobileKeyboardCanvas();
     window.addEventListener("resize", () => {
       if (!state.unlocked) return;
       syncStickyCanvasOffset();
