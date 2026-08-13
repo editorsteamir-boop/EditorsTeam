@@ -116,6 +116,51 @@
   function editEditor(i){ const x=state.editors[i];state.editorEdit=i;state.editorFile=null;state.editorExistingImage=x.image||DEFAULT_AVATAR;state.editorPortfolioQueue=existingPortfolioMedia(x); for(const id of ["fullName","badge","age","city","specialty","rating","bio"])$(id).value=x[id]||"";$("projectsDone").value=x.projects||"";$("verified").checked=!!x.verified;$("online").checked=!!x.online;$("editorActive").checked=x.active!==false;$("avatarPreview").src=state.editorExistingImage;$("editorFormTitle").textContent="ویرایش ادیتور";renderEditorPortfolioQueue();scrollTo({top:0,behavior:"smooth"}); }
 
   function renderEditorPortfolioQueue(){ const el=$("editorPortfolioQueue"); if(!el)return;el.innerHTML=state.editorPortfolioQueue.map((x,i)=>{const mediaType=x.mediaType||inferPortfolioType(x.src||x.name);const preview=x.preview||x.src;const visual=mediaType==="video"?`<div class="queue-video"><video src="${esc(preview)}#t=0.1" muted playsinline preload="metadata"></video><span>▶</span></div>`:`<img src="${esc(preview)}">`;return `<div class="queue-item">${visual}<small>${esc(x.name||x.title||`نمونه‌کار ${i+1}`)}</small><div class="queue-actions"><button type="button" data-epq="up" data-i="${i}">↑</button><button type="button" data-epq="down" data-i="${i}">↓</button><button type="button" class="danger" data-epq="remove" data-i="${i}">×</button></div></div>`;}).join(""); }
+  function releasePreview(item){ if(item?.preview?.startsWith("blob:"))URL.revokeObjectURL(item.preview); }
+  function addProjectFiles(event){
+    const files=[...(event.target.files||[])];
+    for(const file of files){
+      if(!String(file.type||"").startsWith("image/"))continue;
+      state.projectQueue.push({type:"new",file,name:file.name,preview:URL.createObjectURL(file)});
+    }
+    event.target.value="";
+    renderQueue();
+    if(files.length)toast(`${files.length} تصویر به صف پروژه اضافه شد`);
+  }
+  function addEditorPortfolioFiles(event){
+    const files=[...(event.target.files||[])];
+    for(const file of files){
+      const isImage=String(file.type||"").startsWith("image/");
+      const isVideo=String(file.type||"").startsWith("video/")||/\.(mp4|webm|mov|m4v|ogg)$/i.test(file.name);
+      if(!isImage&&!isVideo)continue;
+      state.editorPortfolioQueue.push({type:"new",file,name:file.name,mediaType:isVideo?"video":"image",preview:URL.createObjectURL(file)});
+    }
+    event.target.value="";
+    renderEditorPortfolioQueue();
+    if(files.length)toast(`${files.length} فایل نمونه‌کار به صف اضافه شد`);
+  }
+  async function selectEditorImage(event){
+    const file=event.target.files?.[0];
+    if(!file)return;
+    try{
+      await validateSquareJpg(file);
+      state.editorFile=file;
+      $("avatarPreview").src=URL.createObjectURL(file);
+      toast("تصویر پروفایل انتخاب شد");
+    }catch(err){
+      event.target.value="";
+      alert(err.message);
+    }
+  }
+  function queueAction(event,queue,attribute,render){
+    const button=event.target.closest(`button[${attribute}]`);if(!button)return;
+    const index=Number(button.dataset.i),action=button.getAttribute(attribute);
+    if(!Number.isInteger(index)||!queue[index])return;
+    if(action==="remove"){releasePreview(queue[index]);queue.splice(index,1);}
+    if(action==="up"&&index>0)[queue[index-1],queue[index]]=[queue[index],queue[index-1]];
+    if(action==="down"&&index<queue.length-1)[queue[index+1],queue[index]]=[queue[index],queue[index+1]];
+    render();
+  }
   function validateSquareJpg(file){ return new Promise((resolve,reject)=>{ if(!String(file.type||"").startsWith("image/"))return reject(new Error("فایل انتخابی باید تصویر باشد.")); const img=new Image();const u=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(u);if(img.naturalWidth!==img.naturalHeight)return reject(new Error("ابعاد تصویر ادیتور باید دقیقاً نسبت ۱ به ۱ باشد."));resolve();};img.onerror=()=>{URL.revokeObjectURL(u);reject(new Error("تصویر قابل خواندن نیست."));};img.src=u; }); }
   async function saveEditor(e){ e.preventDefault(); try{
     assertSettings();const name=$("fullName").value.trim();if(!name)throw new Error("نام ادیتور را وارد کنید.");
@@ -343,6 +388,11 @@
   $("requestSearch")?.addEventListener("input",renderRequests);
   document.querySelector(".admin-tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-tab]");if(!b)return;document.querySelectorAll(".admin-tabs button").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".tab-panel").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));if(b.dataset.tab==="requestsTab")fetchRequests();});
   $("tokenFile")?.addEventListener("change",loadTokenFile);
+  $("projectImages")?.addEventListener("change",addProjectFiles);
+  $("projectImageQueue")?.addEventListener("click",e=>queueAction(e,state.projectQueue,"data-q",renderQueue));
+  $("editorImage")?.addEventListener("change",selectEditorImage);
+  $("editorPortfolioImages")?.addEventListener("change",addEditorPortfolioFiles);
+  $("editorPortfolioQueue")?.addEventListener("click",e=>queueAction(e,state.editorPortfolioQueue,"data-epq",renderEditorPortfolioQueue));
   $("connectBtn").onclick=connect;$("saveSettingsBtn").onclick=localSettingsSave;$("projectForm").onsubmit=saveProject;$("editorForm").onsubmit=saveEditor;$("newProjectBtn").onclick=resetProject;$("cancelProjectEdit").onclick=resetProject;$("newEditorBtn").onclick=resetEditor;$("cancelEditorEdit").onclick=resetEditor;$("projectsAdminList").onclick=listAction;$("editorsAdminList").onclick=listAction;
   localSettingsLoad();resetProject();resetEditor();if($("requestsTab")){setRequestsLoggedIn(!!loadSupabaseSession());renderRequests();testSupabaseConnection(false);}
 })();
