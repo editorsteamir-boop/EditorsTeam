@@ -253,25 +253,8 @@
     }
   }
 
-  function fontPriority(name) {
-    const normalized = String(name || "").toLowerCase();
-    const preferred = [
-      "iransansx-900",
-      "dana-bold",
-      "estedad",
-      "shabnam-bold",
-      "fa_peyda_bold",
-      "graphik arabic bold",
-      "diodrumarabic-bold",
-      "noto",
-      "open sans",
-    ];
-    const index = preferred.findIndex((item) => normalized.includes(item));
-    return index === -1 ? 999 : index;
-  }
-
   async function getFonts() {
-    const rows = await api("fonto_fonts", "select=*&is_active=eq.true&order=name.asc");
+    const rows = await api("fonto_fonts", "select=*&is_active=eq.true&order=sort_order.asc,name.asc");
     return rows
       .map((item) => {
         const file = item.file_url || item.file_name;
@@ -281,11 +264,11 @@
           fileName: file,
           url: publicUrl("fonto-fonts", file),
           category: item.category || "persian",
+          sortOrder: Number(item.sort_order || 0),
           previewText: FONT_PREVIEW_TEXT,
         };
       })
-      .filter((item) => item.name && item.url)
-      .sort((a, b) => fontPriority(a.name) - fontPriority(b.name) || a.name.localeCompare(b.name));
+      .filter((item) => item.name && item.url);
   }
 
   async function getQuickStyles() {
@@ -396,14 +379,13 @@
     panel.className = "fonto-panel fonto-library-panel fonto-font-library-panel";
     panel.innerHTML =
       '<div class="fonto-library-heading"><div><h3>پیش‌نمایش فونت‌ها</h3>' +
-      '<small id="fontoFontPreviewCount">در حال دریافت...</small></div>' +
+      "</div>" +
       '<div class="fonto-library-nav" aria-label="پیمایش پیش‌نمایش فونت‌ها">' +
       '<button id="fontoFontPrev" type="button" aria-label="قبلی">‹</button>' +
       '<button id="fontoFontNext" type="button" aria-label="بعدی">›</button></div></div>' +
       '<div id="fontoFontCategories" class="fonto-category-scroll" aria-label="دسته‌بندی فونت‌ها"></div>' +
       '<div id="fontoFontPreviews" class="fonto-template-grid fonto-font-preview-grid" aria-live="polite">' +
-      '<span class="fonto-library-message">در حال ساخت پیش‌نمایش همهٔ فونت‌ها...</span></div>' +
-      '<p class="fonto-library-help">برای دیدن فونت‌های بیشتر افقی بکشید؛ خود فونت‌ها هنگام دیده‌شدن بارگذاری می‌شوند.</p>';
+      '<span class="fonto-library-message">در حال دریافت فونت‌ها...</span></div>';
     const fontPanel = controls.querySelector(".fonto-font-panel");
     if (fontPanel) fontPanel.after(panel);
     else controls.prepend(panel);
@@ -437,7 +419,22 @@
   }
 
   function visibleFonts() {
-    return activeFontCategory === "all" ? fontAssets : fontAssets.filter((font) => font.category === activeFontCategory);
+    const filtered = activeFontCategory === "all" ? fontAssets : fontAssets.filter((font) => font.category === activeFontCategory);
+    const pinned = readPinnedFonts();
+    return [...filtered.filter((font) => pinned.has(String(font.id))), ...filtered.filter((font) => !pinned.has(String(font.id)))];
+  }
+
+  const PINNED_FONTS_KEY = "editorsTeam.fonto.pinnedFonts.v1";
+  function readPinnedFonts() {
+    try { return new Set(JSON.parse(localStorage.getItem(PINNED_FONTS_KEY) || "[]").map(String)); }
+    catch { return new Set(); }
+  }
+  function togglePinnedFont(font) {
+    const pinned = readPinnedFonts();
+    const id = String(font.id);
+    pinned.has(id) ? pinned.delete(id) : pinned.add(id);
+    localStorage.setItem(PINNED_FONTS_KEY, JSON.stringify([...pinned]));
+    renderFontPreviews();
   }
 
   async function applyFontPreview(card, font) {
@@ -527,9 +524,10 @@
   }
 
   function createFontCard(font) {
-    const button = document.createElement("button");
-    button.type = "button";
+    const button = document.createElement("div");
     button.className = "fonto-template-card fonto-font-card" + (state.fontUrl === font.url ? " active" : "");
+    button.tabIndex = 0;
+    button.setAttribute("role", "button");
     button.dataset.fontUrl = font.url;
     button.dataset.fontRowId = String(font.id || "");
     button.dataset.fontFile = String(font.fileName || "");
@@ -537,6 +535,13 @@
     button.setAttribute("aria-pressed", String(state.fontUrl === font.url));
     button.title = font.name;
     button._fontAsset = font;
+    const pin = document.createElement("button");
+    pin.type = "button";
+    pin.className = "fonto-font-pin" + (readPinnedFonts().has(String(font.id)) ? " pinned" : "");
+    pin.setAttribute("aria-label", "پین کردن فونت " + font.name);
+    pin.setAttribute("aria-pressed", String(readPinnedFonts().has(String(font.id))));
+    pin.textContent = "📌";
+    pin.addEventListener("click", (event) => { event.stopPropagation(); togglePinnedFont(font); });
     const preview = document.createElement("span");
     preview.className = "fonto-template-preview fonto-font-preview";
     preview.dir = "rtl";
@@ -557,8 +562,9 @@
     preview.appendChild(sample);
     const title = document.createElement("small");
     title.textContent = font.name;
-    button.append(preview, title);
+    button.append(pin, preview, title);
     button.addEventListener("click", () => chooseFont(font));
+    button.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); chooseFont(font); } });
     return button;
   }
 
@@ -572,10 +578,8 @@
 
   function renderFontPreviews() {
     const wrap = $("fontoFontPreviews");
-    const count = $("fontoFontPreviewCount");
     if (!wrap) return;
     currentVisibleFonts = visibleFonts();
-    if (count) count.textContent = fontAssets.length.toLocaleString("fa-IR") + " فونت · بارگذاری فقط هنگام نمایش";
     wrap.replaceChildren();
     renderedFontCount = 0;
     wrap.onscroll = () => scheduleVisibleFontPreviews(wrap);
@@ -599,14 +603,13 @@
     panel.className = "fonto-panel fonto-library-panel fonto-quick-panel";
     panel.innerHTML =
       '<div class="fonto-library-heading"><div><h3>استایل‌های سریع</h3>' +
-      '<small id="fontoQuickStyleCount">در حال دریافت...</small></div>' +
+      "</div>" +
       '<div class="fonto-library-nav" aria-label="پیمایش استایل‌های سریع">' +
       '<button id="fontoQuickPrev" type="button" aria-label="قبلی">‹</button>' +
       '<button id="fontoQuickNext" type="button" aria-label="بعدی">›</button></div></div>' +
       '<div id="fontoQuickCategories" class="fonto-category-scroll" aria-label="دسته‌بندی استایل‌های سریع"></div>' +
       '<div id="fontoQuickStyles" class="fonto-template-grid" aria-live="polite">' +
       '<span class="fonto-library-message">در حال دریافت استایل‌های سریع...</span></div>' +
-      '<p class="fonto-library-help">استایل PNG دلخواه را انتخاب کنید؛ می‌توانید آن را با یک تم متن ترکیب کنید.</p>' +
       '<button id="fontoClearQuickStyle" type="button" class="fonto-action fonto-clear-asset">حذف استایل سریع انتخاب‌شده</button>';
     const fontLibraryPanel = ensureFontLibraryPanel();
     if (fontLibraryPanel) fontLibraryPanel.after(panel);
@@ -650,14 +653,13 @@
     panel.className = "fonto-panel fonto-library-panel fonto-theme-panel";
     panel.innerHTML =
       '<div class="fonto-library-heading"><div><h3>تم‌های متن</h3>' +
-      '<small id="fontoTextThemeCount">در حال دریافت...</small></div>' +
+      "</div>" +
       '<div class="fonto-library-nav" aria-label="پیمایش تم‌های متن">' +
       '<button id="fontoThemePrev" type="button" aria-label="قبلی">‹</button>' +
       '<button id="fontoThemeNext" type="button" aria-label="بعدی">›</button></div></div>' +
       '<div id="fontoThemeCategories" class="fonto-category-scroll" aria-label="دسته‌بندی تم‌ها"></div>' +
       '<div id="fontoTextThemes" class="fonto-template-grid fonto-theme-grid" aria-live="polite">' +
-      '<span class="fonto-library-message">در حال ساخت پیش‌نمایش تم‌ها...</span></div>' +
-      '<p class="fonto-library-help">هر تم فقط روی متن اعمال می‌شود و برای فارسی و انگلیسی آزمایش شده است.</p>';
+      '<span class="fonto-library-message">در حال ساخت پیش‌نمایش تم‌ها...</span></div>';
     const quickPanel = ensureQuickStylesPanel();
     if (quickPanel) quickPanel.after(panel);
     else controls.prepend(panel);
@@ -668,10 +670,8 @@
 
   function renderQuickStyles() {
     const wrap = $("fontoQuickStyles");
-    const count = $("fontoQuickStyleCount");
     if (!wrap) return;
     const visible = visibleQuickStyles();
-    if (count) count.textContent = quickStyles.length.toLocaleString("fa-IR") + " استایل";
     wrap.replaceChildren();
     if (!quickStyles.length) {
       const message = document.createElement("span");
@@ -1265,6 +1265,22 @@
     $(id)?.addEventListener(event, handler);
   }
 
+  function showFontoToast(message) {
+    let toast = $("fontoToast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "fontoToast";
+      toast.className = "fonto-toast";
+      toast.setAttribute("role", "status");
+      toast.setAttribute("aria-live", "polite");
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toast._hideTimer);
+    toast._hideTimer = setTimeout(() => toast.classList.remove("show"), 2800);
+  }
+
   function sizeFromOffset(offset) {
     const value = clamp(Number(offset) || 0, -100, 100);
     if (value < 0) return NORMAL_TEXT_SIZE + (NORMAL_TEXT_SIZE - MIN_TEXT_SIZE) * (value / 100);
@@ -1280,9 +1296,7 @@
   function syncSizeOutput() {
     const output = $("fontoSizeValue");
     if (!output) return;
-    const offset = Math.round(offsetFromSize(state.size));
-    const mode = offset === 0 ? "نرمال" : offset > 0 ? "+" + offset.toLocaleString("fa-IR") + "٪" : offset.toLocaleString("fa-IR") + "٪";
-    output.textContent = mode + " · " + Math.round(state.size).toLocaleString("fa-IR");
+    output.textContent = "";
   }
 
   function syncTextLayoutControls() {
@@ -1408,6 +1422,7 @@
       link.download = "fonto-" + Date.now() + ".png";
       link.href = url;
       link.click();
+      showFontoToast("تصویر در گالری ذخیره شد");
       setTimeout(() => URL.revokeObjectURL(url), 1500);
     });
     bind("fontoReset", "click", resetEditor);
