@@ -4,7 +4,7 @@
 
   const SUPABASE_URL = "https://yxzekduddsewulkbdcoz.supabase.co";
   const SUPABASE_KEY = "sb_publishable_rr0hMzT-HuRk4a-frH4QPQ_ZWCgQyHB";
-  const SESSION_KEY = "editorsTeam.fonto.access.v2";
+  const SESSION_KEY = "editorsTeam.fonto.access.v3";
   const FONT_CACHE = "editorsTeam-fonto-fonts-v4";
   const $ = (id) => document.getElementById(id);
   const clamp = (number, min, max) => Math.max(min, Math.min(max, number));
@@ -104,21 +104,49 @@
     element.className = "fonto-status " + type;
   }
 
-  function remember() {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ok: true, at: Date.now() }));
+  function remember(session) {
+    sessionStorage.setItem(
+      SESSION_KEY,
+      JSON.stringify({
+        token: session.token,
+        expiresAt: session.expires_at,
+        fullName: session.full_name || "",
+      }),
+    );
   }
 
-  function hasSession() {
+  function storedSession() {
     try {
       const session = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null");
-      return Boolean(session?.ok && Date.now() - session.at < 28_800_000);
+      return session?.token && Date.parse(session.expiresAt) > Date.now() ? session : null;
     } catch {
-      return false;
+      return null;
     }
   }
 
+  async function rpc(name, body, token = SUPABASE_KEY) {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(body || {}),
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok) throw new Error(data?.message || "ارتباط با سرور برقرار نشد");
+    return data;
+  }
+
   function encodeStoragePath(path) {
-    return String(path || "").replace(/^\/+/, "").split("/").map(encodeURIComponent).join("/");
+    return String(path || "")
+      .replace(/^\/+/, "")
+      .split("/")
+      .map(encodeURIComponent)
+      .join("/");
   }
 
   function publicUrl(bucket, path) {
@@ -141,39 +169,87 @@
   }
 
   async function verify() {
-    const input = $("fontoPassword");
-    const password = input?.value || "";
-    if (!password) return status("لطفاً رمز ورود را وارد کنید.", "bad");
+    const phoneInput = $("fontoPhone");
+    const passwordInput = $("fontoUserPassword");
+    const phone = phoneInput?.value.trim() || "";
+    const password = passwordInput?.value || "";
+    if (!/^09\d{9}$/.test(phone)) return status("شماره تماس را با صفر و به‌صورت ۱۱ رقمی وارد کنید.", "bad");
+    if (!password) return status("لطفاً رمز عبور را وارد کنید.", "bad");
     const button = $("fontoLoginBtn");
     if (button) {
       button.disabled = true;
       button.textContent = "در حال بررسی...";
     }
     try {
-      const response = await fetch(SUPABASE_URL + "/rest/v1/rpc/verify_fonto_password", {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: "Bearer " + SUPABASE_KEY,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ input_password: password }),
+      const result = await rpc("verify_fonto_user", {
+        input_phone: phone,
+        input_password: password,
       });
-      const allowed = response.ok ? await response.json() : false;
-      if (allowed === true) {
-        remember();
+      if (result?.ok && result.token) {
+        remember(result);
         await unlock();
       } else {
-        status("رمز ورود صحیح نیست.", "bad");
+        status(
+          result?.retry_after ? "تلاش‌های ناموفق زیاد بوده؛ ۱۰ دقیقه بعد دوباره امتحان کنید." : "شماره تماس یا رمز عبور صحیح نیست.",
+          "bad",
+        );
       }
-    } catch {
-      status("اتصال به Supabase برقرار نشد.", "bad");
+    } catch (error) {
+      status(error.message || "اتصال به Supabase برقرار نشد.", "bad");
     } finally {
       if (button) {
         button.disabled = false;
         button.textContent = "ورود به ابزار فونت";
       }
-      if (input) input.value = "";
+      if (passwordInput) passwordInput.value = "";
+    }
+  }
+
+  async function register(event) {
+    event?.preventDefault();
+    const name = $("fontoRegisterName")?.value.trim() || "";
+    const phone = $("fontoRegisterPhone")?.value.trim() || "";
+    const city = $("fontoRegisterCity")?.value.trim() || "";
+    if (name.length < 2 || city.length < 2 || !/^09\d{9}$/.test(phone)) {
+      return status("نام، شهر و شماره تماس ۱۱ رقمی با صفر را کامل وارد کنید.", "bad");
+    }
+    const button = $("fontoRegisterSubmit");
+    if (button) {
+      button.disabled = true;
+      button.textContent = "در حال ثبت…";
+    }
+    try {
+      const result = await rpc("register_fonto_user", {
+        input_full_name: name,
+        input_phone: phone,
+        input_city: city,
+      });
+      $("fontoRegisterForm")?.reset();
+      status(result?.message || "درخواست شما ثبت شد؛ رمز عبور برای شما پیامک خواهد شد.", "ok");
+    } catch (error) {
+      status(error.message || "ثبت درخواست انجام نشد.", "bad");
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = "ثبت درخواست";
+      }
+    }
+  }
+
+  function showAuthForm(targetId) {
+    $("fontoGateChoices")?.classList.toggle("hidden", Boolean(targetId));
+    $("fontoRegisterForm")?.classList.toggle("hidden", targetId !== "fontoRegisterForm");
+    $("fontoLoginForm")?.classList.toggle("hidden", targetId !== "fontoLoginForm");
+    if (targetId) $(targetId)?.querySelector("input")?.focus();
+  }
+
+  async function updateDailyLoginCount() {
+    try {
+      const rows = await rpc("get_fonto_daily_login_stats", { input_days: 1 });
+      const count = Array.isArray(rows) ? Number(rows[0]?.login_count || 0) : 0;
+      if ($("fontoLoginToday")) $("fontoLoginToday").textContent = `ورودهای امروز ابزار فونت: ${count.toLocaleString("fa-IR")}`;
+    } catch {
+      if ($("fontoLoginToday")) $("fontoLoginToday").textContent = "آمار ورود امروز در دسترس نیست.";
     }
   }
 
@@ -213,10 +289,7 @@
   }
 
   async function getQuickStyles() {
-    const rows = await api(
-      "fonto_quick_styles",
-      "select=*&is_active=eq.true&order=sort_order.asc,created_at.asc",
-    );
+    const rows = await api("fonto_quick_styles", "select=*&is_active=eq.true&order=sort_order.asc,created_at.asc");
     return rows
       .map((item) => ({
         ...item,
@@ -364,9 +437,7 @@
   }
 
   function visibleFonts() {
-    return activeFontCategory === "all"
-      ? fontAssets
-      : fontAssets.filter((font) => font.category === activeFontCategory);
+    return activeFontCategory === "all" ? fontAssets : fontAssets.filter((font) => font.category === activeFontCategory);
   }
 
   async function applyFontPreview(card, font) {
@@ -456,39 +527,39 @@
   }
 
   function createFontCard(font) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "fonto-template-card fonto-font-card" + (state.fontUrl === font.url ? " active" : "");
-      button.dataset.fontUrl = font.url;
-      button.dataset.fontRowId = String(font.id || "");
-      button.dataset.fontFile = String(font.fileName || "");
-      button.dataset.fontCategory = font.category;
-      button.setAttribute("aria-pressed", String(state.fontUrl === font.url));
-      button.title = font.name;
-      button._fontAsset = font;
-      const preview = document.createElement("span");
-      preview.className = "fonto-template-preview fonto-font-preview";
-      preview.dir = "rtl";
-      // Keep the mobile preview square even if an older cached stylesheet is active.
-      preview.style.setProperty("width", "100%", "important");
-      preview.style.setProperty("height", "auto", "important");
-      preview.style.setProperty("min-height", "0", "important");
-      preview.style.setProperty("max-height", "none", "important");
-      preview.style.setProperty("aspect-ratio", "1 / 1", "important");
-      const sample = document.createElement("canvas");
-      sample.className = "fonto-font-sample";
-      sample.width = 240;
-      sample.height = 240;
-      sample.style.setProperty("width", "100%", "important");
-      sample.style.setProperty("height", "100%", "important");
-      sample.style.setProperty("aspect-ratio", "1 / 1", "important");
-      sample.setAttribute("aria-label", "پیش‌نمایش ادیتورز تیم با فونت " + font.name);
-      preview.appendChild(sample);
-      const title = document.createElement("small");
-      title.textContent = font.name;
-      button.append(preview, title);
-      button.addEventListener("click", () => chooseFont(font));
-      return button;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "fonto-template-card fonto-font-card" + (state.fontUrl === font.url ? " active" : "");
+    button.dataset.fontUrl = font.url;
+    button.dataset.fontRowId = String(font.id || "");
+    button.dataset.fontFile = String(font.fileName || "");
+    button.dataset.fontCategory = font.category;
+    button.setAttribute("aria-pressed", String(state.fontUrl === font.url));
+    button.title = font.name;
+    button._fontAsset = font;
+    const preview = document.createElement("span");
+    preview.className = "fonto-template-preview fonto-font-preview";
+    preview.dir = "rtl";
+    // Keep the mobile preview square even if an older cached stylesheet is active.
+    preview.style.setProperty("width", "100%", "important");
+    preview.style.setProperty("height", "auto", "important");
+    preview.style.setProperty("min-height", "0", "important");
+    preview.style.setProperty("max-height", "none", "important");
+    preview.style.setProperty("aspect-ratio", "1 / 1", "important");
+    const sample = document.createElement("canvas");
+    sample.className = "fonto-font-sample";
+    sample.width = 240;
+    sample.height = 240;
+    sample.style.setProperty("width", "100%", "important");
+    sample.style.setProperty("height", "100%", "important");
+    sample.style.setProperty("aspect-ratio", "1 / 1", "important");
+    sample.setAttribute("aria-label", "پیش‌نمایش ادیتورز تیم با فونت " + font.name);
+    preview.appendChild(sample);
+    const title = document.createElement("small");
+    title.textContent = font.name;
+    button.append(preview, title);
+    button.addEventListener("click", () => chooseFont(font));
+    return button;
   }
 
   function appendFontBatch(wrap) {
@@ -566,9 +637,7 @@
   }
 
   function visibleQuickStyles() {
-    return activeQuickCategory === "all"
-      ? quickStyles
-      : quickStyles.filter((style) => style.category === activeQuickCategory);
+    return activeQuickCategory === "all" ? quickStyles : quickStyles.filter((style) => style.category === activeQuickCategory);
   }
 
   function ensureTextThemesPanel() {
@@ -654,9 +723,7 @@
   }
 
   function visibleThemes() {
-    return activeThemeCategory === "all"
-      ? textThemes
-      : textThemes.filter((theme) => theme.category === activeThemeCategory);
+    return activeThemeCategory === "all" ? textThemes : textThemes.filter((theme) => theme.category === activeThemeCategory);
   }
 
   function renderTextThemes() {
@@ -902,9 +969,7 @@
     const lines = [];
     let current = "";
     for (const word of words) {
-      const pieces = ctx.measureText(word).width > maxWidth
-        ? splitLongToken(ctx, word, maxWidth)
-        : [word];
+      const pieces = ctx.measureText(word).width > maxWidth ? splitLongToken(ctx, word, maxWidth) : [word];
       for (const piece of pieces) {
         const candidate = current ? current + " " + piece : piece;
         if (current && ctx.measureText(candidate).width > maxWidth) {
@@ -921,7 +986,9 @@
 
   function measureTextLayout(ctx, text, fontFamily, size, fontWeight, maxWidth, lineHeightRatio) {
     ctx.font = fontWeight + " " + size + "px " + fontFamily;
-    const paragraphs = String(text ?? "").replace(/\r\n?/g, "\n").split("\n");
+    const paragraphs = String(text ?? "")
+      .replace(/\r\n?/g, "\n")
+      .split("\n");
     const lines = paragraphs.flatMap((paragraph) => wrapParagraph(ctx, paragraph, maxWidth));
     const widths = lines.map((line) => ctx.measureText(line).width);
     const lineHeight = size * lineHeightRatio;
@@ -960,9 +1027,7 @@
     ctx.save();
     ctx.translate(x, y);
     const textAlign = ["right", "center", "left"].includes(style.textAlign) ? style.textAlign : "center";
-    const textDirection = ["rtl", "ltr"].includes(style.textDirection)
-      ? style.textDirection
-      : /[\u0600-\u06ff]/.test(text) ? "rtl" : "ltr";
+    const textDirection = ["rtl", "ltr"].includes(style.textDirection) ? style.textDirection : /[\u0600-\u06ff]/.test(text) ? "rtl" : "ltr";
     ctx.textAlign = textAlign;
     ctx.textBaseline = "middle";
     if ("direction" in ctx) ctx.direction = textDirection;
@@ -978,11 +1043,7 @@
     );
     const size = layout.size;
     const lineX = textAlign === "right" ? maxWidth / 2 : textAlign === "left" ? -maxWidth / 2 : 0;
-    const fillCenterX = textAlign === "right"
-      ? lineX - layout.width / 2
-      : textAlign === "left"
-        ? lineX + layout.width / 2
-        : 0;
+    const fillCenterX = textAlign === "right" ? lineX - layout.width / 2 : textAlign === "left" ? lineX + layout.width / 2 : 0;
     const fill = createTextFill(ctx, { width: layout.width }, size, style, fillCenterX);
     const firstLineY = -((layout.lines.length - 1) * layout.lineHeight) / 2;
     const drawLines = (method, offsetX = 0, offsetY = 0) => {
@@ -1019,12 +1080,14 @@
     const shadows = style.shadowLayers?.length
       ? style.shadowLayers
       : style.shadow
-        ? [{
-            color: style.shadowColor || "#000000",
-            blur: style.shadowBlur || 0,
-            x: style.shadowOffsetX || 0,
-            y: style.shadowOffsetY || 0,
-          }]
+        ? [
+            {
+              color: style.shadowColor || "#000000",
+              blur: style.shadowBlur || 0,
+              x: style.shadowOffsetX || 0,
+              y: style.shadowOffsetY || 0,
+            },
+          ]
         : [];
     for (const layer of shadows) {
       ctx.save();
@@ -1126,27 +1189,17 @@
   function syncPreviewBackground() {
     const wrap = state.canvas?.parentElement;
     if (!wrap) return;
-    wrap.style.background = state.bg === "transparent"
-      ? "repeating-conic-gradient(#d9dce3 0 25%, #f3f4f7 0 50%) 50% / 18px 18px"
-      : state.bg;
+    wrap.style.background =
+      state.bg === "transparent" ? "repeating-conic-gradient(#d9dce3 0 25%, #f3f4f7 0 50%) 50% / 18px 18px" : state.bg;
   }
 
   async function renderComposition(ctx, width, height) {
     ctx.clearRect(0, 0, width, height);
     if (state.quickStyleImage) {
-      const fit = Math.min(
-        (width * 0.96) / state.quickStyleImage.width,
-        (height * 0.92) / state.quickStyleImage.height,
-      );
+      const fit = Math.min((width * 0.96) / state.quickStyleImage.width, (height * 0.92) / state.quickStyleImage.height);
       const assetWidth = state.quickStyleImage.width * fit;
       const assetHeight = state.quickStyleImage.height * fit;
-      ctx.drawImage(
-        state.quickStyleImage,
-        (width - assetWidth) / 2,
-        (height - assetHeight) / 2,
-        assetWidth,
-        assetHeight,
-      );
+      ctx.drawImage(state.quickStyleImage, (width - assetWidth) / 2, (height - assetHeight) / 2, assetWidth, assetHeight);
     }
     let family = state.font;
     try {
@@ -1261,10 +1314,12 @@
       ["fontoX", "x"],
       ["fontoY", "y"],
       ["fontoScale", "scale"],
-    ].forEach(([id, key]) => bind(id, "input", (event) => {
-      state[key] = Number(event.target.value);
-      draw();
-    }));
+    ].forEach(([id, key]) =>
+      bind(id, "input", (event) => {
+        state[key] = Number(event.target.value);
+        draw();
+      }),
+    );
 
     document.querySelectorAll("[data-fonto-align]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -1356,7 +1411,13 @@
       setTimeout(() => URL.revokeObjectURL(url), 1500);
     });
     bind("fontoReset", "click", resetEditor);
-    bind("fontoLogout", "click", () => {
+    bind("fontoLogout", "click", async () => {
+      const session = storedSession();
+      if (session?.token) {
+        try {
+          await rpc("revoke_fonto_session", { input_token: session.token });
+        } catch {}
+      }
       sessionStorage.removeItem(SESSION_KEY);
       location.reload();
     });
@@ -1441,7 +1502,7 @@
   }
 
   async function unlock() {
-    if (state.unlocked) return;
+    if (state.unlocked) return updateDailyLoginCount();
     state.unlocked = true;
     $("fontoGate")?.classList.add("hidden");
     $("fontoEditor")?.classList.remove("hidden");
@@ -1457,12 +1518,24 @@
     syncTextLayoutControls();
     syncStickyCanvasOffset();
     resize();
+    updateDailyLoginCount();
   }
 
-  function activate() {
-    if (hasSession()) return unlock();
+  async function activate() {
+    const session = storedSession();
+    if (session) {
+      try {
+        const result = await rpc("validate_fonto_session", {
+          input_token: session.token,
+        });
+        if (result?.ok) return unlock();
+      } catch {}
+      sessionStorage.removeItem(SESSION_KEY);
+    }
+    state.unlocked = false;
+    $("fontoEditor")?.classList.add("hidden");
     $("fontoGate")?.classList.remove("hidden");
-    return Promise.resolve();
+    showAuthForm(null);
   }
 
   function applyVisibleLabels() {
@@ -1472,15 +1545,19 @@
     if (navButton) navButton.textContent = "ابزار فونت";
     if (sectionTitle) sectionTitle.textContent = "ابزار فونت";
     if (gateTitle) gateTitle.textContent = "ورود به ابزار فونت";
-    if ($("fontoLoginBtn")) $("fontoLoginBtn").textContent = "ورود به ابزار فونت";
+    if ($("fontoLoginBtn")) $("fontoLoginBtn").textContent = "ورود";
     if ($("fontoLogout")) $("fontoLogout").textContent = "خروج از ابزار فونت";
   }
 
   document.addEventListener("DOMContentLoaded", () => {
     applyVisibleLabels();
-    bind("fontoLoginBtn", "click", verify);
-    bind("fontoPassword", "keydown", (event) => {
-      if (event.key === "Enter") verify();
+    $("fontoRegisterChoice")?.addEventListener("click", () => showAuthForm("fontoRegisterForm"));
+    $("fontoExistingChoice")?.addEventListener("click", () => showAuthForm("fontoLoginForm"));
+    document.querySelectorAll("[data-fonto-auth-back]").forEach((button) => button.addEventListener("click", () => showAuthForm(null)));
+    $("fontoRegisterForm")?.addEventListener("submit", register);
+    $("fontoLoginForm")?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      verify();
     });
     bindControls();
     window.addEventListener("resize", () => {

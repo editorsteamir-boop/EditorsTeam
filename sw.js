@@ -1,6 +1,6 @@
 const CACHE_PREFIX="editors-team-";
-const STATIC_CACHE=`${CACHE_PREFIX}static-v29-enforced-square-font-previews`;
-const PAGE_CACHE=`${CACHE_PREFIX}pages-v29-enforced-square-font-previews`;
+const STATIC_CACHE=`${CACHE_PREFIX}static-v30-fonto-user-access`;
+const PAGE_CACHE=`${CACHE_PREFIX}pages-v30-fonto-user-access`;
 
 self.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil((async()=>{
