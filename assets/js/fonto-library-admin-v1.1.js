@@ -56,6 +56,12 @@
       event.currentTarget.reset(); $('fontoStyleTextColor').value = '#ffffff'; status('استایل جدید اضافه شد.'); await reload();
     } catch (error) { status(error.message); } finally { button.disabled = false; }
   }
+  async function removeStyleAsset(path) {
+    const clean = String(path || '').replace(/^\/+/, '');
+    if (!clean.startsWith('admin-quick-styles/')) return;
+    const response = await fetch(`${URL}/storage/v1/object/fonto-text-boxes/${clean.split('/').map(encodeURIComponent).join('/')}`, {method:'DELETE', headers:{apikey:KEY, Authorization:`Bearer ${session.access_token}`}});
+    if (!response.ok && response.status !== 404) { const data = await response.json().catch(() => null); throw new Error(data?.message || 'رکورد حذف شد، اما حذف فایل از Storage انجام نشد.'); }
+  }
   async function login(event) {
     event.preventDefault(); const password = $('fontoLibraryPassword');
     connection('checking', 'در حال ورود…');
@@ -70,7 +76,7 @@
   $('fontoStyleUploadForm').addEventListener('submit', uploadStyle);
   $('fontoLibraryReloadBtn').addEventListener('click', reload);
   $('fontoAdminFontSearch').addEventListener('input', renderFonts);
-  $('fontoAdminStylesList').addEventListener('click', async (event) => { const button = event.target.closest('[data-delete-style]'); if (!button || !confirm('این استایل حذف شود؟')) return; button.disabled = true; try { await rpc('fonto_admin_delete_quick_style', {input_style_id:button.dataset.deleteStyle}); await reload(); } catch (error) { status(error.message); button.disabled = false; } });
+  $('fontoAdminStylesList').addEventListener('click', async (event) => { const button = event.target.closest('[data-delete-style]'); if (!button || !confirm('این استایل حذف شود؟')) return; const item=styles.find(style=>String(style.id)===button.dataset.deleteStyle); button.disabled = true; try { const removed=await rpc('fonto_admin_delete_quick_style', {input_style_id:button.dataset.deleteStyle}); if(!removed)throw new Error('استایل پیدا نشد یا قبلاً حذف شده است.'); styles=styles.filter(style=>String(style.id)!==button.dataset.deleteStyle);renderStyles();status('استایل حذف شد.'); try{await removeStyleAsset(item?.asset_url);}catch(storageError){status(storageError.message);} } catch (error) { status(error.message); button.disabled = false; } });
   $('fontoAdminFontsList').addEventListener('click', (event) => { const button = event.target.closest('[data-move-font]'); if (!button) return; const index = fonts.findIndex((font) => String(font.id) === button.dataset.moveFont), next = index + Number(button.dataset.direction); if (index < 0 || next < 0 || next >= fonts.length) return; [fonts[index], fonts[next]] = [fonts[next], fonts[index]]; renderFonts(); });
   $('fontoSaveFontOrder').addEventListener('click', async () => { const button = $('fontoSaveFontOrder'); button.disabled = true; try { await rpc('fonto_admin_reorder_fonts', {input_font_ids:fonts.map((font) => font.id)}); status('ترتیب فونت‌ها ذخیره شد.'); } catch (error) { status(error.message); } finally { button.disabled = false; } });
   $('fontoLibraryLogoutBtn').addEventListener('click', () => { session = null; sessionStorage.removeItem(SESSION_KEY); workspace(false); connection('neutral','برای مدیریت کتابخانه وارد شوید.'); });

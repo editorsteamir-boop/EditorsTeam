@@ -1,6 +1,6 @@
 const CACHE_PREFIX="editors-team-";
-const STATIC_CACHE=`${CACHE_PREFIX}static-v32-admin-cache-fix`;
-const PAGE_CACHE=`${CACHE_PREFIX}pages-v32-admin-cache-fix`;
+const STATIC_CACHE=`${CACHE_PREFIX}static-v33-admin-upload-fix`;
+const PAGE_CACHE=`${CACHE_PREFIX}pages-v33-admin-upload-fix`;
 
 self.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil((async()=>{
@@ -32,7 +32,7 @@ self.addEventListener("fetch",e=>{
   const nav=r.mode==="navigate";
   const data=u.pathname.includes("/data/")&&u.pathname.endsWith(".json");
   const fontoCritical=u.pathname.endsWith("/assets/js/fonto.js")||u.pathname.endsWith("/assets/css/fonto.css");
-  const adminCritical=u.pathname.includes("/assets/js/github-admin");
+  const adminCritical=u.pathname.includes("/assets/js/github-admin")||u.pathname.includes("/assets/js/fonto-library-admin");
   if(nav){e.respondWith(networkFirst(r,PAGE_CACHE,true));return;}
   if(data){e.respondWith(swr(r,PAGE_CACHE,true));return;}
   if(adminCritical){e.respondWith(networkFirst(r,STATIC_CACHE,false));return;}

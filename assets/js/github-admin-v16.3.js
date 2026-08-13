@@ -43,18 +43,24 @@
     }
     if(failed.length)throw new Error(`اطلاعات ذخیره شد، اما حذف ${failed.length} فایل از GitHub ناموفق بود:\n${failed.join("\n")}`);
   }
+  function imageExtension(file){
+    const byType={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/gif":"gif","image/avif":"avif"};
+    if(byType[String(file?.type||"").toLowerCase()])return byType[String(file.type).toLowerCase()];
+    const ext=(String(file?.name||"").split(".").pop()||"").toLowerCase().replace(/[^a-z0-9]/g,"");
+    return /^(jpe?g|png|webp|gif|avif|heic|heif)$/.test(ext)?(ext==="jpeg"?"jpg":ext):"jpg";
+  }
   function imageToWebp(file,quality=.84){
     if(!file||!String(file.type||"").startsWith("image/")||/image\/webp/i.test(file.type))return Promise.resolve(file);
-    return new Promise((resolve,reject)=>{
+    return new Promise(resolve=>{
       const img=new Image(),url=URL.createObjectURL(file);
       img.onload=()=>{
         try{
           const c=document.createElement("canvas");c.width=img.naturalWidth;c.height=img.naturalHeight;
           c.getContext("2d").drawImage(img,0,0);
-          c.toBlob(blob=>{URL.revokeObjectURL(url);if(!blob)return reject(new Error("تبدیل تصویر به WebP انجام نشد."));resolve(new File([blob],file.name.replace(/\.[^.]+$/,"")+".webp",{type:"image/webp"}));},"image/webp",quality);
-        }catch(e){URL.revokeObjectURL(url);reject(e);}
+          c.toBlob(blob=>{URL.revokeObjectURL(url);resolve(blob?new File([blob],file.name.replace(/\.[^.]+$/,"")+".webp",{type:"image/webp"}):file);},"image/webp",quality);
+        }catch(_){URL.revokeObjectURL(url);resolve(file);}
       };
-      img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("تصویر قابل خواندن نیست."));};
+      img.onerror=()=>{URL.revokeObjectURL(url);resolve(file);};
       img.src=url;
     });
   }
@@ -92,8 +98,8 @@
     const images=[];let uploadIndex=0;
     for(const item of state.projectQueue){
       if(item.type==="existing"){images.push({src:item.src,alt:item.alt||title});continue;}
-      let file=await imageToWebp(item.file);
-      const path=`assets/images/projects/${id}/${Date.now()}-${String(++uploadIndex).padStart(2,"0")}.webp`;
+      const file=await imageToWebp(item.file),ext=imageExtension(file);
+      const path=`assets/images/projects/${id}/${Date.now()}-${String(++uploadIndex).padStart(2,"0")}.${ext}`;
       toast(`در حال آپلود تصویر ${uploadIndex}...`);
       await uploadFile(path,file,`Upload image for ${title}`);
       images.push({src:`./${path}`,alt:`${title} ${images.length+1}`});
@@ -169,8 +175,8 @@
     const oldImage=old?.image||"";
     let image=state.editorExistingImage;
     if(state.editorFile){
-      const file=await imageToWebp(state.editorFile);
-      const path=`assets/images/editors/${id}.webp`;toast("در حال آپلود تصویر ادیتور...");
+      const file=await imageToWebp(state.editorFile),ext=imageExtension(file);
+      const path=`assets/images/editors/${id}.${ext}`;toast("در حال آپلود تصویر ادیتور...");
       await uploadFile(path,file,`Upload editor photo: ${name}`);image=`./${path}?v=${Date.now()}`;
     }
     const portfolioMedia=[];let portfolioIndex=0;
@@ -178,7 +184,7 @@
       if(item.type==="existing"){portfolioMedia.push({src:item.src,type:item.mediaType||inferPortfolioType(item.src),title:item.title||`پروژه ${portfolioMedia.length+1}`});continue;}
       const mediaType=item.mediaType||inferPortfolioType(item.file.name,item.file.type?.startsWith("video/")?"video":"image");
       let file=item.file,ext;
-      if(mediaType==="image"){file=await imageToWebp(file);ext="webp";} else {ext=(file.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";}
+      if(mediaType==="image"){file=await imageToWebp(file);ext=imageExtension(file);} else {ext=(file.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";}
       const path=`assets/images/editors/${id}/portfolio/${Date.now()}-${String(++portfolioIndex).padStart(2,"0")}.${ext}`;
       toast(`در حال آپلود نمونه‌کار ${portfolioIndex}...`);await uploadFile(path,file,`Upload portfolio ${mediaType}: ${name}`);
       portfolioMedia.push({src:`./${path}`,type:mediaType,title:`پروژه ${portfolioMedia.length+1}`});

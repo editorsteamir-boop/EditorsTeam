@@ -117,10 +117,8 @@ begin
   where id = input_style_id
   returning asset_url into stored_asset;
   if stored_asset is null then return false; end if;
-
-  delete from storage.objects
-  where bucket_id = 'fonto-text-boxes'
-    and name in (stored_asset, (select preview_url from public.fonto_quick_styles where id = input_style_id));
+  -- The browser removes the object through the Storage API after this RPC.
+  -- Direct writes to storage.objects are intentionally blocked by Supabase.
   return true;
 end;
 $$;
