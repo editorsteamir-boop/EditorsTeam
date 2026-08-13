@@ -39,7 +39,8 @@
       "./assets/images/editors/editor-1785758530231/portfolio/1785785973891-08.webp",
       "./assets/images/editors/editor-1785758530231/portfolio/1785785978180-09.webp",
       "./assets/images/editors/editor-1785758530231/portfolio/1785785983057-10.webp",
-      "./assets/images/editors/editor-1785758530231/portfolio/1785786402348-03.webp"
+      "./assets/images/editors/editor-1785758530231/portfolio/1785786402348-03.webp",
+      "./assets/images/editors/editor-1785758530231/portfolio/1786659711716-01.webp"
     ],
     "portfolioMedia": [
       {
@@ -196,6 +197,11 @@
         "src": "./assets/images/editors/editor-1785758530231/portfolio/1785786402348-03.webp",
         "type": "image",
         "title": "پروژه 31"
+      },
+      {
+        "src": "./assets/images/editors/editor-1785758530231/portfolio/1786659711716-01.webp",
+        "type": "image",
+        "title": "پروژه 32"
       }
     ],
     "bio": "",
