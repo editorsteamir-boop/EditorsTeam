@@ -1,0 +1,60 @@
+.admin-tabs {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .admin-layout {
+    display: block;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    width: 100%;
+    height: auto;
+    min-height: 66px;
+    padding: 7px 8px;
+    border-left: 0;
+    border-top: 0;
+    border-bottom: 1px solid var(--line);
+    z-index: 100;
+  }
+
+  .side-nav {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 5px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .side-nav button {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-width: 0;
+    height: 50px;
+    margin: 0;
+    padding: 7px 2px;
+    overflow: hidden;
+  }
+
+  .side-nav button span {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .side-nav button b {
+    display: none;
+  }
+
+  .topbar {
+    min-height: 82px;
+  }
+
+  .admin-shell {
+    margin-top: 18px;
+    padding-bottom: 24px;
+  }
+}

@@ -60,6 +60,20 @@
   }
   function localSettingsLoad(){ try{const s=JSON.parse(localStorage.getItem("editorsTeam.github.settings")||"{}"); if(s.owner)$("ghOwner").value=s.owner;if(s.repo)$("ghRepo").value=s.repo;if(s.branch)$("ghBranch").value=s.branch;}catch{} }
   function localSettingsSave(){ const s=settings(); localStorage.setItem("editorsTeam.github.settings",JSON.stringify({owner:s.owner,repo:s.repo,branch:s.branch})); toast("تنظیمات غیرحساس ذخیره شد"); }
+  async function loadTokenFile(event){
+    const file=event.target.files?.[0];
+    if(!file)return;
+    try{
+      const token=(await file.text()).replace(/^\uFEFF/,"").trim();
+      if(!token)throw new Error("فایل انتخاب‌شده خالی است.");
+      $("ghToken").value=token;
+      $("ghToken").dispatchEvent(new Event("input",{bubbles:true}));
+      toast("توکن از فایل درج شد");
+    }catch(error){
+      $("ghToken").value="";
+      toast(error.message||"خواندن فایل توکن انجام نشد");
+    }
+  }
   async function connect(){ const status=$("connectionStatus"); status.className="status"; status.textContent="در حال اتصال..."; try{ const s=assertSettings(); const repoUrl=`https://api.github.com/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}`; await ghFetch(repoUrl); const [p,e]=await Promise.all([getContent("data/projects.json"),getContent("data/editors.json")]); state.projects=p?JSON.parse(base64ToText(p.content)):[]; state.editors=e?JSON.parse(base64ToText(e.content)):[]; state.projects=Array.isArray(state.projects)?state.projects:[];state.editors=Array.isArray(state.editors)?state.editors:[]; normalizeOrders();renderProjects();renderEditors();status.className="status ok";status.textContent="اتصال موفق بود و اطلاعات مخزن دریافت شد.";localSettingsSave(); }
     catch(err){status.className="status bad";status.textContent=err.message;}
   }
@@ -328,6 +342,7 @@
   $("supabaseLogoutBtn")?.addEventListener("click",supabaseLogout);
   $("requestSearch")?.addEventListener("input",renderRequests);
   document.querySelector(".admin-tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-tab]");if(!b)return;document.querySelectorAll(".admin-tabs button").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".tab-panel").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));if(b.dataset.tab==="requestsTab")fetchRequests();});
+  $("tokenFile")?.addEventListener("change",loadTokenFile);
   $("connectBtn").onclick=connect;$("saveSettingsBtn").onclick=localSettingsSave;$("projectForm").onsubmit=saveProject;$("editorForm").onsubmit=saveEditor;$("newProjectBtn").onclick=resetProject;$("cancelProjectEdit").onclick=resetProject;$("newEditorBtn").onclick=resetEditor;$("cancelEditorEdit").onclick=resetEditor;$("projectsAdminList").onclick=listAction;$("editorsAdminList").onclick=listAction;
   localSettingsLoad();resetProject();resetEditor();if($("requestsTab")){setRequestsLoggedIn(!!loadSupabaseSession());renderRequests();testSupabaseConnection(false);}
 })();
