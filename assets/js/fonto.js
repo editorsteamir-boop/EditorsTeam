@@ -394,11 +394,11 @@
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#ffffff";
-    let size = 34;
+    let size = 62;
     do {
       ctx.font = size + 'px "' + family + '"';
       size -= 1;
-    } while (size > 13 && ctx.measureText(FONT_PREVIEW_TEXT).width > width - 18);
+    } while (size > 18 && ctx.measureText(FONT_PREVIEW_TEXT).width > width - 22);
     ctx.fillText(FONT_PREVIEW_TEXT, width / 2, height / 2 + 2);
     canvas.dataset.fontFamily = family;
     canvas.dataset.fontRowId = String(font.id || "");
@@ -469,10 +469,19 @@
       const preview = document.createElement("span");
       preview.className = "fonto-template-preview fonto-font-preview";
       preview.dir = "rtl";
+      // Keep the mobile preview square even if an older cached stylesheet is active.
+      preview.style.setProperty("width", "100%", "important");
+      preview.style.setProperty("height", "auto", "important");
+      preview.style.setProperty("min-height", "0", "important");
+      preview.style.setProperty("max-height", "none", "important");
+      preview.style.setProperty("aspect-ratio", "1 / 1", "important");
       const sample = document.createElement("canvas");
       sample.className = "fonto-font-sample";
       sample.width = 240;
       sample.height = 240;
+      sample.style.setProperty("width", "100%", "important");
+      sample.style.setProperty("height", "100%", "important");
+      sample.style.setProperty("aspect-ratio", "1 / 1", "important");
       sample.setAttribute("aria-label", "پیش‌نمایش ادیتورز تیم با فونت " + font.name);
       preview.appendChild(sample);
       const title = document.createElement("small");
