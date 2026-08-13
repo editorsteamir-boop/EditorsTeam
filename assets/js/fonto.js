@@ -5,7 +5,7 @@
   const SUPABASE_URL = "https://yxzekduddsewulkbdcoz.supabase.co";
   const SUPABASE_KEY = "sb_publishable_rr0hMzT-HuRk4a-frH4QPQ_ZWCgQyHB";
   const SESSION_KEY = "editorsTeam.fonto.access.v2";
-  const FONT_CACHE = "editorsTeam-fonto-fonts-v3";
+  const FONT_CACHE = "editorsTeam-fonto-fonts-v4";
   const $ = (id) => document.getElementById(id);
   const clamp = (number, min, max) => Math.max(min, Math.min(max, number));
   const loadedFonts = new Map();
@@ -24,6 +24,7 @@
     textDirection: "rtl",
     lineHeight: 1.18,
     font: "Tahoma",
+    fontId: "",
     fontUrl: "",
     fontWeight: 800,
     size: 44,
@@ -92,8 +93,6 @@
   let activeFontCategory = "all";
   let activeQuickCategory = "all";
   let activeThemeCategory = "all";
-  let fontPreviewObserver = null;
-  let fontBatchObserver = null;
   let renderedFontCount = 0;
   let currentVisibleFonts = [];
   const FONT_BATCH_SIZE = 8;
@@ -203,6 +202,7 @@
         return {
           id: item.id || file,
           name: item.name || item.family || file?.replace(/\.(ttf|otf|woff2?)$/i, ""),
+          fileName: file,
           url: publicUrl("fonto-fonts", file),
           category: item.category || "persian",
           previewText: FONT_PREVIEW_TEXT,
@@ -253,21 +253,39 @@
     return Math.abs(result);
   }
 
-  async function loadFont(name, url) {
-    if (!url) return name;
-    if (loadedFonts.has(url)) return loadedFonts.get(url);
-    const response = await cacheFetch(url);
-    const blob = await response.blob();
-    const objectUrl = URL.createObjectURL(blob);
-    const family = "Fonto_" + hash(url);
-    const face = new FontFace(family, "url(" + objectUrl + ")", {
-      style: "normal",
-      weight: "normal",
-    });
-    await face.load();
-    document.fonts.add(face);
-    loadedFonts.set(url, family);
-    return family;
+  async function loadFont(font) {
+    if (!font?.url) return font?.name || "Tahoma";
+
+    // Bind every preview to its exact Supabase row, including duplicate names.
+    const rowId = String(font.id || font.fileName || font.url);
+    const cacheKey = rowId + "|" + font.url;
+    if (loadedFonts.has(cacheKey)) return loadedFonts.get(cacheKey);
+
+    const loading = (async () => {
+      const response = await cacheFetch(font.url);
+      const bytes = await response.arrayBuffer();
+      const family = "FontoRow_" + hash(cacheKey);
+      const face = new FontFace(family, bytes, {
+        style: "normal",
+        weight: "400",
+        display: "swap",
+      });
+      const loadedFace = await face.load();
+      document.fonts.add(loadedFace);
+      if (document.fonts.ready) await document.fonts.ready;
+      if (document.fonts.has && !document.fonts.has(loadedFace)) {
+        throw new Error("FontFace was not registered for row " + rowId);
+      }
+      return family;
+    })();
+
+    loadedFonts.set(cacheKey, loading);
+    try {
+      return await loading;
+    } catch (error) {
+      loadedFonts.delete(cacheKey);
+      throw error;
+    }
   }
 
   async function populateFonts() {
@@ -275,6 +293,7 @@
       fontAssets = await getFonts();
       if (!fontAssets.length) throw new Error("No active fonts");
       state.font = fontAssets[0].name;
+      state.fontId = fontAssets[0].id;
       state.fontUrl = fontAssets[0].url;
       activeFontCategory = "all";
       renderFontCategories();
@@ -282,6 +301,7 @@
     } catch (error) {
       console.error(error);
       state.font = "Tahoma";
+      state.fontId = "";
       state.fontUrl = "";
       const wrap = $("fontoFontPreviews");
       if (wrap) wrap.innerHTML = '<span class="fonto-library-message">پیش‌نمایش فونت‌ها در دسترس نیست.</span>';
@@ -353,10 +373,10 @@
     if (!card?.isConnected || card.dataset.loaded === "true") return;
     card.dataset.loaded = "loading";
     try {
-      const family = await loadFont(font.name, font.url);
+      const family = await loadFont(font);
       if (!card.isConnected) return;
       const sample = card.querySelector("canvas.fonto-font-sample");
-      if (sample) renderFontSample(sample, family);
+      if (sample) renderFontSample(sample, family, font);
       card.dataset.loaded = "true";
     } catch (error) {
       console.warn("Font preview failed", font.name, error);
@@ -364,7 +384,7 @@
     }
   }
 
-  function renderFontSample(canvas, family) {
+  function renderFontSample(canvas, family, font) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const width = canvas.width;
@@ -381,29 +401,39 @@
     } while (size > 13 && ctx.measureText(FONT_PREVIEW_TEXT).width > width - 18);
     ctx.fillText(FONT_PREVIEW_TEXT, width / 2, height / 2 + 2);
     canvas.dataset.fontFamily = family;
+    canvas.dataset.fontRowId = String(font.id || "");
+    canvas.dataset.fontFile = String(font.fileName || "");
   }
 
-  function createFontPreviewObserver(wrap) {
-    fontPreviewObserver?.disconnect();
-    fontPreviewObserver = null;
-    if (!("IntersectionObserver" in window)) {
-      return;
+  function syncVisibleFontPreviews(wrap) {
+    if (!wrap?.isConnected) return;
+    const rootRect = wrap.getBoundingClientRect();
+    const cards = [...wrap.querySelectorAll(".fonto-font-card")];
+    const measurable = rootRect.width > 0;
+    const visibleCards = measurable
+      ? cards.filter((card) => {
+          const rect = card.getBoundingClientRect();
+          return rect.right > rootRect.left && rect.left < rootRect.right;
+        })
+      : cards.slice(0, 4);
+
+    visibleCards.forEach((card) => applyFontPreview(card, card._fontAsset));
+
+    const lastCard = cards[cards.length - 1];
+    if (!lastCard || renderedFontCount >= currentVisibleFonts.length || !measurable) return;
+    const lastRect = lastCard.getBoundingClientRect();
+    if (lastRect.right > rootRect.left - 24 && lastRect.left < rootRect.right + 24) {
+      appendFontBatch(wrap);
     }
-    fontPreviewObserver = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        fontPreviewObserver?.unobserve(entry.target);
-        applyFontPreview(entry.target, entry.target._fontAsset);
-      }
-    }, { root: wrap, rootMargin: "0px" });
   }
 
-  function observeFontCards(cards) {
-    if (fontPreviewObserver) {
-      cards.forEach((card) => fontPreviewObserver.observe(card));
-      return;
-    }
-    cards.slice(0, 4).forEach((card) => applyFontPreview(card, card._fontAsset));
+  function scheduleVisibleFontPreviews(wrap) {
+    if (wrap._fontPreviewFrame) return;
+    const schedule = window.requestAnimationFrame || ((callback) => window.setTimeout(callback, 16));
+    wrap._fontPreviewFrame = schedule(() => {
+      wrap._fontPreviewFrame = 0;
+      syncVisibleFontPreviews(wrap);
+    });
   }
 
   function syncSelectedFontCards() {
@@ -416,10 +446,11 @@
 
   async function chooseFont(font) {
     state.font = font.name;
+    state.fontId = font.id;
     state.fontUrl = font.url;
     syncSelectedFontCards();
     try {
-      await loadFont(font.name, font.url);
+      await loadFont(font);
     } catch {}
     draw();
   }
@@ -429,6 +460,8 @@
       button.type = "button";
       button.className = "fonto-template-card fonto-font-card" + (state.fontUrl === font.url ? " active" : "");
       button.dataset.fontUrl = font.url;
+      button.dataset.fontRowId = String(font.id || "");
+      button.dataset.fontFile = String(font.fileName || "");
       button.dataset.fontCategory = font.category;
       button.setAttribute("aria-pressed", String(state.fontUrl === font.url));
       button.title = font.name;
@@ -450,26 +483,11 @@
   }
 
   function appendFontBatch(wrap) {
-    wrap.querySelector(".fonto-font-sentinel")?.remove();
-    fontBatchObserver?.disconnect();
-    fontBatchObserver = null;
     const batch = currentVisibleFonts.slice(renderedFontCount, renderedFontCount + FONT_BATCH_SIZE);
     const cards = batch.map(createFontCard);
     cards.forEach((card) => wrap.appendChild(card));
     renderedFontCount += cards.length;
-    observeFontCards(cards);
-    if (renderedFontCount >= currentVisibleFonts.length) return;
-    const sentinel = document.createElement("span");
-    sentinel.className = "fonto-font-sentinel";
-    sentinel.setAttribute("aria-hidden", "true");
-    wrap.appendChild(sentinel);
-    if (!("IntersectionObserver" in window)) return;
-    fontBatchObserver = new IntersectionObserver((entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      fontBatchObserver?.disconnect();
-      appendFontBatch(wrap);
-    }, { root: wrap, rootMargin: "0px 24px" });
-    fontBatchObserver.observe(sentinel);
+    scheduleVisibleFontPreviews(wrap);
   }
 
   function renderFontPreviews() {
@@ -477,12 +495,10 @@
     const count = $("fontoFontPreviewCount");
     if (!wrap) return;
     currentVisibleFonts = visibleFonts();
-    if (count) count.textContent = fontAssets.length.toLocaleString("fa-IR") + " فونت · بارگذاری مرحله‌ای";
+    if (count) count.textContent = fontAssets.length.toLocaleString("fa-IR") + " فونت · بارگذاری فقط هنگام نمایش";
     wrap.replaceChildren();
     renderedFontCount = 0;
-    fontBatchObserver?.disconnect();
-    fontBatchObserver = null;
-    createFontPreviewObserver(wrap);
+    wrap.onscroll = () => scheduleVisibleFontPreviews(wrap);
     if (!currentVisibleFonts.length) {
       const message = document.createElement("span");
       message.className = "fonto-library-message";
@@ -1125,7 +1141,13 @@
     }
     let family = state.font;
     try {
-      if (state.fontUrl) family = await loadFont(state.font, state.fontUrl);
+      if (state.fontUrl) {
+        family = await loadFont({
+          id: state.fontId,
+          name: state.font,
+          url: state.fontUrl,
+        });
+      }
     } catch (error) {
       console.warn(error);
     }

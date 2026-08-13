@@ -1,6 +1,6 @@
 const CACHE_PREFIX="editors-team-";
-const STATIC_CACHE=`${CACHE_PREFIX}static-v26-fonto-lazy-canvas-previews`;
-const PAGE_CACHE=`${CACHE_PREFIX}pages-v26-fonto-lazy-canvas-previews`;
+const STATIC_CACHE=`${CACHE_PREFIX}static-v27-fonto-row-bound-previews`;
+const PAGE_CACHE=`${CACHE_PREFIX}pages-v27-fonto-row-bound-previews`;
 
 self.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil((async()=>{
