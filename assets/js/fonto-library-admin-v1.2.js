@@ -26,7 +26,7 @@
   function renderFonts() {
     const query = $('fontoAdminFontSearch').value.trim().toLowerCase();
     $('fontoAdminFontCount').textContent = `${fonts.length.toLocaleString('fa-IR')} فونت`;
-    $('fontoAdminFontsList').innerHTML = fonts.map((font, index) => ({font,index})).filter(({font}) => !query || String(font.name).toLowerCase().includes(query)).map(({font,index}) => `<article class="fonto-admin-font-row"><span>${(index + 1).toLocaleString('fa-IR')}</span><b>${esc(font.name)}</b><small>${esc(font.category || '')}</small><div><button type="button" class="secondary" data-move-font="${esc(font.id)}" data-direction="-1" aria-label="بالا">↑</button><button type="button" class="secondary" data-move-font="${esc(font.id)}" data-direction="1" aria-label="پایین">↓</button></div></article>`).join('') || '<p class="requests-status">فونتی پیدا نشد.</p>';
+    $('fontoAdminFontsList').innerHTML = fonts.map((font, index) => ({font,index})).filter(({font}) => !query || String(font.name).toLowerCase().includes(query)).map(({font,index}) => `<article class="fonto-admin-font-row"><span>${(index + 1).toLocaleString('fa-IR')}</span><b>${esc(font.name)}</b><small>${esc(font.category || '')}</small><div><button type="button" class="secondary" data-move-font="${esc(font.id)}" data-direction="-1" aria-label="بالا">↑</button><button type="button" class="secondary" data-move-font="${esc(font.id)}" data-direction="1" aria-label="پایین">↓</button><button type="button" class="danger" data-delete-font="${esc(font.id)}">حذف</button></div></article>`).join('') || '<p class="requests-status">فونتی پیدا نشد.</p>';
   }
   async function reload() {
     status('در حال دریافت کتابخانه…');
@@ -62,6 +62,12 @@
     const response = await fetch(`${URL}/storage/v1/object/fonto-text-boxes/${clean.split('/').map(encodeURIComponent).join('/')}`, {method:'DELETE', headers:{apikey:KEY, Authorization:`Bearer ${session.access_token}`}});
     if (!response.ok && response.status !== 404) { const data = await response.json().catch(() => null); throw new Error(data?.message || 'رکورد حذف شد، اما حذف فایل از Storage انجام نشد.'); }
   }
+  async function removeFontAsset(path) {
+    const clean = String(path || '').replace(/^\/+/, '');
+    if (!clean || clean.includes('..')) return;
+    const response = await fetch(`${URL}/storage/v1/object/fonto-fonts/${clean.split('/').map(encodeURIComponent).join('/')}`, {method:'DELETE', headers:{apikey:KEY, Authorization:`Bearer ${session.access_token}`}});
+    if (!response.ok && response.status !== 404) { const data = await response.json().catch(() => null); throw new Error(data?.message || 'رکورد فونت حذف شد، اما حذف فایل از Storage انجام نشد.'); }
+  }
   async function login(event) {
     event.preventDefault(); const password = $('fontoLibraryPassword');
     connection('checking', 'در حال ورود…');
@@ -77,7 +83,22 @@
   $('fontoLibraryReloadBtn').addEventListener('click', reload);
   $('fontoAdminFontSearch').addEventListener('input', renderFonts);
   $('fontoAdminStylesList').addEventListener('click', async (event) => { const button = event.target.closest('[data-delete-style]'); if (!button || !confirm('این استایل حذف شود؟')) return; const item=styles.find(style=>String(style.id)===button.dataset.deleteStyle); button.disabled = true; try { const removed=await rpc('fonto_admin_delete_quick_style', {input_style_id:button.dataset.deleteStyle}); if(!removed)throw new Error('استایل پیدا نشد یا قبلاً حذف شده است.'); styles=styles.filter(style=>String(style.id)!==button.dataset.deleteStyle);renderStyles();status('استایل حذف شد.'); try{await removeStyleAsset(item?.asset_url);}catch(storageError){status(storageError.message);} } catch (error) { status(error.message); button.disabled = false; } });
-  $('fontoAdminFontsList').addEventListener('click', (event) => { const button = event.target.closest('[data-move-font]'); if (!button) return; const index = fonts.findIndex((font) => String(font.id) === button.dataset.moveFont), next = index + Number(button.dataset.direction); if (index < 0 || next < 0 || next >= fonts.length) return; [fonts[index], fonts[next]] = [fonts[next], fonts[index]]; renderFonts(); });
+  $('fontoAdminFontsList').addEventListener('click', async (event) => {
+    const deleteButton=event.target.closest('[data-delete-font]');
+    if(deleteButton){
+      const font=fonts.find(item=>String(item.id)===deleteButton.dataset.deleteFont);
+      if(!font||!confirm(`فونت «${font.name}» برای همیشه حذف شود؟`))return;
+      deleteButton.disabled=true;
+      try{
+        const fileName=await rpc('fonto_admin_delete_font',{input_font_id:font.id});
+        if(!fileName)throw new Error('فونت پیدا نشد یا قبلاً حذف شده است.');
+        fonts=fonts.filter(item=>String(item.id)!==String(font.id));renderFonts();status(`فونت «${font.name}» حذف شد.`);
+        try{await removeFontAsset(fileName);}catch(storageError){status(storageError.message);}
+      }catch(error){status(error.message);deleteButton.disabled=false;}
+      return;
+    }
+    const button=event.target.closest('[data-move-font]'); if (!button) return; const index = fonts.findIndex((font) => String(font.id) === button.dataset.moveFont), next = index + Number(button.dataset.direction); if (index < 0 || next < 0 || next >= fonts.length) return; [fonts[index], fonts[next]] = [fonts[next], fonts[index]]; renderFonts();
+  });
   $('fontoSaveFontOrder').addEventListener('click', async () => { const button = $('fontoSaveFontOrder'); button.disabled = true; try { await rpc('fonto_admin_reorder_fonts', {input_font_ids:fonts.map((font) => font.id)}); status('ترتیب فونت‌ها ذخیره شد.'); } catch (error) { status(error.message); } finally { button.disabled = false; } });
   $('fontoLibraryLogoutBtn').addEventListener('click', () => { session = null; sessionStorage.removeItem(SESSION_KEY); workspace(false); connection('neutral','برای مدیریت کتابخانه وارد شوید.'); });
   try { session = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); } catch {}

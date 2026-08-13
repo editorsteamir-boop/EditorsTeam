@@ -177,17 +177,48 @@ begin
 end;
 $$;
 
+create or replace function public.fonto_admin_delete_font(input_font_id uuid)
+returns text
+language plpgsql
+security definer
+set search_path = pg_catalog, public
+as $$
+declare
+  stored_file text;
+begin
+  if not public.is_fonto_admin() then raise exception 'دسترسی مدیر لازم است'; end if;
+  delete from public.fonto_fonts
+  where id = input_font_id
+  returning file_name into stored_file;
+  if stored_file is null then return null; end if;
+
+  with ranked as (
+    select id, row_number() over (order by sort_order, name, id)::integer - 1 as position
+    from public.fonto_fonts
+  )
+  update public.fonto_fonts f
+  set sort_order = ranked.position
+  from ranked
+  where f.id = ranked.id;
+
+  -- The browser removes stored_file through the official Storage API.
+  return stored_file;
+end;
+$$;
+
 revoke all on function public.fonto_admin_list_quick_styles() from public, anon;
 revoke all on function public.fonto_admin_create_quick_style(text, text, text, text) from public, anon;
 revoke all on function public.fonto_admin_delete_quick_style(uuid) from public, anon;
 revoke all on function public.fonto_admin_list_fonts() from public, anon;
 revoke all on function public.fonto_admin_reorder_fonts(jsonb) from public, anon;
+revoke all on function public.fonto_admin_delete_font(uuid) from public, anon;
 
 grant execute on function public.fonto_admin_list_quick_styles() to authenticated;
 grant execute on function public.fonto_admin_create_quick_style(text, text, text, text) to authenticated;
 grant execute on function public.fonto_admin_delete_quick_style(uuid) to authenticated;
 grant execute on function public.fonto_admin_list_fonts() to authenticated;
 grant execute on function public.fonto_admin_reorder_fonts(jsonb) to authenticated;
+grant execute on function public.fonto_admin_delete_font(uuid) to authenticated;
 
 drop policy if exists "Authenticated upload fonts" on storage.objects;
 drop policy if exists "Authenticated delete fonts" on storage.objects;
