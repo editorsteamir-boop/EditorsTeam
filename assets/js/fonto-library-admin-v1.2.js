@@ -40,7 +40,7 @@
       if (!file || file.type !== 'image/png') return reject(new Error('فقط فایل PNG پذیرفته می‌شود.'));
       if (file.size > 5 * 1024 * 1024) return reject(new Error('حجم فایل باید کمتر از ۵ مگابایت باشد.'));
       const image = new Image(), objectUrl = globalThis.URL.createObjectURL(file);
-      image.onload = () => { globalThis.URL.revokeObjectURL(objectUrl); image.naturalWidth === image.naturalHeight ? resolve() : reject(new Error('تصویر باید نسبت دقیق ۱ به ۱ داشته باشد.')); };
+      image.onload = () => { globalThis.URL.revokeObjectURL(objectUrl); resolve(); };
       image.onerror = () => { globalThis.URL.revokeObjectURL(objectUrl); reject(new Error('فایل PNG معتبر نیست.')); };
       image.src = objectUrl;
     });
