@@ -1289,13 +1289,15 @@
     if (!source) return null;
     const width = Number(source.dataset.w) || 300;
     const height = Number(source.dataset.h) || 133;
-    const density = source.width / width || 1;
+    const EXPORT_SCALE = 3;
     const output = document.createElement("canvas");
-    output.width = source.width;
-    output.height = source.height;
+    output.width = Math.round(width * EXPORT_SCALE);
+    output.height = Math.round(height * EXPORT_SCALE);
     const ctx = output.getContext("2d");
     if (!ctx) return null;
-    ctx.setTransform(density, 0, 0, density, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.scale(EXPORT_SCALE, EXPORT_SCALE);
     await renderComposition(ctx, width, height);
     return output;
   }
