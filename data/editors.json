@@ -216,5 +216,23 @@
     "online": true,
     "active": true,
     "order": 1
+  },
+  {
+    "id": "editor-1787157014631",
+    "fullName": "یاسین پاک ایزدی",
+    "badge": "ادیتور",
+    "age": "",
+    "city": "کرمان",
+    "specialty": "هوش مصنوعی",
+    "rating": "3",
+    "projects": "",
+    "portfolioImages": [],
+    "portfolioMedia": [],
+    "bio": "",
+    "image": "./assets/images/editors/editor-1787157014631.webp?v=1787157018568",
+    "verified": false,
+    "online": false,
+    "active": true,
+    "order": 2
   }
 ]
