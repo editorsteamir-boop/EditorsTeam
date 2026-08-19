@@ -226,8 +226,70 @@
     "specialty": "هوش مصنوعی",
     "rating": "3",
     "projects": "",
-    "portfolioImages": [],
-    "portfolioMedia": [],
+    "portfolioImages": [
+      "./assets/images/editors/editor-1787157014631/portfolio/1787169096881-01.webp",
+      "./assets/images/editors/editor-1787157014631/portfolio/1787169100283-02.webp",
+      "./assets/images/editors/editor-1787157014631/portfolio/1787169103222-03.webp",
+      "./assets/images/editors/editor-1787157014631/portfolio/1787169105736-04.webp",
+      "./assets/images/editors/editor-1787157014631/portfolio/1787169108321-05.webp",
+      "./assets/images/editors/editor-1787157014631/portfolio/1787169111673-06.webp",
+      "./assets/images/editors/editor-1787157014631/portfolio/1787169114525-07.webp",
+      "./assets/images/editors/editor-1787157014631/portfolio/1787169117289-08.webp",
+      "./assets/images/editors/editor-1787157014631/portfolio/1787169120038-09.webp",
+      "./assets/images/editors/editor-1787157014631/portfolio/1787169122536-10.webp"
+    ],
+    "portfolioMedia": [
+      {
+        "src": "./assets/images/editors/editor-1787157014631/portfolio/1787169096881-01.webp",
+        "type": "image",
+        "title": "پروژه 1"
+      },
+      {
+        "src": "./assets/images/editors/editor-1787157014631/portfolio/1787169100283-02.webp",
+        "type": "image",
+        "title": "پروژه 2"
+      },
+      {
+        "src": "./assets/images/editors/editor-1787157014631/portfolio/1787169103222-03.webp",
+        "type": "image",
+        "title": "پروژه 3"
+      },
+      {
+        "src": "./assets/images/editors/editor-1787157014631/portfolio/1787169105736-04.webp",
+        "type": "image",
+        "title": "پروژه 4"
+      },
+      {
+        "src": "./assets/images/editors/editor-1787157014631/portfolio/1787169108321-05.webp",
+        "type": "image",
+        "title": "پروژه 5"
+      },
+      {
+        "src": "./assets/images/editors/editor-1787157014631/portfolio/1787169111673-06.webp",
+        "type": "image",
+        "title": "پروژه 6"
+      },
+      {
+        "src": "./assets/images/editors/editor-1787157014631/portfolio/1787169114525-07.webp",
+        "type": "image",
+        "title": "پروژه 7"
+      },
+      {
+        "src": "./assets/images/editors/editor-1787157014631/portfolio/1787169117289-08.webp",
+        "type": "image",
+        "title": "پروژه 8"
+      },
+      {
+        "src": "./assets/images/editors/editor-1787157014631/portfolio/1787169120038-09.webp",
+        "type": "image",
+        "title": "پروژه 9"
+      },
+      {
+        "src": "./assets/images/editors/editor-1787157014631/portfolio/1787169122536-10.webp",
+        "type": "image",
+        "title": "پروژه 10"
+      }
+    ],
     "bio": "",
     "image": "./assets/images/editors/editor-1787157014631.webp?v=1787157018568",
     "verified": true,
