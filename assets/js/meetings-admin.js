@@ -11,7 +11,7 @@ function showWorkspace(yes){$("meetingsAuthBox").hidden=yes;$("meetingsWorkspace
 function setStatus(message,type="neutral"){const el=$("meetingsAdminStatus");el.textContent=message;el.className="requests-status "+type}
 async function load(){
   setStatus("در حال دریافت درخواست‌ها…");
-  const response=await fetch(URL+"/rest/v1/meeting_requests?select=*&order=requested_at.desc",{headers:headers(),cache:"no-store"});
+  const response=await fetch(URL+"/rest/v1/meeting_requests?select=*&order=created_at.desc",{headers:headers(),cache:"no-store"});
   if(response.status===401||response.status===403){logout();throw new Error("نشست مدیر منقضی شده است.")}
   const data=await response.json().catch(()=>[]);
   if(!response.ok)throw new Error(data.message||"دریافت درخواست‌ها ناموفق بود.");
@@ -28,7 +28,7 @@ function render(){
   $("meetingRequestsList").innerHTML=requests.length?requests.map(item=>`
     <article class="meeting-request-card" data-meeting-id="${escape(item.id)}">
       <div><h3>${escape(item.first_name)} ${escape(item.last_name)}</h3>
-      <p>سن: ${Number(item.age).toLocaleString("fa-IR")} سال<br>شماره تماس: <a href="tel:${escape(item.phone)}">${escape(item.phone)}</a><br>زمان ثبت: ${new Date(item.requested_at).toLocaleString("fa-IR")}</p></div>
+      <p>سن: ${Number(item.age).toLocaleString("fa-IR")} سال<br>شماره تماس: <a href="tel:${escape(item.phone)}">${escape(item.phone)}</a><br>زمان ثبت: ${new Date(item.created_at).toLocaleString("fa-IR")}</p></div>
       <div class="meeting-request-actions">
         <select data-meeting-status aria-label="وضعیت درخواست">
           <option value="pending" ${item.status==="pending"?"selected":""}>منتظر بررسی</option>
