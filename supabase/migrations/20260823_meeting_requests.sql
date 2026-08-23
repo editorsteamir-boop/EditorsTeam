@@ -36,6 +36,11 @@ grant usage, select on sequence public.meeting_requests_id_seq to anon, authenti
 grant insert (first_name, last_name, age, phone) on public.meeting_requests to anon, authenticated;
 grant select, update, delete on public.meeting_requests to authenticated;
 
+-- Remove policies from the earlier prototype, if present.
+drop policy if exists public_submit_meeting_request on public.meeting_requests;
+drop policy if exists site_admin_read_meeting_requests on public.meeting_requests;
+drop policy if exists site_admin_delete_meeting_requests on public.meeting_requests;
+
 drop policy if exists "public can submit meeting requests" on public.meeting_requests;
 create policy "public can submit meeting requests"
   on public.meeting_requests for insert to anon, authenticated
