@@ -8,6 +8,7 @@
     <link rel="manifest" href="./manifest.json" />
     <link rel="stylesheet" href="./assets/css/sales.css?v=16.0.0" />
     <link rel="stylesheet" href="./assets/css/main.css?v=16.2.0" />
+    <link rel="stylesheet" href="./assets/css/meetings.css?v=1.0.0" />
     <link rel="stylesheet" href="./assets/css/fonto.css?v=8.1.0" />
     <style>
       .nav-inner{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:2px!important;max-width:none!important;overflow:hidden!important}
@@ -37,17 +38,9 @@
         </div>
         <div class="progress"><div id="bar" class="bar"></div></div>
         <div class="actions">
-          <a
-            class="btn supportBtn"
-            href="https://rubika.ir/editorsteamir"
-            target="_blank"
-            >کانال روبیکا</a
-          ><a
-            class="btn secondary"
-            href="https://rubika.ir/joing/BBAEJBICI0KSHFTVXWHINBVKFFWZDRXC"
-            target="_blank"
-            >ارسال پروژه</a
-          >
+          <a class="btn supportBtn" href="https://rubika.ir/editorsteamir" target="_blank" rel="noopener">کانال روبیکا</a>
+          <a class="btn secondary" href="https://rubika.ir/joing/BBAEJBICI0KSHFTVXWHINBVKFFWZDRXC" target="_blank" rel="noopener">ارسال پروژه</a>
+          <button class="btn meetings-trigger" type="button" data-open-meetings>جلسات</button>
         </div>
       </div>
       <div class="bottom-nav">
@@ -447,6 +440,22 @@
         </div>
       </div>
     </div>
+    <div id="meetingsModal" class="meetings-modal" role="dialog" aria-modal="true" aria-labelledby="meetingsTitle" hidden>
+      <div class="meetings-dialog">
+        <button class="meetings-close" type="button" aria-label="بستن" data-close-meetings>×</button>
+        <h2 id="meetingsTitle" class="meetings-heading">درخواست جلسه</h2>
+        <p class="meetings-lead">اطلاعاتتان را وارد کنید تا برای هماهنگی زمان جلسه با شما تماس بگیریم.</p>
+        <form id="meetingsForm" class="meetings-form" autocomplete="on">
+          <label>نام<input id="meetingFirstName" name="firstName" type="text" minlength="2" maxlength="60" autocomplete="given-name" required /></label>
+          <label>نام خانوادگی<input id="meetingLastName" name="lastName" type="text" minlength="2" maxlength="80" autocomplete="family-name" required /></label>
+          <label>سن<input id="meetingAge" name="age" type="number" inputmode="numeric" min="10" max="100" required /></label>
+          <label>شماره تلفن<input id="meetingPhone" name="phone" type="tel" inputmode="numeric" maxlength="11" autocomplete="tel" placeholder="09123456789" required /></label>
+          <button id="meetingsSubmit" class="meetings-submit" type="submit">ثبت درخواست</button>
+          <p class="meetings-note">اطلاعات شما فقط برای هماهنگی جلسه استفاده می‌شود و در بخش عمومی سایت نمایش داده نخواهد شد.</p>
+          <p id="meetingsStatus" class="meetings-status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
     <script src="./assets/js/plan.js?v=6.0.0" defer="defer"></script>
     <script src="./assets/js/app.js?v=18.0.0" defer="defer"></script>
     <script src="./assets/js/sales-public.js?v=1.2.0" defer="defer"></script>
@@ -454,6 +463,7 @@
     <script src="./assets/js/editors.js?v=16.1.0" defer="defer"></script>
     <script src="./assets/js/fonto.js?v=10.2.0" defer="defer"></script>
     <div id="noteToast" class="note-toast">یادداشت ثبت شد</div>
+    <script src="./assets/js/meetings.js?v=1.0.0" defer="defer"></script>
     <script src="./assets/js/splash.js?v=16.0.0" defer="defer"></script>
   </body>
 </html>
