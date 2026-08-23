@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="./assets/css/admin.css?v=17.1.0" />
     <link rel="stylesheet" href="./assets/css/fonto-library-admin.css?v=1.0.0" />
     <link rel="stylesheet" href="./assets/css/admin-layout-fix.css?v=1.0.0" />
+    <link rel="stylesheet" href="./assets/css/meetings-admin.css?v=1.0.0" />
   </head>
   <body>
     <div class="ambient ambient-one"></div>
@@ -28,6 +29,9 @@
           </button>
           <button data-tab-link="salesTab">
             <span>🛒</span><b>فروش و خریدها</b>
+          </button>
+          <button data-tab-link="meetingsTab">
+            <span>◷</span><b>درخواست جلسات</b>
           </button>
           <button data-tab-link="fontoAccessTab">
             <span>🔐</span><b>دسترسی فونتو</b>
@@ -137,6 +141,12 @@
               <span>🛒</span>
               <div>
                 <b>فروش و خریدها</b><small>قیمت، لینک آموزش و تراکنش‌ها</small>
+              </div>
+            </button>
+            <button data-tab="meetingsTab">
+              <span>◷</span>
+              <div>
+                <b>درخواست جلسات</b><small>مشاهده و پیگیری متقاضیان</small>
               </div>
             </button>
             <button data-tab="fontoAccessTab">
@@ -458,6 +468,39 @@
               </div>
             </div>
           </section>
+          <section id="meetingsTab" class="tab-panel">
+            <div class="panel requests-panel">
+              <div class="panel-title">
+                <div>
+                  <span class="section-kicker">درخواست‌های ثبت‌شده</span>
+                  <h2>مدیریت جلسات</h2>
+                  <p>اطلاعات متقاضیان را مشاهده کنید و وضعیت پیگیری هر درخواست را ثبت کنید.</p>
+                </div>
+                <span id="meetingRequestCount" class="count-badge">۰ درخواست</span>
+              </div>
+              <div id="meetingsAuthBox" class="requests-auth-box">
+                <div><b>ورود مدیر Supabase</b><p>برای مشاهده اطلاعات تماس متقاضیان وارد حساب مدیر شوید.</p></div>
+                <form id="meetingsAdminLoginForm" class="requests-auth-form" autocomplete="off">
+                  <input id="meetingsAdminEmail" type="email" autocomplete="username" placeholder="ایمیل مدیر" required />
+                  <input id="meetingsAdminPassword" type="password" autocomplete="off" placeholder="رمز عبور" required />
+                  <button type="submit">ورود به مدیریت جلسات</button>
+                </form>
+              </div>
+              <div id="meetingsWorkspace" hidden>
+                <div class="meeting-admin-summary">
+                  <div><b id="meetingPendingStat">۰</b><span>منتظر بررسی</span></div>
+                  <div><b id="meetingContactedStat">۰</b><span>تماس گرفته‌شده</span></div>
+                  <div><b id="meetingTotalStat">۰</b><span>کل درخواست‌ها</span></div>
+                </div>
+                <div class="sales-toolbar">
+                  <button id="meetingsReloadBtn" type="button" class="secondary">↻ به‌روزرسانی</button>
+                  <button id="meetingsLogoutBtn" type="button" class="danger">خروج مدیر</button>
+                </div>
+                <div id="meetingsAdminStatus" class="requests-status">در حال دریافت درخواست‌ها…</div>
+                <div id="meetingRequestsList" class="meeting-request-list"></div>
+              </div>
+            </div>
+          </section>
           <section id="fontoAccessTab" class="tab-panel">
             <div class="panel requests-panel">
               <div class="panel-title">
@@ -591,6 +634,7 @@
     <div id="toast" class="toast"></div>
     <script src="./assets/js/github-admin-v16.3.js"></script>
     <script src="./assets/js/sales-admin.js?v=1.1.0"></script>
+    <script src="./assets/js/meetings-admin.js?v=1.0.0"></script>
     <script src="./assets/js/fonto-access-admin.js?v=1.0.0"></script>
     <script src="./assets/js/fonto-library-admin-v1.2.js"></script>
     <script>
