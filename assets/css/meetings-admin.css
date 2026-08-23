@@ -1,0 +1,10 @@
+.meeting-admin-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.meeting-admin-summary div{padding:16px;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:rgba(255,255,255,.035)}
+.meeting-admin-summary b{display:block;font-size:24px;color:#f0c75e}.meeting-admin-summary span{color:#9ca3b5;font-size:12px}
+.meeting-request-list{display:grid;gap:12px;margin-top:16px}
+.meeting-request-card{display:grid;grid-template-columns:1fr auto;gap:14px;padding:16px;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:#10131d}
+.meeting-request-card h3{margin:0 0 7px}.meeting-request-card p{margin:0;color:#aeb4c5;line-height:1.9;font-size:13px}
+.meeting-request-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.meeting-request-actions select{min-width:135px;padding:9px;border-radius:10px;color:#fff;background:#171b27;border:1px solid rgba(255,255,255,.13)}
+.meeting-request-actions button{padding:9px 12px}.meeting-request-actions .danger{background:#3a1820;color:#ffb1b8}
+@media(max-width:700px){.meeting-admin-summary{grid-template-columns:1fr}.meeting-request-card{grid-template-columns:1fr}.meeting-request-actions{justify-content:flex-start}}
