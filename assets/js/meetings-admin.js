@@ -9,6 +9,30 @@ let session=null,requests=[];
 const headers=()=>({apikey:KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"});
 function showWorkspace(yes){$("meetingsAuthBox").hidden=yes;$("meetingsWorkspace").hidden=!yes}
 function setStatus(message,type="neutral"){const el=$("meetingsAdminStatus");el.textContent=message;el.className="requests-status "+type}
+async function loadIntroSetting(){
+  const response=await fetch(URL+"/rest/v1/site_settings?setting_key=eq.meeting_intro&select=setting_value",{
+    headers:headers(),cache:"no-store"
+  });
+  const rows=await response.json().catch(()=>[]);
+  if(!response.ok)throw new Error(rows.message||"دریافت متن فرم ناموفق بود.");
+  $("meetingIntroInput").value=Array.isArray(rows)&&rows[0]?.setting_value||"";
+}
+async function saveIntroSetting(){
+  const value=$("meetingIntroInput").value.trim();
+  if(!value)return alert("متن توضیح فرم نمی‌تواند خالی باشد.");
+  if(value.length>500)return alert("متن توضیح حداکثر ۵۰۰ کاراکتر است.");
+  const button=$("meetingIntroSaveBtn");
+  button.disabled=true;button.textContent="در حال ذخیره…";
+  try{
+    const response=await fetch(URL+"/rest/v1/site_settings?on_conflict=setting_key",{
+      method:"POST",
+      headers:{...headers(),Prefer:"resolution=merge-duplicates,return=minimal"},
+      body:JSON.stringify({setting_key:"meeting_intro",setting_value:value,updated_at:new Date().toISOString()})
+    });
+    if(!response.ok)throw new Error((await response.json().catch(()=>({}))).message||"ذخیره متن ناموفق بود.");
+    alert("متن فرم جلسات ذخیره شد.");
+  }finally{button.disabled=false;button.textContent="ذخیره متن فرم"}
+}
 async function load(){
   setStatus("در حال دریافت درخواست‌ها…");
   const response=await fetch(URL+"/rest/v1/meeting_requests?select=*&order=created_at.desc",{headers:headers(),cache:"no-store"});
@@ -16,7 +40,7 @@ async function load(){
   const data=await response.json().catch(()=>[]);
   if(!response.ok)throw new Error(data.message||"دریافت درخواست‌ها ناموفق بود.");
   requests=Array.isArray(data)?data:[];
-  render();setStatus("فهرست درخواست‌ها به‌روز است.","ok");
+  render();await loadIntroSetting();setStatus("فهرست درخواست‌ها و متن فرم به‌روز است.","ok");
 }
 function render(){
   const pending=requests.filter(x=>x.status==="pending").length;
@@ -56,6 +80,7 @@ async function login(event){
 function logout(){session=null;sessionStorage.removeItem(SESSION_KEY);showWorkspace(false)}
 $("meetingsAdminLoginForm").addEventListener("submit",login);
 $("meetingsReloadBtn").addEventListener("click",()=>load().catch(error=>alert(error.message)));
+$("meetingIntroSaveBtn").addEventListener("click",()=>saveIntroSetting().catch(error=>alert(error.message)));
 $("meetingsLogoutBtn").addEventListener("click",logout);
 $("meetingRequestsList").addEventListener("click",async event=>{
   const card=event.target.closest("[data-meeting-id]");if(!card)return;
