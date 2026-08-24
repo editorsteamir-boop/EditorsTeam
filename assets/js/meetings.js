@@ -6,9 +6,22 @@ const form=document.getElementById("meetingsForm");
 if(!modal||!form)return;
 const status=document.getElementById("meetingsStatus");
 const submit=document.getElementById("meetingsSubmit");
+const lead=document.getElementById("meetingsLead");
 const normalizeDigits=value=>String(value||"").translate?String(value):String(value||"")
   .replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d))
   .replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
+async function loadMeetingIntro(){
+  if(!lead)return;
+  try{
+    const response=await fetch(SUPABASE_URL+"/rest/v1/site_settings?setting_key=eq.meeting_intro&select=setting_value",{
+      headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY},
+      cache:"no-store"
+    });
+    const rows=await response.json();
+    if(response.ok&&Array.isArray(rows)&&rows[0]?.setting_value)lead.textContent=rows[0].setting_value;
+  }catch(error){console.warn("Meeting intro is unavailable",error)}
+}
+loadMeetingIntro();
 function openModal(){
   modal.hidden=false;
   document.body.classList.add("meetings-open");
