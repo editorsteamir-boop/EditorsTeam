@@ -8,3 +8,9 @@
 .meeting-request-actions select{min-width:135px;padding:9px;border-radius:10px;color:#fff;background:#171b27;border:1px solid rgba(255,255,255,.13)}
 .meeting-request-actions button{padding:9px 12px}.meeting-request-actions .danger{background:#3a1820;color:#ffb1b8}
 @media(max-width:700px){.meeting-admin-summary{grid-template-columns:1fr}.meeting-request-card{grid-template-columns:1fr}.meeting-request-actions{justify-content:flex-start}}
+.meeting-copy-editor{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end;margin:18px 0;padding:16px;border:1px solid rgba(240,199,94,.22);border-radius:16px;background:rgba(240,199,94,.045)}
+.meeting-copy-editor>div{grid-column:1/-1}.meeting-copy-editor h3{margin:4px 0}.meeting-copy-editor p{margin:0;color:#aeb4c5;font-size:12px}
+.meeting-copy-editor textarea{width:100%;box-sizing:border-box;resize:vertical;min-height:82px;padding:12px;border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;background:#0c0f18;font:inherit;line-height:1.9}
+.meeting-copy-editor textarea:focus{outline:0;border-color:#f0c75e;box-shadow:0 0 0 3px rgba(240,199,94,.1)}
+.meeting-copy-editor button{min-height:46px;padding:0 18px}
+@media(max-width:700px){.meeting-copy-editor{grid-template-columns:1fr}.meeting-copy-editor button{width:100%}}
