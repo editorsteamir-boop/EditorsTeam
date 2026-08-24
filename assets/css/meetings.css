@@ -15,6 +15,7 @@
   background:
     linear-gradient(135deg,#76520b 0%,#f8da74 35%,#a87312 62%,#ffe9a2 100%)!important;
   box-shadow:0 8px 24px rgba(191,139,30,.28),inset 0 1px 0 rgba(255,255,255,.65)!important;
+  font-family:inherit!important;
 }
 .meetings-modal{
   position:fixed;
@@ -79,17 +80,6 @@
   cursor:pointer;
 }
 .meetings-submit:disabled{opacity:.65;cursor:wait}
-.meetings-note{
-  grid-column:1/-1;
-  margin:0;
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:12px;
-  padding:11px 12px;
-  color:#aeb3c3;
-  background:rgba(255,255,255,.035);
-  font-size:11px;
-  line-height:1.8;
-}
 .meetings-status{grid-column:1/-1;min-height:24px;margin:0;text-align:center;font-size:12px}
 .meetings-status.success{color:#69e6a2}.meetings-status.error{color:#ff8f98}
 body.meetings-open{overflow:hidden}
@@ -97,5 +87,5 @@ body.meetings-open{overflow:hidden}
   .hero .actions{gap:6px}
   .hero .actions .btn{font-size:11px;padding:10px 4px}
   .meetings-form{grid-template-columns:1fr}
-  .meetings-submit,.meetings-note,.meetings-status{grid-column:1}
+  .meetings-submit,.meetings-status{grid-column:1}
 }
