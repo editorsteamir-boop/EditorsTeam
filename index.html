@@ -444,14 +444,13 @@
       <div class="meetings-dialog">
         <button class="meetings-close" type="button" aria-label="بستن" data-close-meetings>×</button>
         <h2 id="meetingsTitle" class="meetings-heading">درخواست جلسه</h2>
-        <p class="meetings-lead">اطلاعاتتان را وارد کنید تا برای هماهنگی زمان جلسه با شما تماس بگیریم.</p>
+        <p id="meetingsLead" class="meetings-lead">اطلاعاتتان را وارد کنید تا برای هماهنگی زمان جلسه با شما تماس بگیریم.</p>
         <form id="meetingsForm" class="meetings-form" autocomplete="on">
           <label>نام<input id="meetingFirstName" name="firstName" type="text" minlength="2" maxlength="60" autocomplete="given-name" required /></label>
           <label>نام خانوادگی<input id="meetingLastName" name="lastName" type="text" minlength="2" maxlength="80" autocomplete="family-name" required /></label>
           <label>سن<input id="meetingAge" name="age" type="number" inputmode="numeric" min="10" max="100" required /></label>
           <label>شماره تلفن<input id="meetingPhone" name="phone" type="tel" inputmode="numeric" maxlength="11" autocomplete="tel" placeholder="09123456789" required /></label>
           <button id="meetingsSubmit" class="meetings-submit" type="submit">ثبت درخواست</button>
-          <p class="meetings-note">اطلاعات شما فقط برای هماهنگی جلسه استفاده می‌شود و در بخش عمومی سایت نمایش داده نخواهد شد.</p>
           <p id="meetingsStatus" class="meetings-status" aria-live="polite"></p>
         </form>
       </div>
