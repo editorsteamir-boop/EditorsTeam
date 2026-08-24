@@ -1,6 +1,6 @@
 const CACHE_PREFIX="editors-team-";
-const STATIC_CACHE=`${CACHE_PREFIX}static-v34-font-delete`;
-const PAGE_CACHE=`${CACHE_PREFIX}pages-v34-font-delete`;
+const STATIC_CACHE=`${CACHE_PREFIX}static-v35-meeting-font`;
+const PAGE_CACHE=`${CACHE_PREFIX}pages-v35-meeting-font`;
 
 self.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil((async()=>{
