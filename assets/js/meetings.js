@@ -22,7 +22,8 @@ async function loadMeetingIntro(){
   }catch(error){console.warn("Meeting intro is unavailable",error)}
 }
 loadMeetingIntro();
-function openModal(){
+function openModal(event){
+  event?.preventDefault();
   modal.hidden=false;
   document.body.classList.add("meetings-open");
   requestAnimationFrame(()=>document.getElementById("meetingFirstName")?.focus());
