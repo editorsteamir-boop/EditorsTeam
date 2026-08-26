@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="./assets/css/fonto-library-admin.css?v=1.0.0" />
     <link rel="stylesheet" href="./assets/css/admin-layout-fix.css?v=1.0.0" />
     <link rel="stylesheet" href="./assets/css/meetings-admin.css?v=1.0.0" />
+    <link rel="stylesheet" href="./assets/css/admin-dashboard.css?v=1.0.0" />
   </head>
   <body>
     <div class="ambient ambient-one"></div>
@@ -20,36 +21,14 @@
           <div class="brand-mark">ET</div>
           <div><strong>EditorsTeam</strong><span>مدیریت محتوا</span></div>
         </div>
-        <nav class="side-nav">
-          <button class="active" data-tab-link="projectsTab">
-            <span>▦</span><b>پروژه‌ها</b>
+        <nav class="side-nav" aria-label="میانبرهای پنل">
+          <button class="active" type="button" data-admin-home>
+            <span>⌂</span><b>خانه پنل</b>
           </button>
-          <button data-tab-link="editorsTab">
-            <span>◉</span><b>ادیتورها</b>
-          </button>
-          <button data-tab-link="salesTab">
-            <span>🛒</span><b>فروش و خریدها</b>
-          </button>
-          <button data-tab-link="meetingsTab">
-            <span>◷</span><b>درخواست جلسات</b>
-          </button>
-          <button data-tab-link="fontoAccessTab">
-            <span>🔐</span><b>دسترسی فونتو</b>
-          </button>
-          <button data-tab-link="fontoLibraryTab">
-            <span>▧</span><b>کتابخانه فونتو</b>
-          </button>
-          <button data-scroll="githubPanel">
+          <button type="button" data-open-connection>
             <span>⌁</span><b>اتصال GitHub</b>
           </button>
         </nav>
-        <div class="sidebar-tip">
-          <span>🔒</span>
-          <p>
-            توکن در فایل‌های پروژه ذخیره نمی‌شود و فقط در حافظه همین صفحه
-            می‌ماند.
-          </p>
-        </div>
         <a class="view-site" href="./index.html"><span>↗</span> مشاهده سایت</a>
       </aside>
       <div class="workspace">
@@ -64,7 +43,44 @@
           </div>
         </header>
         <main class="admin-shell">
-          <section id="githubPanel" class="panel github-panel featured-panel">
+          <section id="adminHome" class="admin-home">
+            <div class="admin-home-hero">
+              <div>
+                <span class="section-kicker">دسترسی سریع</span>
+                <h2>چه بخشی را می‌خواهی مدیریت کنی؟</h2>
+                <p>هر بخش فقط هنگام انتخاب باز می‌شود تا پنل ساده و خلوت بماند.</p>
+              </div>
+              <span class="admin-home-hint">برای ورود، یک کارت را انتخاب کن</span>
+            </div>
+            <div class="admin-card-grid">
+              <button class="admin-home-card" type="button" data-open-tab="projectsTab" data-title="مدیریت پروژه‌ها">
+                <span class="admin-home-card-icon">▦</span><b>پروژه‌ها</b><small>افزودن، ویرایش و مرتب‌سازی گالری پروژه‌ها</small><span class="card-arrow">←</span>
+              </button>
+              <button class="admin-home-card" type="button" data-open-tab="editorsTab" data-title="مدیریت ادیتورها">
+                <span class="admin-home-card-icon">◉</span><b>ادیتورها</b><small>پروفایل اعضا، نمونه‌کارها و وضعیت نمایش</small><span class="card-arrow">←</span>
+              </button>
+              <button class="admin-home-card" type="button" data-open-tab="salesTab" data-title="فروش و خریدها">
+                <span class="admin-home-card-icon">🛒</span><b>فروش و خریدها</b><small>قیمت آموزش‌ها، لینک‌ها و خریدهای ثبت‌شده</small><span class="card-arrow">←</span>
+              </button>
+              <button class="admin-home-card" type="button" data-open-tab="meetingsTab" data-title="درخواست جلسات">
+                <span class="admin-home-card-icon">◷</span><b>جلسات</b><small>مشاهده متقاضیان و ثبت وضعیت پیگیری</small><span class="card-arrow">←</span>
+              </button>
+              <button class="admin-home-card" type="button" data-open-tab="fontoAccessTab" data-title="دسترسی فونتو">
+                <span class="admin-home-card-icon">🔐</span><b>دسترسی فونتو</b><small>درخواست کاربران، رمزها و آمار ورود</small><span class="card-arrow">←</span>
+              </button>
+              <button class="admin-home-card" type="button" data-open-tab="fontoLibraryTab" data-title="کتابخانه فونتو">
+                <span class="admin-home-card-icon">▧</span><b>کتابخانه فونتو</b><small>استایل‌های سریع و ترتیب پیش‌نمایش فونت‌ها</small><span class="card-arrow">←</span>
+              </button>
+              <button class="admin-home-card connection-card" type="button" data-open-connection data-title="تنظیمات GitHub">
+                <span class="admin-home-card-icon">⌁</span><b>اتصال GitHub</b><small>بررسی مخزن، شاخه و تنظیمات اتصال امن</small><span class="card-arrow">←</span>
+              </button>
+            </div>
+          </section>
+          <div id="adminDetailNav" class="admin-detail-nav" hidden>
+            <button id="adminBackHome" type="button" class="secondary">→ بازگشت به خانه</button>
+            <div class="admin-detail-title"><span>بخش فعال</span><b id="adminDetailTitle">مدیریت</b></div>
+          </div>
+          <section id="githubPanel" class="panel github-panel featured-panel admin-detail-view" hidden>
             <div class="panel-head">
               <div class="panel-icon github-icon">⌁</div>
               <div>
@@ -162,7 +178,7 @@
               </div>
             </button>
           </nav>
-          <section id="projectsTab" class="tab-panel active">
+          <section id="projectsTab" class="tab-panel">
             <div class="content-grid">
               <div class="panel form-panel">
                 <div class="panel-title">
@@ -647,35 +663,55 @@
     <script src="./assets/js/fonto-access-admin.js?v=1.0.0"></script>
     <script src="./assets/js/fonto-library-admin-v1.2.js"></script>
     <script>
-      document
-        .querySelectorAll("[data-tab-link]")
-        .forEach((btn) =>
-          btn.addEventListener("click", () =>
-            document
-              .querySelector(
-                '.admin-tabs button[data-tab="' + btn.dataset.tabLink + '"]',
-              )
-              .click(),
-          ),
+      (() => {
+        const home = document.getElementById("adminHome");
+        const detailNav = document.getElementById("adminDetailNav");
+        const detailTitle = document.getElementById("adminDetailTitle");
+        const githubPanel = document.getElementById("githubPanel");
+        const panels = [...document.querySelectorAll(".tab-panel")];
+        const hiddenTabs = document.querySelector(".admin-tabs");
+
+        function showHome() {
+          home.hidden = false;
+          detailNav.hidden = true;
+          githubPanel.hidden = true;
+          panels.forEach((panel) => panel.classList.remove("active"));
+          document.querySelectorAll("[data-admin-home]").forEach((button) => button.classList.add("active"));
+          document.querySelectorAll("[data-open-connection]").forEach((button) => button.classList.remove("active"));
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function showTab(tabId, title) {
+          home.hidden = true;
+          detailNav.hidden = false;
+          githubPanel.hidden = true;
+          detailTitle.textContent = title || "مدیریت";
+          const routeButton = hiddenTabs?.querySelector('[data-tab="' + tabId + '"]');
+          if (routeButton) routeButton.click();
+          else panels.forEach((panel) => panel.classList.toggle("active", panel.id === tabId));
+          document.querySelectorAll("[data-admin-home],[data-open-connection]").forEach((button) => button.classList.remove("active"));
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function showConnection() {
+          home.hidden = true;
+          detailNav.hidden = false;
+          detailTitle.textContent = "تنظیمات GitHub";
+          panels.forEach((panel) => panel.classList.remove("active"));
+          githubPanel.hidden = false;
+          document.querySelectorAll("[data-admin-home]").forEach((button) => button.classList.remove("active"));
+          document.querySelectorAll("[data-open-connection]").forEach((button) => button.classList.add("active"));
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        document.querySelectorAll("[data-open-tab]").forEach((card) =>
+          card.addEventListener("click", () => showTab(card.dataset.openTab, card.dataset.title)),
         );
-      document
-        .querySelectorAll("[data-scroll]")
-        .forEach((btn) =>
-          btn.addEventListener("click", () =>
-            document
-              .getElementById(btn.dataset.scroll)
-              .scrollIntoView({ behavior: "smooth" }),
-          ),
-        );
-      document.querySelector(".admin-tabs").addEventListener("click", (e) => {
-        const b = e.target.closest("[data-tab]");
-        if (!b) return;
-        document
-          .querySelectorAll("[data-tab-link]")
-          .forEach((x) =>
-            x.classList.toggle("active", x.dataset.tabLink === b.dataset.tab),
-          );
-      });
+        document.querySelectorAll("[data-admin-home]").forEach((button) => button.addEventListener("click", showHome));
+        document.querySelectorAll("[data-open-connection]").forEach((button) => button.addEventListener("click", showConnection));
+        document.getElementById("adminBackHome").addEventListener("click", showHome);
+        showHome();
+      })();
     </script>
   </body>
 </html>
